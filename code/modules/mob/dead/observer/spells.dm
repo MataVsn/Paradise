@@ -11,7 +11,7 @@ GLOBAL_LIST_INIT(boo_phrases, list(
 
 /obj/effect/proc_holder/spell/targeted/click/boo
 	name = "Boo!"
-	desc = "Fuck with the living."
+	desc = "Fuck with the living. гыгы"
 	selection_deactivated_message	= "<span class='shadowling'>Your presence will not be known. For now.</span>"
 	selection_activated_message		= "<span class='shadowling'>You prepare to reach across the veil. <b>Left-click to influence a target!</b></span>"
 	auto_target_single = FALSE
