@@ -294,6 +294,9 @@
 #define COMSIG_MOB_ALTCLICKON "mob_altclickon"
 	#define COMSIG_MOB_CANCEL_CLICKON (1<<0)
 
+///from base of mob/key_down(): (_key, client/user)
+#define COMSIG_MOB_DROP_ITEM "mob_drop_item"
+
 ///from base of obj/allowed(mob/M): (/obj) returns bool, if TRUE the mob has id access to the obj
 #define COMSIG_MOB_ALLOWED "mob_allowed"
 ///from base of mob/anti_magic_check(): (mob/user, magic, holy, tinfoil, chargecost, self, protection_sources)
@@ -370,6 +373,10 @@
 #define COMSIG_MOB_CLIENT_LOGIN "comsig_mob_client_login"
 ///sent from borg mobs to itself, for tools to catch an upcoming destroy() due to safe decon (rather than detonation)
 #define COMSIG_BORG_SAFE_DECONSTRUCT "borg_safe_decon"
+///sent from living mobs every tick of fire
+#define COMSIG_LIVING_FIRE_TICK "living_fire_tick"
+//sent from living mobs when they are ahealed
+#define COMSIG_LIVING_AHEAL "living_aheal"
 
 //ALL OF THESE DO NOT TAKE INTO ACCOUNT WHETHER AMOUNT IS 0 OR LOWER AND ARE SENT REGARDLESS!
 
@@ -595,6 +602,11 @@
 #define COMSIG_JOB_RECEIVED "job_received"
 // called after DNA is updated
 #define COMSIG_HUMAN_UPDATE_DNA "human_update_dna"
+/// From mob/living/carbon/human/change_body_accessory(): (mob/living/carbon/human/H, body_accessory_style)
+#define COMSIG_HUMAN_CHANGE_BODY_ACCESSORY "human_change_body_accessory"
+	#define COMSIG_HUMAN_NO_CHANGE_APPEARANCE (1<<0)
+/// From mob/living/carbon/human/change_head_accessory(): (mob/living/carbon/human/H, head_accessory_style)
+#define COMSIG_HUMAN_CHANGE_HEAD_ACCESSORY "human_change_head_accessory"
 
 // /datum/species signals
 

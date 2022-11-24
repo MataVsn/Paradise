@@ -103,8 +103,7 @@ emp_act
 		bleed_rate = 0
 		user.visible_message("<span class='alert'>[user] patches some leaks on [src] with [I].</span>")
 	if(IgniteMob())
-		message_admins("[key_name_admin(user)] set [key_name_admin(src)] on fire with [I]")
-		log_game("[key_name(user)] set [key_name(src)] on fire with [I]")
+		add_attack_logs(user, src, "set on fire with [I]")
 
 
 /mob/living/carbon/human/check_projectile_dismemberment(obj/item/projectile/P, def_zone)
@@ -384,6 +383,7 @@ emp_act
 	if(affecting.sabotaged)
 		to_chat(user, "<span class='warning'>[src]'s [affecting.name] is already sabotaged!</span>")
 	else
+		add_attack_logs(user, src, "emagged [p_their()] [affecting.name]")
 		to_chat(user, "<span class='warning'>You sneakily slide the card into the dataport on [src]'s [affecting.name] and short out the safeties.</span>")
 		affecting.sabotaged = 1
 	return 1
@@ -447,6 +447,11 @@ emp_act
 
 	apply_damage(I.force * weakness, I.damtype, affecting, armor, sharp = weapon_sharp, used_weapon = I)
 
+	if(mind && user?.mind?.objectives)
+		for(var/datum/objective/pain_hunter/objective in user.mind.objectives)
+			if(mind == objective.target)
+				objective.take_damage(I.force * weakness, I.damtype)
+
 	var/bloody = 0
 	if(I.damtype == BRUTE && I.force && prob(25 + I.force * 2))
 		I.add_mob_blood(src)	//Make the weapon bloody, not the person.
@@ -469,7 +474,7 @@ emp_act
 											"<span class='combat userdanger'>[src] has been knocked down!</span>")
 							apply_effect(2, WEAKEN, armor)
 							AdjustConfused(15)
-						if(mind.special_role == SPECIAL_ROLE_REV && prob(I.force + ((100 - health)/2)) && src != user && I.damtype == BRUTE)
+						if(mind && mind.special_role == SPECIAL_ROLE_REV && prob(I.force + ((100 - health)/2)) && src != user && I.damtype == BRUTE)
 							SSticker.mode.remove_revolutionary(mind)
 
 					if(bloody)//Apply blood

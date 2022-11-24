@@ -91,6 +91,7 @@ GLOBAL_LIST_EMPTY(allRequestConsoles)
 
 	announcement.title = "[department] announcement"
 	announcement.newscast = FALSE
+	announcement.log = TRUE
 
 	name = "[department] Requests Console"
 	GLOB.allRequestConsoles += src
@@ -193,7 +194,7 @@ GLOBAL_LIST_EMPTY(allRequestConsoles)
 					reset_message(TRUE)
 
 		if("writeAnnouncement")
-			var/new_message = sanitize(input("Write your message:", "Awaiting Input", ""))
+			var/new_message = sanitize(input("Write your message:", "Awaiting Input", "") as message|null)
 			if(new_message)
 				message = new_message
 			else

@@ -142,6 +142,11 @@
 /mob/living/carbon/human/drask/Initialize(mapload)
 	. = ..(mapload, /datum/species/drask)
 
+/mob/living/carbon/human/moth/Initialize(mapload)
+	. = ..(mapload, /datum/species/moth)
+	if(!body_accessory)
+		change_body_accessory("Plain Wings")
+
 /mob/living/carbon/human/Stat()
 	..()
 	statpanel("Status")
@@ -615,12 +620,12 @@
 						unEquip(pocket_item)
 						if(thief_mode)
 							usr.put_in_hands(pocket_item)
-						add_attack_logs(usr, src, "Stripped of [pocket_item]", isLivingSSD(src) ? null : ATKLOG_ALL)
+						add_attack_logs(usr, src, "Stripped of [pocket_item]")
 				else
 					if(place_item)
 						usr.unEquip(place_item)
 						equip_to_slot_if_possible(place_item, pocket_id, FALSE, TRUE)
-						add_attack_logs(usr, src, "Equipped with [place_item]", isLivingSSD(src) ? null : ATKLOG_ALL)
+						add_attack_logs(usr, src, "Equipped with [place_item]")
 
 				// Update strip window
 				if(usr.machine == src && in_range(src, usr))
@@ -629,7 +634,7 @@
 				// Display a warning if the user mocks up if they don't have pickpocket gloves.
 				if(!thief_mode)
 					to_chat(src, "<span class='warning'>You feel your [pocket_side] pocket being fumbled with!</span>")
-				add_attack_logs(usr, src, "Attempted strip of [pocket_item]", isLivingSSD(src) ? null : ATKLOG_ALL)
+				add_attack_logs(usr, src, "Attempted strip of [pocket_item]")
 
 		if(href_list["set_sensor"])
 			if(istype(w_uniform, /obj/item/clothing/under))
@@ -644,7 +649,7 @@
 														"<span class='danger'>You have dislodged everything from [src]'s headpocket!</span>")
 				var/obj/item/organ/internal/headpocket/C = get_int_organ(/obj/item/organ/internal/headpocket)
 				C.empty_contents()
-				add_attack_logs(usr, src, "Stripped of headpocket items", isLivingSSD(src) ? null : ATKLOG_ALL)
+				add_attack_logs(usr, src, "Stripped of headpocket items")
 
 		if(href_list["strip_accessory"])
 			if(istype(w_uniform, /obj/item/clothing/under))
@@ -1200,6 +1205,8 @@
 
 	tail = dna.species.tail
 
+	wing = dna.species.wing
+
 	maxHealth = dna.species.total_health
 
 	if(dna.species.language)
@@ -1329,7 +1336,10 @@
 
 	m_styles = DEFAULT_MARKING_STYLES //Wipes out markings, setting them all to "None".
 	m_colours = DEFAULT_MARKING_COLOURS //Defaults colour to #00000 for all markings.
-	body_accessory = null
+	if(dna.species.bodyflags & HAS_BODY_ACCESSORY)
+		body_accessory = GLOB.body_accessory_by_name[dna.species.default_bodyacc]
+	else
+		body_accessory = null
 
 	dna.real_name = real_name
 
@@ -1846,25 +1856,25 @@ Eyes need to have significantly high darksight to shine unless the mob has the X
 	var/datum/objective/sintouched/O
 	switch(rand(1,7))//traditional seven deadly sins... except lust.
 		if(1) // acedia
-			log_game("[src] was influenced by the sin of Acedia.")
+			add_game_logs("[src] was influenced by the sin of Acedia.", src)
 			O = new /datum/objective/sintouched/acedia
 		if(2) // Gluttony
-			log_game("[src] was influenced by the sin of gluttony.")
+			add_game_logs("[src] was influenced by the sin of gluttony.", src)
 			O = new /datum/objective/sintouched/gluttony
 		if(3) // Greed
-			log_game("[src] was influenced by the sin of greed.")
+			add_game_logs("[src] was influenced by the sin of greed.", src)
 			O = new /datum/objective/sintouched/greed
 		if(4) // sloth
-			log_game("[src] was influenced by the sin of sloth.")
+			add_game_logs("[src] was influenced by the sin of sloth.", src)
 			O = new /datum/objective/sintouched/sloth
 		if(5) // Wrath
-			log_game("[src] was influenced by the sin of wrath.")
+			add_game_logs("[src] was influenced by the sin of wrath.", src)
 			O = new /datum/objective/sintouched/wrath
 		if(6) // Envy
-			log_game("[src] was influenced by the sin of envy.")
+			add_game_logs("[src] was influenced by the sin of envy.", src)
 			O = new /datum/objective/sintouched/envy
 		if(7) // Pride
-			log_game("[src] was influenced by the sin of pride.")
+			add_game_logs("[src] was influenced by the sin of pride.", src)
 			O = new /datum/objective/sintouched/pride
 	SSticker.mode.sintouched += src.mind
 	src.mind.objectives += O
@@ -1908,6 +1918,11 @@ Eyes need to have significantly high darksight to shine unless the mob has the X
 /mob/living/carbon/human/proc/get_perceived_trauma()
 	return min(health, maxHealth - getStaminaLoss())
 
+/mob/living/carbon/human/WakeUp(updating = TRUE)
+	if(dna.species.spec_WakeUp(src))
+		return
+	..()
+
 /**
   * Helper to get the mobs runechat colour span
   *
@@ -1921,3 +1936,9 @@ Eyes need to have significantly high darksight to shine unless the mob has the X
 		runechat_msg_location = loc
 	else
 		runechat_msg_location = src
+
+/mob/living/carbon/human/limb_attack_self()
+	var/obj/item/organ/external/arm = hand ? get_organ(BODY_ZONE_L_ARM) : get_organ(BODY_ZONE_R_ARM)
+	if(arm)
+		arm.attack_self(src)
+	return ..()

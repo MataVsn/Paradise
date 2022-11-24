@@ -126,11 +126,11 @@ GLOBAL_LIST_INIT(uplink_items, subtypesof(/datum/uplink_item))
 			if(ishuman(user))
 				var/mob/living/carbon/human/A = user
 				if(limited_stock > 0)
-					log_game("[key_name(user)] purchased [name]. [name] was discounted to [cost].")
+					add_game_logs("purchased [name]. [name] was discounted to [cost].", user)
 					if(!user.mind.special_role)
 						message_admins("[key_name_admin(user)] purchased [name] (discounted to [cost]), as a non antagonist.")
 				else
-					log_game("[key_name(user)] purchased [name].")
+					add_game_logs("purchased [name].", user)
 					if(!user.mind.special_role)
 						message_admins("[key_name_admin(user)] purchased [name], as a non antagonist.")
 				A.put_in_any_hand_if_possible(I)
@@ -1758,7 +1758,7 @@ GLOBAL_LIST_INIT(uplink_items, subtypesof(/datum/uplink_item))
 	The briefcase also feels a little heavier to hold; it has been manufactured to pack a little bit more of a punch if your client needs some convincing."
 	reference = "CASH"
 	item = /obj/item/storage/secure/briefcase/syndie
-	cost = 5
+	cost = 1
 
 /datum/uplink_item/badass/plasticbag
 	name = "Plastic Bag"
@@ -1834,6 +1834,14 @@ GLOBAL_LIST_INIT(uplink_items, subtypesof(/datum/uplink_item))
 	cost = 22 // normally 27
 	uplinktypes = list(UPLINK_TYPE_NUCLEAR, UPLINK_TYPE_SST)
 
+/datum/uplink_item/bundles_TC/cyborg_maint
+	name = "Cyborg maintenance crate"
+	desc = "A box containing all internal parts of cyborg for repair."
+	reference = "CYMT"
+	item = /obj/item/storage/box/syndie_kit/cyborg_maint
+	cost = 4
+	uplinktypes = list(UPLINK_TYPE_NUCLEAR, UPLINK_TYPE_SST)
+
 /datum/uplink_item/bundles_TC/badass
 	name = "Syndicate Bundle"
 	desc = "Syndicate Bundles are specialised groups of items that arrive in a plain box. These items are collectively worth more than 20 telecrystals, but you do not know which specialisation you will receive."
@@ -1887,7 +1895,7 @@ GLOBAL_LIST_INIT(uplink_items, subtypesof(/datum/uplink_item))
 	for(var/item in bought_items)
 		var/obj/purchased = new item(C)
 		U.purchase_log += "<BIG>[bicon(purchased)]</BIG>"
-	log_game("[key_name(usr)] purchased a surplus crate with [jointext(itemlog, ", ")]")
+	add_game_logs("purchased a surplus crate with [jointext(itemlog, ", ")]", usr)
 
 /datum/uplink_item/bundles_TC/telecrystal
 	name = "Raw Telecrystal"

@@ -44,7 +44,6 @@
 	var/datum/job/assigned_job
 	var/list/datum/objective/objectives = list()
 	var/list/datum/objective/special_verbs = list()
-	var/list/targets = list()
 
 	var/has_been_rev = 0//Tracks if this mind has been a rev or not
 
@@ -231,7 +230,7 @@
 		. += "<a href='?src=[UID()];revolution=clear'>no</a>|<b><font color='red'>HEADREV</font></b>|<a href='?src=[UID()];revolution=rev'>rev</a>"
 
 		. += " <a href='?src=[UID()];revolution=reequip'>Reequip</a> (gives security HUD and spray can)."
-		if(objectives.len==0)
+		if(!length(objectives))
 			. += "<br>Objectives are empty! <a href='?src=[UID()];revolution=autoobjectives'>Set to kill all heads</a>."
 	else if(src in SSticker.mode.revolutionaries)
 		. += "<a href='?src=[UID()];revolution=clear'>no</a>|<a href='?src=[UID()];revolution=headrev'>headrev</a>|<b><font color='red'>REV</font></b>"
@@ -288,18 +287,22 @@
 	if(src in SSticker.mode.wizards)
 		. += "<b><font color='red'>WIZARD</font></b>|<a href='?src=[UID()];wizard=clear'>no</a>"
 		. += "<br><a href='?src=[UID()];wizard=lair'>To lair</a>, <a href='?src=[UID()];common=undress'>undress</a>, <a href='?src=[UID()];wizard=dressup'>dress up</a>, <a href='?src=[UID()];wizard=name'>let choose name</a>."
-		if(objectives.len==0)
+		if(!length(objectives))
+			. += "<br>Objectives are empty! <a href='?src=[UID()];wizard=autoobjectives'>Randomize!</a>"
+	else if(src in SSticker.mode.apprentices)
+		. += "<b><font color='red'>WIZARD APPRENTICE</font></b>|<a href='?src=[UID()];wizard=clear'>no</a>"
+		. += "<br><a href='?src=[UID()];wizard=lair'>To lair</a>, <a href='?src=[UID()];common=undress'>undress</a>, <a href='?src=[UID()];wizard=dressup'>dress up</a>, <a href='?src=[UID()];wizard=name'>let choose name</a>."
+		if(!length(objectives))
 			. += "<br>Objectives are empty! <a href='?src=[UID()];wizard=autoobjectives'>Randomize!</a>"
 	else
-		. += "<a href='?src=[UID()];wizard=wizard'>wizard</a>|<b>NO</b>"
-
+		. += "<b>NO</b>|<a href='?src=[UID()];wizard=wizard'>wizard</a>|<a href='?src=[UID()];wizard=apprentice'>apprentice</a>"
 	. += _memory_edit_role_enabled(ROLE_WIZARD)
 
 /datum/mind/proc/memory_edit_changeling(mob/living/carbon/human/H)
 	. = _memory_edit_header("changeling", list("traitorchan"))
 	if(src in SSticker.mode.changelings)
 		. += "<b><font color='red'>CHANGELING</font></b>|<a href='?src=[UID()];changeling=clear'>no</a>"
-		if(objectives.len==0)
+		if(!length(objectives))
 			. += "<br>Objectives are empty! <a href='?src=[UID()];changeling=autoobjectives'>Randomize!</a>"
 		if(changeling && changeling.absorbed_dna.len && (current.real_name != changeling.absorbed_dna[1]))
 			. += "<br><a href='?src=[UID()];changeling=initialdna'>Transform to initial appearance.</a>"
@@ -312,7 +315,7 @@
 	. = _memory_edit_header("vampire", list("traitorvamp"))
 	if(src in SSticker.mode.vampires)
 		. += "<b><font color='red'>VAMPIRE</font></b>|<a href='?src=[UID()];vampire=clear'>no</a>"
-		if(objectives.len==0)
+		if(!length(objectives))
 			. += "<br>Objectives are empty! <a href='?src=[UID()];vampire=autoobjectives'>Randomize!</a>"
 	else
 		. += "<a href='?src=[UID()];vampire=vampire'>vampire</a>|<b>NO</b>"
@@ -402,7 +405,7 @@
 	. = _memory_edit_header("traitor", list("traitorchan", "traitorvamp"))
 	if(has_antag_datum(/datum/antagonist/traitor))
 		. += "<b><font color='red'>TRAITOR</font></b>|<a href='?src=[UID()];traitor=clear'>no</a>"
-		if(objectives.len==0)
+		if(!length(objectives))
 			. += "<br>Objectives are empty! <a href='?src=[UID()];traitor=autoobjectives'>Randomize!</a>"
 	else
 		. += "<a href='?src=[UID()];traitor=traitor'>traitor</a>|<b>NO</b>"
@@ -471,7 +474,8 @@
 	var/mob/living/silicon/silicon = current
 	. = "<br>Current Laws:<b>[silicon.laws.name]</b> <a href='?src=[UID()];silicon=lawmanager'>Law Manager</a>"
 	var/mob/living/silicon/robot/robot = current
-	if(istype(robot) && robot.emagged)
+	if(istype(robot))
+		. += "<br><b>Cyborg Module: [robot.module ? robot.module : "None" ]</b> <a href='?src=[UID()];silicon=borgpanel'>Borg Panel</a>"
 		if(robot.emagged)
 			. += "<br>Cyborg: <b><font color='red'>Is emagged!</font></b> <a href='?src=[UID()];silicon=unemag'>Unemag!</a>"
 		if(robot.laws.zeroth_law)
@@ -651,9 +655,9 @@
 				def_value = "custom"
 
 		var/list/objective_types = list(
-			"assassinate", "blood", "debrain", "protect", "prevent", "brig", "hijack",
-			"escape", "survive", "steal", "download", "nuclear", "capture", "absorb",
-			"destroy", "maroon", "identity theft",
+			"assassinate", "prevent from escape", "pain_hunter", "steal brain", "protect", "hijack",
+			"escape", "survive", "steal", "download", "nuclear", "capture", "blood", "absorb",
+			"destroy", "identity theft", "kill all humans",
 			// Цели для ниндзя //
 			"get money", "find and scan", "set up",
 			"research corrupt", "ai corrupt", "plant explosive", "cyborg hijack",
@@ -667,50 +671,50 @@
 		var/datum/objective/new_objective = null
 
 		switch(new_obj_type)
-			if("assassinate","protect","debrain", "brig", "maroon")
-				//To determine what to name the objective in explanation text.
-				var/objective_type_capital = uppertext(copytext(new_obj_type, 1,2))//Capitalize first letter.
-				var/objective_type_text = copytext(new_obj_type, 2)//Leave the rest of the text.
-				var/objective_type = "[objective_type_capital][objective_type_text]"//Add them together into a text string.
+			if("assassinate", "protect", "steal brain", "prevent from escape", "pain_hunter")
+				var/obj_type = list("assassinate" = /datum/objective/assassinate,
+								"protect" = /datum/objective/protect,
+								"steal brain" = /datum/objective/debrain,
+								"prevent from escape" = /datum/objective/maroon,
+								"pain_hunter" = /datum/objective/pain_hunter
+								)[new_obj_type]
+				new_objective = new obj_type
+				new_objective.owner = src
 
-				var/list/possible_targets = list()
-				for(var/datum/mind/possible_target in SSticker.minds)
-					if((possible_target != src) && istype(possible_target.current, /mob/living/carbon/human))
-						possible_targets += possible_target.current
+				if(alert(usr, "Do you want to pick the target yourself? No will randomise it", "Pick target", "Yes", "No") == "Yes")
+					var/list/possible_targets = list()
+					for(var/datum/mind/possible_target in SSticker.minds)
+						if((possible_target != src) && ishuman(possible_target.current))
+							possible_targets += possible_target.current
 
-				var/mob/def_target = null
-				var/objective_list[] = list(/datum/objective/assassinate, /datum/objective/protect, /datum/objective/debrain)
-				if(objective&&(objective.type in objective_list) && objective:target)
-					def_target = objective.target.current
-				possible_targets = sortAtom(possible_targets)
-
-				var/new_target
-				if(length(possible_targets) > 0)
-					if(alert(usr, "Do you want to pick the objective yourself? No will randomise it", "Pick objective", "Yes", "No") == "Yes")
-						possible_targets += "Free objective"
-						new_target = input("Select target:", "Objective target", def_target) as null|anything in possible_targets
+					var/mob/def_target = null
+					if(objective && objective.target)
+						def_target = objective.target.current
+					possible_targets = sortAtom(possible_targets)
+					possible_targets += "Free objective"
+					var/new_target = input("Select target:", "Objective target", def_target) as null|anything in possible_targets
+					if(!new_target || new_target == "Free objective")
+						new_objective.target = null
+						new_objective.explanation_text = "Free objective"
 					else
-						new_target = pick(possible_targets)
-
-					if(!new_target)
-						return
+						new_objective.target = new_target:mind
+						var/description = ""
+						switch(new_obj_type)
+							if("assassinate")
+								description = "Assassinate"
+							if("protect")
+								description = "Protect"
+							if("debrain")
+								description = "Steal the brain of"
+							if("prevent")
+								description = "Prevent from escaping alive or assassinate"
+							if("pain_hunter")
+								var/datum/objective/pain_hunter/choose_objective = new_objective
+								choose_objective.update_find_objective()
+						if(description)
+							new_objective.explanation_text = "[description] [new_target:real_name], the [new_target:mind:assigned_role]."
 				else
-					to_chat(usr, "<span class='warning'>No possible target found. Defaulting to a Free objective.</span>")
-					new_target = "Free objective"
-
-				var/objective_path = text2path("/datum/objective/[new_obj_type]")
-				if(new_target == "Free objective")
-					new_objective = new objective_path
-					new_objective.owner = src
-					new_objective:target = null
-					new_objective.explanation_text = "Free objective"
-				else
-					new_objective = new objective_path
-					new_objective.owner = src
-					new_objective:target = new_target:mind
-					//Will display as special role if assigned mode is equal to special role.. Ninjas/commandos/nuke ops.
-					new_objective.explanation_text = "[objective_type] [new_target:real_name], the [new_target:mind:assigned_role == new_target:mind:special_role ? (new_target:mind:special_role) : (new_target:mind:assigned_role)]."
-
+					new_objective.find_target()
 			if("destroy")
 				var/list/possible_targets = active_ais(1)
 				if(possible_targets.len)
@@ -722,12 +726,8 @@
 				else
 					to_chat(usr, "No active AIs with minds")
 
-			if("kill all human")
+			if("kill all humans")
 				new_objective = new /datum/objective/block
-				new_objective.owner = src
-
-			if("prevent from escaping alive")
-				new_objective = new /datum/objective/maroon
 				new_objective.owner = src
 
 			if("hijack")
@@ -1122,11 +1122,20 @@
 					current.spellremove(current)
 					current.faction = list("Station")
 					SSticker.mode.update_wiz_icons_removed(src)
-					to_chat(current, "<span class='warning'><FONT size = 3><B>You have been brainwashed! You are no longer a wizard!</B></FONT></span>")
+					to_chat(current, "<span class='userdanger'><FONT size = 3>You have been brainwashed! You are no longer a wizard!</FONT></span>")
 					log_admin("[key_name(usr)] has de-wizarded [key_name(current)]")
 					message_admins("[key_name_admin(usr)] has de-wizarded [key_name_admin(current)]")
+				if(src in SSticker.mode.apprentices)
+					SSticker.mode.apprentices -= src
+					special_role = null
+					current.spellremove(current)
+					current.faction = list("Station")
+					SSticker.mode.update_wiz_icons_removed(src)
+					to_chat(current, "<span class='userdanger'><FONT size = 3>You have been brainwashed! You are no longer a apprentice wizard!</FONT></span>")
+					log_admin("[key_name(usr)] has de-apprentice-wizarded [key_name(current)]")
+					message_admins("[key_name_admin(usr)] has de-apprentice-wizarded [key_name_admin(current)]")
 			if("wizard")
-				if(!(src in SSticker.mode.wizards))
+				if(!(src in SSticker.mode.wizards) && !(src in SSticker.mode.apprentices))
 					SSticker.mode.wizards += src
 					special_role = SPECIAL_ROLE_WIZARD
 					//ticker.mode.learn_basic_spells(current)
@@ -1136,23 +1145,48 @@
 					current.faction = list("wizard")
 					log_admin("[key_name(usr)] has wizarded [key_name(current)]")
 					message_admins("[key_name_admin(usr)] has wizarded [key_name_admin(current)]")
+			if("apprentice")
+				if(!(src in SSticker.mode.wizards) && !(src in SSticker.mode.apprentices))
+					SSticker.mode.apprentices += src
+					special_role = SPECIAL_ROLE_WIZARD_APPRENTICE
+					SSticker.mode.update_wiz_icons_added(src)
+					SEND_SOUND(current, 'sound/ambience/antag/ragesmages.ogg')
+					to_chat(current, "<span class='danger'>You are a Apprentice of Space Wizard!</span>")
+					current.faction = list("wizard")
+					log_admin("[key_name(usr)] has apprentice-wizarded [key_name(current)]")
+					message_admins("[key_name_admin(usr)] has apprentice-wizarded [key_name_admin(current)]")
 			if("lair")
 				current.forceMove(pick(GLOB.wizardstart))
 				log_admin("[key_name(usr)] has moved [key_name(current)] to the wizard's lair")
 				message_admins("[key_name_admin(usr)] has moved [key_name_admin(current)] to the wizard's lair")
 			if("dressup")
-				SSticker.mode.equip_wizard(current)
-				log_admin("[key_name(usr)] has equipped [key_name(current)] as a wizard")
-				message_admins("[key_name_admin(usr)] has equipped [key_name_admin(current)] as a wizard")
+				if(src in SSticker.mode.wizards)
+					SSticker.mode.equip_wizard(current)
+					log_admin("[key_name(usr)] has equipped [key_name(current)] as a wizard")
+					message_admins("[key_name_admin(usr)] has equipped [key_name_admin(current)] as a wizard")
+				else if(src in SSticker.mode.apprentices)
+					SSticker.mode.equip_wizard_apprentice(current)
+					log_admin("[key_name(usr)] has equipped [key_name(current)] as a wizard apprentice")
+					message_admins("[key_name_admin(usr)] has equipped [key_name_admin(current)] as a wizard apprentice")
 			if("name")
 				INVOKE_ASYNC(SSticker.mode, /datum/game_mode/wizard.proc/name_wizard, current)
 				log_admin("[key_name(usr)] has allowed wizard [key_name(current)] to name themselves")
 				message_admins("[key_name_admin(usr)] has allowed wizard [key_name_admin(current)] to name themselves")
 			if("autoobjectives")
-				SSticker.mode.forge_wizard_objectives(src)
-				to_chat(usr, "<span class='notice'>The objectives for wizard [key] have been generated. You can edit them and announce manually.</span>")
-				log_admin("[key_name(usr)] has automatically forged wizard objectives for [key_name(current)]")
-				message_admins("[key_name_admin(usr)] has automatically forged wizard objectives for [key_name_admin(current)]")
+				if(src in SSticker.mode.wizards)
+					SSticker.mode.forge_wizard_objectives(src)
+					to_chat(usr, "<span class='notice'>The objectives for wizard [key] have been generated. You can edit them and announce manually.</span>")
+					log_admin("[key_name(usr)] has automatically forged wizard objectives for [key_name(current)]")
+					message_admins("[key_name_admin(usr)] has automatically forged wizard objectives for [key_name_admin(current)]")
+				else if(src in SSticker.mode.apprentices)
+					if (SSticker.mode.wizards.len)
+						var/datum/mind/wizard = pick(SSticker.mode.wizards)
+						SSticker.mode.forge_wizard_apprentice_objectives(wizard, src)
+					else
+						SSticker.mode.forge_wizard_objectives(src)
+					to_chat(usr, "<span class='notice'>The objectives for wizard apprentice [key] have been generated. You can edit them and announce manually.</span>")
+					log_admin("[key_name(usr)] has automatically forged wizard apprentice objectives for [key_name(current)]")
+					message_admins("[key_name_admin(usr)] has automatically forged wizard apprentice objectives for [key_name_admin(current)]")
 
 
 	else if(href_list["changeling"])
@@ -1761,6 +1795,12 @@
 					return
 				var/list/objective_types = list("stealthy", "generic", "aggressive")
 				var/objective_type = input("Select type of objectives to generate", "Objective type selection") as null|anything in objective_types
+				if(objective_type == "stealthy" || objective_type == "aggressive")
+					if(alert(usr, "Данный вид целей генерирует дополнительных антагонистов в раунд. Продолжить?","ВАЖНО!","Да","Нет") == "Нет")
+						return
+				if(!objective_type)
+					if(alert(usr, "Рандомный выбор типа целей имеет шанс сгенерировать дополнительных антагонистов в раунд. Продолжить генерацию?","ВАЖНО!","Да","Нет") == "Нет")
+						return
 				SSticker.mode.forge_ninja_objectives(src, objective_type)
 				SSticker.mode.basic_ninja_needs_check(src)
 				to_chat(usr, "<span class='notice'>Цели для ниндзя: [key] были сгенерированы. Вы можете их отредактировать и оповестить игрока о целях вручную.</span>")
@@ -1769,6 +1809,11 @@
 
 	else if(href_list["silicon"])
 		switch(href_list["silicon"])
+			if("borgpanel")
+				var/mob/living/silicon/robot/R = current
+				var/datum/borgpanel/B = new(usr, R)
+				B.ui_interact(usr, state = GLOB.admin_state)
+				log_and_message_admins("has opened [R]'s Borg Panel.")
 			if("lawmanager")
 				var/mob/living/silicon/S = current
 				var/datum/ui_module/law_manager/L = new(S)
@@ -2033,7 +2078,8 @@
 		SSticker.mode.equip_space_ninja(ninja_mob)
 		SSticker.mode.give_ninja_datum(src)
 		//Стелс цели так же генерят трейторов. И я подозреваю мы не очень хотим закидывать вместе с ниндзя - трейторов в уже идущий раунд
-		var/objective_type = pick("generic", "aggressive")
+		//Теперь агрессивные цели генерят генокрадов, поэтому они тоже отпадают
+		var/objective_type = "generic" //pick("generic", "aggressive")
 		SSticker.mode.forge_ninja_objectives(src, objective_type)
 		SSticker.mode.basic_ninja_needs_check(src)
 
@@ -2186,6 +2232,7 @@
 			H.update_inv_w_uniform()
 
 	add_attack_logs(missionary, current, "Converted to a zealot for [convert_duration/600] minutes")
+	add_conversion_logs(current, "became a mindslave for [convert_duration/600] minutes. Master: [key_name_log(missionary)]")
 	addtimer(CALLBACK(src, .proc/remove_zealot, jumpsuit), convert_duration) //deconverts after the timer expires
 	return 1
 
@@ -2194,6 +2241,7 @@
 		return
 	remove_antag_datum(/datum/antagonist/mindslave)
 	add_attack_logs(zealot_master, current, "Lost control of zealot")
+	add_conversion_logs(current, "Time's up and stopped being mindslave for [key_name_log(zealot_master)]")
 	zealot_master = null
 
 	if(jumpsuit)

@@ -36,7 +36,7 @@
 	var/weapon_weight = WEAPON_LIGHT
 	var/list/restricted_species
 	var/ninja_weapon = FALSE 			//Оружия со значением TRUE обходят ограничение ниндзя на использование пушек
-
+	var/bolt_open = FALSE
 	var/spread = 0
 	var/randomspread = 1
 
@@ -74,6 +74,7 @@
 
 /obj/item/gun/New()
 	..()
+	appearance_flags |= KEEP_TOGETHER
 	if(gun_light)
 		verbs += /obj/item/gun/proc/toggle_gunlight
 	build_zooming()

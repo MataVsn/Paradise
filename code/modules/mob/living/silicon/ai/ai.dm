@@ -188,6 +188,7 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 	add_language("Chittin", 1)
 	add_language("Bubblish", 1)
 	add_language("Clownish", 1)
+	add_language("Tkachi", 1)
 
 	if(!safety)//Only used by AIize() to successfully spawn an AI.
 		if(!B)//If there is no player/brain inside.
@@ -727,8 +728,8 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 			mech_has_controlbeacon = TRUE
 			break
 		if(!can_dominate_mechs && !mech_has_controlbeacon)
-			message_admins("Warning: possible href exploit by [key_name(usr)] - attempted control of a mecha without can_dominate_mechs or a control beacon in the mech.")
-			log_debug("Warning: possible href exploit by [key_name(usr)] - attempted control of a mecha without can_dominate_mechs or a control beacon in the mech.")
+			message_admins("Warning: possible href exploit by [ADMIN_LOOKUPFLW(usr)] - attempted control of a mecha without can_dominate_mechs or a control beacon in the mech.")
+			log_debug("Warning: possible href exploit by [key_name_log(usr)] - attempted control of a mecha without can_dominate_mechs or a control beacon in the mech.")
 			return
 
 		if(controlled_mech)
@@ -998,8 +999,8 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 		if("Crew Member")
 			var/personnel_list[] = list()
 
-			for(var/datum/data/record/t in GLOB.data_core.locked)//Look in data core locked.
-				personnel_list["[t.fields["name"]]: [t.fields["rank"]]"] = t.fields["image"]//Pull names, rank, and image.
+			for(var/datum/data/record/t in GLOB.data_core.general)//Look in data core general.
+				personnel_list["[t.fields["name"]]: [t.fields["rank"]]"] = t.fields["photo"]//Pull names, rank, and id photo.
 
 			if(personnel_list.len)
 				input = input("Select a crew member:") as null|anything in personnel_list

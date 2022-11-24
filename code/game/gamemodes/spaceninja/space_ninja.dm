@@ -42,7 +42,7 @@
 
 /datum/game_mode/space_ninja/post_setup()
 	for(var/datum/mind/space_ninja_mind in space_ninjas)
-		log_game("[key_name(space_ninja_mind)] has been selected as a Space Ninja")
+		add_game_logs("has been selected as a Space Ninja", space_ninja_mind.current)
 		INVOKE_ASYNC(src, .proc/name_ninja, space_ninja_mind.current)
 		equip_space_ninja(space_ninja_mind.current)
 		give_ninja_datum(space_ninja_mind)
@@ -87,11 +87,8 @@
 		QDEL_NULL(ninja_mind.ninja)
 		ninja_mind.current.faction = list("Station")
 		if(admin_removed)
-			log_admin("[key_name(caller)] has removed special role \"Ninja\" from [key_name(ninja_mind.current)]")
-			message_admins("[key_name_admin(caller)] has removed special role \"Ninja\" from [key_name_admin(ninja_mind.current)]")
-		else
-			ninja_mind.current.create_attack_log(span_danger("De-Ninjaned"))
-			ninja_mind.current.create_log(CONVERSION_LOG, "De-Ninjaned")
+			log_and_message_admins("has removed special role \"Ninja\" from [key_name_admin(ninja_mind.current)]")
+		add_conversion_logs(ninja_mind.current, "De-ninjad")
 		if(issilicon(ninja_mind.current))
 			to_chat(ninja_mind.current, span_userdanger("Вы стали Роботом! И годы ваших тренировок становятся пылью..."))
 		else
@@ -315,16 +312,43 @@
 			rnd_hack_objective.owner = ninja_mind
 			ninja_mind.objectives += rnd_hack_objective
 
-	//Банальная Кража
-	for(var/num_obj = 0, num_obj < 2, num_obj++)
-		var/datum/objective/steal/steal_objective = new
-		steal_objective.owner = ninja_mind
-		steal_objective.find_target()
-		if("[steal_objective.steal_target]" in ninja_datum.assigned_targets)
-			steal_objective.find_target()
-		else if(steal_objective.steal_target)
-			ninja_datum.assigned_targets.Add("[steal_objective.steal_target]")
-		ninja_mind.objectives += steal_objective
+	var/pick_kill_or_steal = pick(1,2)
+	switch(pick_kill_or_steal)
+		if(1)
+			//Банальная Кража
+			for(var/num_obj = 0, num_obj < 2, num_obj++)
+				var/datum/objective/steal/steal_objective = new
+				steal_objective.owner = ninja_mind
+				steal_objective.find_target()
+				if("[steal_objective.steal_target]" in ninja_datum.assigned_targets)
+					steal_objective.find_target()
+				else if(steal_objective.steal_target)
+					ninja_datum.assigned_targets.Add("[steal_objective.steal_target]")
+				ninja_mind.objectives += steal_objective
+		if(2)
+			//Банальное убийство
+			for(var/num_obj = 0, num_obj < 2, num_obj++)
+				var/datum/objective/assassinate/kill_objective = new
+				kill_objective.owner = ninja_mind
+				kill_objective.find_target()
+				//Защита от повторяющихся целей
+				for(var/sanity_check = 0, sanity_check < 10)
+					if("[kill_objective.target]" in ninja_datum.assigned_targets)
+						kill_objective.find_target()
+						log_debug("Ninja_Objectives_Log: Не вышло найти не повторяющуюся цель на убийство. Пробуем снова")
+						sanity_check++
+						continue
+					else
+						log_debug("Ninja_Objectives_Log: Цель на убийство у ниндзя - уникальна")
+						break
+				//Выдача или удаление цели если нету
+				if(kill_objective.target)
+					ninja_datum.assigned_targets.Add("[kill_objective.target]")
+					ninja_mind.objectives += kill_objective
+					log_debug("Ninja_Objectives_Log: Цель на убийство у ниндзя успешно выдана")
+				else
+					qdel(kill_objective)
+					log_debug("Ninja_Objectives_Log: Удаляем цель на убийство у ниндзя ибо не кого убивать")
 
 	if(!(locate(/datum/objective/survive) in ninja_mind.objectives))
 		var/datum/objective/survive/survive_objective = new
@@ -334,7 +358,6 @@
 
 // Цели с которыми для ниндзя больше поощряется агрессивный и заметный геймплей
 /datum/game_mode/proc/forge_aggressive_ninja_objectives(datum/mind/ninja_mind)
-	var/datum/ninja/ninja_datum = ninja_mind.ninja
 	var/mob/living/carbon/human/ninja_mob = ninja_mind.current
 
 	//Cyborg Hijack: Flag set to complete in the DrainAct in ninjaDrainAct.dm
@@ -350,35 +373,22 @@
 		ninja_bomb.detonation_objective = bomb_objective
 	ninja_mind.objectives += bomb_objective
 
-	//Похищать людей пока не найдёшь нужного//
+	//Похищать людей пока не найдёшь нужного
 	var/datum/objective/find_and_scan/find_objective = new
 	find_objective.owner = ninja_mind
 	find_objective.find_target()
 	ninja_mind.objectives += find_objective
 
-	//Банальное убийство
-	for(var/num_obj = 0, num_obj < 2, num_obj++)
-		var/datum/objective/assassinate/kill_objective = new
-		kill_objective.owner = ninja_mind
-		kill_objective.find_target()
-		//Защита от повторяющихся целей
-		for(var/sanity_check = 0, sanity_check < 10)
-			if("[kill_objective.target]" in ninja_datum.assigned_targets)
-				kill_objective.find_target()
-				log_debug("Ninja_Objectives_Log: Не вышло найти не повторяющуюся цель на убийство. Пробуем снова")
-				sanity_check++
-				continue
-			else
-				log_debug("Ninja_Objectives_Log: Цель на убийство у ниндзя - уникальна")
-				break
-		//Выдача или удаление цели если нету
-		if(kill_objective.target)
-			ninja_datum.assigned_targets.Add("[kill_objective.target]")
-			ninja_mind.objectives += kill_objective
-			log_debug("Ninja_Objectives_Log: Цель на убийство у ниндзя успешно выдана")
-		else
-			qdel(kill_objective)
-			log_debug("Ninja_Objectives_Log: Удаляем цель на убийство у ниндзя ибо не кого убивать")
+	//Очистка станции от генокрадов
+	var/datum/objective/vermit_hunt/hunt_changelings = new
+	hunt_changelings.owner = ninja_mind
+	hunt_changelings.find_target()
+	ninja_mind.objectives += hunt_changelings
+	if(!length(hunt_changelings.changelings))//Если нет генокрадов, просто не даём цель
+		GLOB.all_objectives -= hunt_changelings
+		ninja_mind.objectives -= hunt_changelings
+		log_debug("Ninja_Objectives_Log: Удаляем цель охоты на генок у ниндзя ибо нет генокрадов")
+		qdel(hunt_changelings)
 
 	//Выжить
 	if(!(locate(/datum/objective/survive) in ninja_mind.objectives))

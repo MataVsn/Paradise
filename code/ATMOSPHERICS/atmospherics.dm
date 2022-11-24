@@ -72,7 +72,7 @@ Pipelines + Other Objects -> Pipe network
 // Icons/overlays/underlays
 /obj/machinery/atmospherics/update_icon()
 	var/turf/T = get_turf(loc)
-	if(T.transparent_floor)
+	if(T?.transparent_floor)
 		plane = FLOOR_PLANE
 	else
 		if(!T || level == 2 || !T.intact)
@@ -202,7 +202,7 @@ Pipelines + Other Objects -> Pipe network
 				"[user] unfastens \the [src].", \
 				"<span class='notice'>You have unfastened \the [src].</span>", \
 				"<span class='italics'>You hear ratcheting.</span>")
-			investigate_log("was <span class='warning'>REMOVED</span> by [key_name(usr)]", "atmos")
+			investigate_log("was <span class='warning'>REMOVED</span> by [key_name_log(usr)]", INVESTIGATE_ATMOS)
 
 			for(var/obj/item/clothing/shoes/magboots/usermagboots in user.get_equipped_items())
 				if(usermagboots.gustprotection && usermagboots.magpulse)

@@ -428,6 +428,9 @@
 		bodytemperature += (BODYTEMP_HEATING_MAX + (fire_stacks * 12))
 
 /mob/living/carbon/human/proc/get_thermal_protection()
+	if(HAS_TRAIT(src, RESISTHOT))
+		return FIRE_IMMUNITY_MAX_TEMP_PROTECT
+
 	var/thermal_protection = 0 //Simple check to estimate how protected we are against multiple temperatures
 	if(wear_suit)
 		if(wear_suit.max_heat_protection_temperature >= FIRE_SUIT_MAX_TEMP_PROTECT)
@@ -868,6 +871,8 @@
 						icon_num = 5
 					if(istype(O, /obj/item/organ/external/tail) && O.dna.species.tail)
 						new_overlays += "[O.dna.species.tail][icon_num]"
+					if(istype(O, /obj/item/organ/external/wing) && O.dna.species.tail)
+						new_overlays += "[O.dna.species.wing][icon_num]"
 					else
 						new_overlays += "[O.limb_name][icon_num]"
 				healthdoll.overlays += (new_overlays - cached_overlays)

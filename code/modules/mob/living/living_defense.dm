@@ -201,6 +201,7 @@
 		return FALSE
 	var/turf/location = get_turf(src)
 	location.hotspot_expose(700, 50, 1)
+	SEND_SIGNAL(src, COMSIG_LIVING_FIRE_TICK)
 	return TRUE
 
 /mob/living/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume, global_overlay = TRUE)
@@ -219,7 +220,7 @@
 		fire_stacks /= 2
 		L.fire_stacks += fire_stacks
 		if(L.IgniteMob())
-			log_game("[key_name(src)] bumped into [key_name(L)] and set them on fire")
+			add_attack_logs(src, L, "bumped and set on fire")
 
 	if(L_old_on_fire) //Only ignite us and gain their stacks if they were onfire before we bumped them
 		L.fire_stacks /= 2
@@ -308,6 +309,8 @@
 /mob/living/attack_animal(mob/living/simple_animal/M)
 	M.face_atom(src)
 	if((M.a_intent == INTENT_HELP && M.ckey) || M.melee_damage_upper == 0)
+		if(!M.friendly)
+			return FALSE
 		if(handle_emote_CD())
 			return
 		M.custom_emote(1, "[M.friendly] [src.declent_ru(ACCUSATIVE)].")
