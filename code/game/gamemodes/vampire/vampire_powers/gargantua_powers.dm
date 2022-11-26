@@ -8,6 +8,7 @@
 	panel = "Vampire"
 	school = "vampire"
 	action_background_icon_state = "bg_vampire"
+	action_icon_state = "blood_swell"
 
 /obj/effect/proc_holder/spell/self/blood_swell/cast(list/targets, mob/user)
 	var/mob/living/target = targets[1]
@@ -26,6 +27,7 @@
 	panel = "Vampire"
 	school = "vampire"
 	action_background_icon_state = "bg_vampire"
+	action_icon_state = "OH_YEAAAAH"
 
 
 /obj/effect/proc_holder/spell/self/overwhelming_force/cast(list/targets, mob/user)
@@ -45,6 +47,7 @@
 	panel = "Vampire"
 	school = "vampire"
 	action_background_icon_state = "bg_vampire"
+	action_icon_state = "blood_rush"
 
 /obj/effect/proc_holder/spell/self/blood_rush/cast(list/targets, mob/user)
 	ADD_TRAIT(user, TRAIT_GOTTAGOFAST, VAMPIRE_TRAIT)
@@ -64,6 +67,7 @@
 	panel = "Vampire"
 	school = "vampire"
 	action_background_icon_state = "bg_vampire"
+	action_icon_state = "vampire_charge"
 	allowed_type = /atom
 	range = 7
 	auto_target_single = FALSE
