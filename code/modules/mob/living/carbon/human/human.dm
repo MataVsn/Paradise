@@ -1937,6 +1937,25 @@ Eyes need to have significantly high darksight to shine unless the mob has the X
 	else
 		runechat_msg_location = src
 
+/mob/living/carbon/human/ObjBump(A)
+	if(HAS_TRAIT(src, TRAIT_FORCE_DOORS))
+		if(istype(A, /obj/machinery/door/airlock))
+			var/obj/machinery/door/airlock/AL = A
+			if(AL.operating)
+				return
+			if(AL.welded)
+				to_chat(src, "<span class='warning'>The door is welded.</span>")
+				return
+			else if(AL.locked)
+				to_chat(src, "<span class='warning'>The door is bolted.</span>")
+				return
+			if(AL.density)
+				visible_message("<span class='danger'>[src] forces the door!</span>")
+				playsound(loc, "sparks", 100, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+				AL.open(TRUE)
+				if(mind?.vampire && HAS_TRAIT_FROM(src, TRAIT_FORCE_DOORS, VAMPIRE_TRAIT))
+					mind.vampire.bloodusable -= 5
+
 /mob/living/carbon/human/limb_attack_self()
 	var/obj/item/organ/external/arm = hand ? get_organ(BODY_ZONE_L_ARM) : get_organ(BODY_ZONE_R_ARM)
 	if(arm)

@@ -66,12 +66,15 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_BLOODCRAWL		"bloodcrawl"
 #define TRAIT_BLOODCRAWL_EAT	"bloodcrawl_eat"
 #define TRAIT_JESTER			"jester"
+#define TRAIT_FORCE_DOORS 		"force_doors"
+#define TRAIT_DARKNESS_CLOAK 	"darkness_cloak"
 
 //
 // common trait sources
 #define ROUNDSTART_TRAIT "roundstart" //cannot be removed without admin intervention
 #define CULT_TRAIT "cult"
 #define CLOCK_TRAIT "clockwork cult"
+#define VAMPIRE_TRAIT "vampire"
 
 // unique trait sources
 #define CULT_EYES "cult_eyes"

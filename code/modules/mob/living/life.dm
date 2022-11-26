@@ -143,6 +143,8 @@
 		AdjustCultSlur(-1)
 	if(clockslurring)
 		AdjustClockSlur(-1)
+	if(confused)
+		AdjustConfused(-1)
 
 /mob/living/proc/update_damage_hud()
 	return
