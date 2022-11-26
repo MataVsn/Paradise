@@ -1,12 +1,4 @@
 #define BLOOD_DRAIN_LIMIT 200 // the amount of blood a vampire can drain from a person.
-#define SUBCLASS_HEMOMANCER "hemomancer"
-#define SUBCLASS_GARGANTUA "gargantua"
-#define SUBCLASS_UMBRAE "umbrae"
-#define SUBCLASS_DANTALION "dantalion"
-
-#define BLOOD_DRAIN_LIMIT 200
-#define FULLPOWER_DRAINED_REQUIREMENT 0 // the number of people you need to suck to get become full powered // CHANGE TO 8 AFTER TESTING
-#define FULLPOWER_BLOODTOTAL_REQUIREMENT 1000 // the amount of blood you need to suck to get full power
 
 /datum/game_mode
 	var/list/datum/mind/vampires = list()
@@ -133,15 +125,15 @@
 /datum/game_mode/proc/auto_declare_completion_enthralled()
 	if(vampire_enthralled.len)
 		var/text = "<FONT size = 2><B>Рабами вампиров были:</B></FONT>"
-		for(var/datum/mind/Mind in vampire_enthralled)
-			text += "<br>[Mind.key] [genderize_ru(Mind.current.gender, "был", "была", "было", "были")] [Mind.name] ("
-			if(Mind.current)
-				if(Mind.current.stat == DEAD)
-					text += "[genderize_ru(Mind.current.gender, "умер", "умерла", "умерло", "умерли")]"
+		for(var/datum/mind/mind in vampire_enthralled)
+			text += "<br>[mind.key] [genderize_ru(mind.current.gender, "был", "была", "было", "были")] [mind.name] ("
+			if(mind.current)
+				if(mind.current.stat == DEAD)
+					text += "[genderize_ru(mind.current.gender, "умер", "умерла", "умерло", "умерли")]"
 				else
-					text += "[genderize_ru(Mind.current.gender, "выжил", "выжила", "выжило", "выжили")]"
-				if(Mind.current.real_name != Mind.name)
-					text += " как [Mind.current.real_name]"
+					text += "[genderize_ru(mind.current.gender, "выжил", "выжила", "выжило", "выжили")]"
+				if(mind.current.real_name != mind.name)
+					text += " как [mind.current.real_name]"
 			else
 				text += "тело было уничтожено"
 			text += ")"
@@ -211,20 +203,22 @@
 	var/bloodtotal = 1000 // CHANGE TO ZERO WHEN PLAYTESTING HAPPENS
 	var/bloodusable = 1000 // CHANGE TO ZERO WHEN PLAYTESTING HAPPENS
 	var/mob/living/owner = null
-	var/subclass
+	var/list/subclass = list() /// a list of all the subclasses a vampire has, normally limited to only one unless they are an ancient vampire.
 	var/iscloaking = FALSE // handles the vampire cloak toggle
 	var/can_force_doors = FALSE
 	var/list/powers = list() // list of available powers and passives
 	var/mob/living/carbon/human/draining // who the vampire is draining of blood
 	var/nullified = 0 //Nullrod makes them useless for a short while.
 	var/max_thralls = 2
-	var/list/upgrade_tiers = list(
-		/obj/effect/proc_holder/spell/self/rejuvenate = 0,
-		/obj/effect/proc_holder/spell/mob_aoe/glare = 0,
-		/datum/vampire_passive/vision = 100,
-		/obj/effect/proc_holder/spell/self/specialize = 150,
-		/datum/vampire_passive/regen = 200,
-		/obj/effect/proc_holder/spell/targeted/turf_teleport/shadow_step = 250)
+	var/list/vampire_thralls
+	// power lists
+	var/list/upgrade_tiers = list(/obj/effect/proc_holder/spell/self/rejuvenate = 0,
+									/obj/effect/proc_holder/spell/mob_aoe/glare = 0,
+									/datum/vampire_passive/vision = 100,
+									/obj/effect/proc_holder/spell/self/specialize = 150,
+									/datum/vampire_passive/regen = 200,
+									/obj/effect/proc_holder/spell/targeted/turf_teleport/shadow_step = 250)
+
 	var/list/umbrae_powers = list(/obj/effect/proc_holder/spell/self/cloak = 150,
 									/obj/effect/proc_holder/spell/targeted/click/shadow_snare = 300,
 									/obj/effect/proc_holder/spell/targeted/click/dark_passage = 400,
@@ -240,7 +234,6 @@
 									/datum/vampire_passive/blood_swell_upgrade = 400,
 									/obj/effect/proc_holder/spell/self/overwhelming_force = 600)
 
-	var/list/dantalion_powers = list(/obj/effect/proc_holder/spell/targetted/enthrall = 150)
 	// list of the peoples UIDs that we have drained, and how much blood from each one
 	var/list/drained_humans = list()
 
@@ -380,27 +373,21 @@
 	if(!subclass)
 		return
 
-	if(subclass == SUBCLASS_UMBRAE)
+	if(SUBCLASS_UMBRAE in subclass)
 		for(var/power in umbrae_powers)
 			var/level = umbrae_powers[power]
 			if(bloodtotal >= level)
 				add_ability(power)
 
-	if(subclass == SUBCLASS_HEMOMANCER)
+	if(SUBCLASS_HEMOMANCER in subclass)
 		for(var/power in hemomancer_powers)
 			var/level = hemomancer_powers[power]
 			if(bloodtotal >= level)
 				add_ability(power)
 
-	if(subclass == SUBCLASS_GARGANTUA)
+	if(SUBCLASS_GARGANTUA in subclass)
 		for(var/power in gargantua_powers)
 			var/level = gargantua_powers[power]
-			if(bloodtotal >= level)
-				add_ability(power)
-
-	if(subclass == SUBCLASS_DANTALION)
-		for(var/power in dantalion_powers)
-			var/level = dantalion_powers[power]
 			if(bloodtotal >= level)
 				add_ability(power)
 
@@ -411,19 +398,14 @@
 
 /datum/vampire/proc/check_full_power_upgrade()
 	if(length(drained_humans) >= FULLPOWER_DRAINED_REQUIREMENT && bloodtotal >= 1000)
-		if(subclass == SUBCLASS_HEMOMANCER)
+		if(SUBCLASS_HEMOMANCER in subclass)
 			add_ability(/obj/effect/proc_holder/spell/self/blood_spill)
 
-		if(subclass == SUBCLASS_UMBRAE)
+		if(SUBCLASS_UMBRAE in subclass)
 			add_ability(/obj/effect/proc_holder/spell/self/eternal_darkness)
 			add_ability(/datum/vampire_passive/xray)
 
-		//if(subclass == SUBCLASS_GARGANTUA) //COMING SOON!!!
-
-
-
-		//if(subclass == SUBCLASS_DANTALION) //COMING SOON!!!
-
+		//if(SUBCLASS_GARGANTUA in subclass) //COMING SOON!!!
 		add_ability(/datum/vampire_passive/full)
 
 /datum/vampire/proc/announce_new_power(list/old_powers)
