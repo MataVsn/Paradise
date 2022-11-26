@@ -200,8 +200,8 @@
 	return
 
 /datum/vampire
-	var/bloodtotal = 1000 // CHANGE TO ZERO WHEN PLAYTESTING HAPPENS
-	var/bloodusable = 1000 // CHANGE TO ZERO WHEN PLAYTESTING HAPPENS
+	var/bloodtotal = 0
+	var/bloodusable = 0
 	var/mob/living/owner = null
 	var/list/subclass = list() /// a list of all the subclasses a vampire has, normally limited to only one unless they are an ancient vampire.
 	var/iscloaking = FALSE // handles the vampire cloak toggle
@@ -209,8 +209,6 @@
 	var/list/powers = list() // list of available powers and passives
 	var/mob/living/carbon/human/draining // who the vampire is draining of blood
 	var/nullified = 0 //Nullrod makes them useless for a short while.
-	var/max_thralls = 2
-	var/list/vampire_thralls
 	// power lists
 	var/list/upgrade_tiers = list(/obj/effect/proc_holder/spell/self/rejuvenate = 0,
 									/obj/effect/proc_holder/spell/mob_aoe/glare = 0,
@@ -224,7 +222,7 @@
 									/obj/effect/proc_holder/spell/targeted/click/dark_passage = 400,
 									/obj/effect/proc_holder/spell/aoe_turf/vamp_extinguish = 600)
 
-	var/list/hemomancer_powers = list(/obj/effect/proc_holder/spell/self/conguring = 150,
+	var/list/hemomancer_powers = list(/obj/effect/proc_holder/spell/self/vamp_claws = 150,
 									/obj/effect/proc_holder/spell/targeted/click/blood_tendrils = 250,
 									/obj/effect/proc_holder/spell/targeted/ethereal_jaunt/blood_pool = 400,
 									/obj/effect/proc_holder/spell/blood_eruption = 600)
@@ -293,12 +291,13 @@
 	owner.alpha = 255
 	REMOVE_TRAITS_IN(owner, "vampire")
 
+#define BLOOD_GAINED_MODIFIER 0.5
+
 /datum/vampire/proc/handle_bloodsucking(mob/living/carbon/human/H, suck_rate = 5 SECONDS)
 	draining = H
 	var/unique_suck_id = H.UID()
-	if(!(unique_suck_id in drained_humans))
-		if(H.ckey || H.player_ghosted)
-			drained_humans += unique_suck_id
+	if(!(unique_suck_id in drained_humans) && (H.ckey || H.player_ghosted))
+		drained_humans[unique_suck_id] = 0
 	var/unique_suck_id = H.UID()
 	var/blood = 0
 	var/blood_limit_exceeded = FALSE
@@ -324,10 +323,10 @@
 			else
 				if(H.stat < DEAD)
 					if(H.ckey || H.player_ghosted) //Requires ckey regardless if monkey or humanoid, or the body has been ghosted before it died
-						blood = min(20, H.blood_volume)	// if they have less than 20 blood, give them the remnant else they get 20 blood
-						bloodtotal += blood / 2	//divide by 2 to counted the double suction since removing cloneloss -Melandor0
-						bloodusable += blood / 2
-						drained_humans[unique_suck_id] += blood / 2
+						blood = min(20, H.blood_volume)
+						bloodtotal += blood * BLOOD_GAINED_MODIFIER
+						bloodusable += blood * BLOOD_GAINED_MODIFIER
+						drained_humans[unique_suck_id] += blood * BLOOD_GAINED_MODIFIER
 						check_vampire_upgrade()
 						to_chat(owner, "<span class='notice'><b>You have accumulated [bloodtotal] [bloodtotal > 1 ? "units" : "unit"] of blood, and have [bloodusable] left to use.</b></span>")
 				else
@@ -352,7 +351,7 @@
 			if(!H.ckey && !H.player_ghosted)//Only runs if there is no ckey and the body has not being ghosted while alive
 				to_chat(V, "<span class='notice'><b>Питьё крови у [H] насыщает вас, но доступной крови от этого вы не получаете.</b></span>")
 				V.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, V.nutrition + 5))
-			else if(H in drained_humans)
+			else
 				if(drained_humans[unique_suck_id] >= BLOOD_DRAIN_LIMIT)
 					V.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, V.nutrition + 5))
 				else
@@ -361,6 +360,8 @@
 
 	draining = null
 	to_chat(owner, "<span class='notice'>Вы прекращаете пить кровь [H.name].</span>")
+
+#undef BLOOD_GAINED_MODIFIER
 
 /datum/vampire/proc/check_vampire_upgrade(announce = TRUE)
 	var/list/old_powers = powers.Copy()
@@ -397,7 +398,7 @@
 		announce_new_power(old_powers)
 
 /datum/vampire/proc/check_full_power_upgrade()
-	if(length(drained_humans) >= FULLPOWER_DRAINED_REQUIREMENT && bloodtotal >= 1000)
+	if(length(drained_humans) >= FULLPOWER_DRAINED_REQUIREMENT && bloodtotal >= FULLPOWER_BLOODTOTAL_REQUIREMENT)
 		if(SUBCLASS_HEMOMANCER in subclass)
 			add_ability(/obj/effect/proc_holder/spell/self/blood_spill)
 
@@ -414,10 +415,10 @@
 		if(!(p in old_powers))
 			if(istype(p, /obj/effect/proc_holder/spell))
 				var/obj/effect/proc_holder/spell/power = p
-				to_chat(owner, "<span class='notice'><b>[power.gain_desc]</b></span>")
+				to_chat(owner, "<span class='boldnotice'>[power.gain_desc]</span>")
 			else if(istype(p, /datum/vampire_passive))
 				var/datum/vampire_passive/power = p
-				to_chat(owner, "<span class='notice'><b>[power.gain_desc]</b></span>")
+				to_chat(owner, "<span class='boldnotice'>[power.gain_desc]</span>")
 
 /datum/game_mode/proc/remove_vampire(datum/mind/vampire_mind)
 	if(vampire_mind in vampires)
