@@ -184,8 +184,8 @@
 		vampire_mob.mind.vampire = vamp
 	else
 		vamp = vampire_mob.mind.vampire
-		vamp.powers.Cut()
-	vamp.check_vampire_upgrade(0)
+		QDEL_LIST(vamp.powers)
+	vamp.check_vampire_upgrade(FALSE)
 
 /datum/game_mode/proc/greet_vampire(var/datum/mind/vampire, var/you_are=1)
 	var/dat
@@ -230,9 +230,12 @@
 	var/list/drained_humans = list()
 
 /datum/vampire/Destroy(force, ...)
+	owner = null
 	draining = null
 	QDEL_NULL(subclass)
-	. = ..()
+	QDEL_LIST(powers)
+	return ..()
+
 /datum/vampire/proc/adjust_nullification(base, extra)
 	// First hit should give full nullification, while subsequent hits increase the value slower
 	nullified = clamp(nullified + extra, base, VAMPIRE_NULLIFICATION_CAP)
@@ -314,7 +317,7 @@
 						blood = min(20, H.blood_volume)
 						adjust_blood(H, blood * BLOOD_GAINED_MODIFIER)
 						to_chat(owner, "<span class='notice'><b>You have accumulated [bloodtotal] unit\s of blood, and have [bloodusable] left to use.</b></span>")				else
-					if(H.ckey || H.player_ghosted)
+				else if(H.ckey || H.player_ghosted)
 						blood = min(5, H.blood_volume)	// The dead only give 5 blood
 						bloodtotal += blood
 				H.blood_volume = max(H.blood_volume - 25, 0)
@@ -486,9 +489,9 @@
 		owner.alpha = round((255 * 0.15))
 		ADD_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
 		return
-	else
-		REMOVE_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
-		owner.alpha = round((255 * 0.80))
+
+	REMOVE_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
+	owner.alpha = round((255 * 0.80))
 
 /datum/vampire/proc/adjust_blood(mob/living/carbon/C, blood_amount = 0)
 	var/unique_suck_id = C.UID()
