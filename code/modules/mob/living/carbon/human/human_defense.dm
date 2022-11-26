@@ -447,7 +447,7 @@ emp_act
 	var/bonus_damage = 0
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
-		bonus_damage = H.physiology.melee_bonus
+		bonus_damage = H.dna.species.melee_bonus
 
 	apply_damage(I.force * weakness + bonus_damage, I.damtype, affecting, armor, sharp = weapon_sharp, used_weapon = I)
 

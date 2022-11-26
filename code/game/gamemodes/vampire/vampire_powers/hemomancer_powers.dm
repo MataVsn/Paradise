@@ -149,7 +149,7 @@
 	for(var/mob/living/L in view(7, user))
 		var/turf/T = get_turf(L)
 		if(locate(/obj/effect/decal/cleanable/blood) in T)
-			if(L.affects_vampire(user))
+			if(L.affects_vampire(user) && !isLivingSSD(L))
 				targets.Add(L)
 
 	if(!length(targets))
@@ -192,7 +192,7 @@
 	var/turf/T = get_turf(owner)
 	var/list/targets = list()
 	for(var/mob/living/carbon/human/H in view(7, T))
-		if(H.affects_vampire(owner) && !H.stat)
+		if(H.affects_vampire(owner) && !H.stat && H.player_logged)
 			targets += H
 	if(!targets.len)
 		return
@@ -221,7 +221,7 @@
 		if(NO_BLOOD in H.dna.species.species_traits)
 			continue
 
-		if(H.affects_vampire(owner) && !H.stat)
+		if(H.affects_vampire(owner) && !H.stat && H.player_logged)
 			var/drain_amount = rand(10,20)
 			H.bleed(drain_amount)
 			H.Beam(owner, icon_state = "drainbeam", time = 2 SECONDS)
