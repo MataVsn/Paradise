@@ -72,7 +72,7 @@ marked this conversation as resolved.
 		if(!deduct_blood_on_cast) //don't take the blood yet if this is false!
 			return
 		vampire.bloodusable -= required_blood
-		to_chat(usr, "<span class='notice'><b>You have [vampire.bloodusable] left to use.</b></span>")
+		to_chat(usr, "<span class='boldnotice'>You have [vampire.bloodusable] left to use.</span>")
 		return TRUE
 	else
 		// stop!!
@@ -88,7 +88,6 @@ marked this conversation as resolved.
 	if(!gain_desc)
 		gain_desc = "You have gained \the [src] ability."
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /obj/effect/proc_holder/spell/self/rejuvenate
 	name = "Rejuvenate"
