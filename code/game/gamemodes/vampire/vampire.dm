@@ -296,7 +296,7 @@
 /datum/vampire/proc/handle_bloodsucking(mob/living/carbon/human/H, suck_rate = 5 SECONDS)
 	draining = H
 	var/unique_suck_id = H.UID()
-	if(!(H in drained_humans))
+	if(!(unique_suck_id in drained_humans))
 		if(H.ckey || H.player_ghosted)
 			drained_humans += unique_suck_id
 	var/unique_suck_id = H.UID()
