@@ -26,6 +26,8 @@ GLOBAL_DATUM_INIT(fire_overlay, /image, image("icon" = 'icons/goonstation/effect
 	var/usesound = null
 	var/throwhitsound
 	var/stealthy_audio = FALSE //Whether or not we use stealthy audio levels for this item's attack sounds
+	/// allows you to override the attack animation with an attack effect
+	var/attack_effect_override
 	var/w_class = WEIGHT_CLASS_NORMAL
 	var/slot_flags = 0		//This is used to determine on which slots an item can fit.
 	pass_flags = PASSTABLE
