@@ -173,9 +173,7 @@
 	return
 
 /datum/game_mode/proc/grant_vampire_powers(mob/living/carbon/vampire_mob)
-	if(!istype(vampire_mob))
-		return
-	if(!vampire_mob.mind)
+	if(!istype(vampire_mob) || !vampire_mob.mind)
 		return
 	var/datum/vampire/vamp
 	if(!vampire_mob.mind.vampire)
@@ -220,10 +218,10 @@
 	var/mob/living/carbon/human/draining // who the vampire is draining of blood
 	var/nullified = 0 //Nullrod makes them useless for a short while.
 	// power lists
-	var/list/upgrade_tiers = list(/obj/effect/proc_holder/spell/self/rejuvenate = 0,
+	var/list/upgrade_tiers = list(/obj/effect/proc_holder/spell/self/vampire/rejuvenate = 0,
 									/obj/effect/proc_holder/spell/mob_aoe/glare = 0,
 									/datum/vampire_passive/vision = 100,
-									/obj/effect/proc_holder/spell/self/specialize = 150,
+									/obj/effect/proc_holder/spell/self/vampire/specialize = 150,
 									/datum/vampire_passive/regen = 200,
 									/obj/effect/proc_holder/spell/targeted/turf_teleport/shadow_step = 250)
 	// list of the peoples UIDs that we have drained, and how much blood from each one
@@ -287,8 +285,6 @@
 /datum/vampire/proc/handle_bloodsucking(mob/living/carbon/human/H, suck_rate = 5 SECONDS)
 	draining = H
 	var/unique_suck_id = H.UID()
-	if(!(unique_suck_id in drained_humans) && (H.ckey || H.player_ghosted))
-		drained_humans[unique_suck_id] = 0
 	var/unique_suck_id = H.UID()
 	var/blood = 0
 	var/blood_limit_exceeded = FALSE
@@ -307,42 +303,35 @@
 		if(!(owner.mind in SSticker.mode.vampires))
 			to_chat(owner, "<span class='userdanger'>Ваши клыки исчезают!</span>")
 			return
+		owner.do_attack_animation(H, ATTACK_EFFECT_BITE)
 		if(unique_suck_id in drained_humans)
 			if(drained_humans[unique_suck_id] >= BLOOD_DRAIN_LIMIT)
 				to_chat(owner, "<span class='warning'>You have drained most of the life force from [H]'s blood, and you will get no more useable blood from them!</span>")
 				H.blood_volume = max(H.blood_volume - 25, 0)
-			else
-				if(H.stat < DEAD)
-					if(H.ckey || H.player_ghosted) //Requires ckey regardless if monkey or humanoid, or the body has been ghosted before it died
-						blood = min(20, H.blood_volume)
-						adjust_blood(H, blood * BLOOD_GAINED_MODIFIER)
-						to_chat(owner, "<span class='notice'><b>You have accumulated [bloodtotal] unit\s of blood, and have [bloodusable] left to use.</b></span>")				else
-				else if(H.ckey || H.player_ghosted)
-						blood = min(5, H.blood_volume)	// The dead only give 5 blood
-						bloodtotal += blood
+				owner.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, owner.nutrition + 5))
 				H.blood_volume = max(H.blood_volume - 25, 0)
-				//Blood level warnings (Code 'borrowed' from Fulp)
-				if(H.blood_volume)
-					if(H.blood_volume <= BLOOD_VOLUME_BAD && blood_volume_warning > BLOOD_VOLUME_BAD)
-						to_chat(owner, "<span class='danger'>Your victim's blood volume is dangerously low.</span>")
-					else if(H.blood_volume <= BLOOD_VOLUME_OKAY && blood_volume_warning > BLOOD_VOLUME_OKAY)
-						to_chat(owner, "<span class='warning'>Your victim's blood is at an unsafe level.</span>")
-					blood_volume_warning = H.blood_volume //Set to blood volume, so that you only get the message once
-				else
-					to_chat(owner, "<span class='warning'>You have bled your victim dry!</span>")
-					break
-
-		if(ishuman(owner))
-			var/mob/living/carbon/human/V = owner
-			V.do_attack_animation(H, ATTACK_EFFECT_BITE)
-			if(!H.ckey && !H.player_ghosted)//Only runs if there is no ckey and the body has not being ghosted while alive
-				to_chat(V, "<span class='notice'><b>Питьё крови у [H] насыщает вас, но доступной крови от этого вы не получаете.</b></span>")
-				V.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, V.nutrition + 5))
-			else
-				if(drained_humans[unique_suck_id] >= BLOOD_DRAIN_LIMIT)
-					V.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, V.nutrition + 5))
-				else
-					V.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, V.nutrition + (blood / 2)))
+				continue
+		if(H.stat < DEAD)
+			if(H.ckey || H.player_ghosted) //Requires ckey regardless if monkey or humanoid, or the body has been ghosted before it died
+				blood = min(20, H.blood_volume)
+				adjust_blood(H, blood * BLOOD_GAINED_MODIFIER)
+				to_chat(owner, "<span class='notice'><b>You have accumulated [bloodtotal] unit\s of blood, and have [bloodusable] left to use.</b></span>")
+		H.blood_volume = max(H.blood_volume - 25, 0)
+		//Blood level warnings (Code 'borrowed' from Fulp)
+		if(H.blood_volume)
+			if(H.blood_volume <= BLOOD_VOLUME_BAD && blood_volume_warning > BLOOD_VOLUME_BAD)
+				to_chat(owner, "<span class='danger'>Your victim's blood volume is dangerously low.</span>")
+			else if(H.blood_volume <= BLOOD_VOLUME_OKAY && blood_volume_warning > BLOOD_VOLUME_OKAY)
+				to_chat(owner, "<span class='warning'>Your victim's blood is at an unsafe level.</span>")
+			blood_volume_warning = H.blood_volume //Set to blood volume, so that you only get the message once
+		else
+			to_chat(owner, "<span class='warning'>You have bled your victim dry!</span>")
+			break
+		if(!H.ckey && !H.player_ghosted)//Only runs if there is no ckey and the body has not being ghosted while alive
+			to_chat(owner, "<span class='notice'><b>Feeding on [H] reduces your thirst, but you get no usable blood from them.</b></span>")
+			owner.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, owner.nutrition + 5))
+		else
+			owner.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, owner.nutrition + (blood / 2)))
 
 
 	draining = null
