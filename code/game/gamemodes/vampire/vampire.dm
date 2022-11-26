@@ -405,7 +405,8 @@
 			add_ability(/obj/effect/proc_holder/spell/self/eternal_darkness)
 			add_ability(/datum/vampire_passive/xray)
 
-		//if(SUBCLASS_GARGANTUA in subclass) //COMING SOON!!!
+		if(SUBCLASS_GARGANTUA in subclass)
+			add_ability(/obj/effect/proc_holder/spell/targeted/click/charge)
 		add_ability(/datum/vampire_passive/full)
 
 /datum/vampire/proc/announce_new_power(list/old_powers)
