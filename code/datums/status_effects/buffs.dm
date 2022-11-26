@@ -121,9 +121,9 @@
 		H.dna.species.stamina_mod /= 0.5
 		H.dna.species.stun_mod /= 0.5
 		if(bonus_damage_applied)
+			bonus_damage_applied = FALSE
 			H.dna.species.melee_bonus -= 10
 			H.dna.species.punchstunthreshold -= 8
-			bonus_damage_applied = FALSE
 
 /datum/status_effect/exercised
 	id = "Exercised"

@@ -55,13 +55,14 @@
 	flags = DROPDEL
 
 /obj/item/restraints/legcuffs/beartrap/shadow_snare/Crossed(AM, oldloc)
-	if(iscarbon(AM))
-		var/mob/living/carbon/C = AM
-		if(C.affects_vampire()) // no parameter here so holy always protects
-			C.extinguish_light()
-			C.EyeBlind(10)
-			STOP_PROCESSING(SSobj, src) // won't wither away once you are trapped
-			..()
+	if(!iscarbon(AM))
+		return
+	var/mob/living/carbon/C = AM
+	if(C.affects_vampire()) // no parameter here so holy always protects
+		C.extinguish_light()
+		C.EyeBlind(10)
+		STOP_PROCESSING(SSobj, src) // won't wither away once you are trapped
+		..()
 
 /obj/item/restraints/legcuffs/beartrap/shadow_snare/attack_hand(mob/user)
 	Crossed(user)
@@ -82,7 +83,7 @@
 
 /obj/item/restraints/legcuffs/beartrap/shadow_snare/Destroy()
 	STOP_PROCESSING(SSobj, src)
-	. = ..()
+	return ..()
 /obj/effect/proc_holder/spell/targeted/click/dark_passage
 	name = "Dark Passage (30)"
 	desc = "You teleport to a targeted turf."
@@ -162,7 +163,7 @@
 /datum/vampire_passive/eternal_darkness/Destroy(force, ...)
 	owner.remove_light()
 	STOP_PROCESSING(SSobj, src)
-	..()
+	return ..()
 
 /datum/vampire_passive/eternal_darkness/process()
 	for(var/mob/living/L in view(6, owner))
