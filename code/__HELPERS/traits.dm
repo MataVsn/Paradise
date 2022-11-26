@@ -67,7 +67,6 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_BLOODCRAWL_EAT	"bloodcrawl_eat"
 #define TRAIT_JESTER			"jester"
 #define TRAIT_FORCE_DOORS 		"force_doors"
-#define TRAIT_DARKNESS_CLOAK 	"darkness_cloak"
 
 //
 // common trait sources

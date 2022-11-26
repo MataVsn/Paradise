@@ -10,7 +10,6 @@ GLOBAL_LIST_INIT(traits_by_type, list(
 		"BLOODCRAWL" = TRAIT_BLOODCRAWL,
 		"BLOODCRAWL_EAT" = TRAIT_BLOODCRAWL_EAT,
 		"TRAIT_FORCE_DOORS" = TRAIT_FORCE_DOORS,
-		"TRAIT_DARKNESS_CLOAK" = TRAIT_DARKNESS_CLOAK
 	)))
 
 /// value -> trait name, generated on use from trait_by_type global
