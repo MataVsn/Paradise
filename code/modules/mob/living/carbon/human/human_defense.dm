@@ -444,8 +444,12 @@ emp_act
 	if(armor >= 100)
 		return 0
 	var/Iforce = I.force //to avoid runtimes on the forcesay checks at the bottom. Some items might delete themselves if you drop them. (stunning yourself, ninja swords)
+	var/bonus_damage = 0
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		bonus_damage = H.physiology.melee_bonus
 
-	apply_damage(I.force * weakness, I.damtype, affecting, armor, sharp = weapon_sharp, used_weapon = I)
+	apply_damage(I.force * weakness + bonus_damage, I.damtype, affecting, armor, sharp = weapon_sharp, used_weapon = I)
 
 	if(mind && user?.mind?.objectives)
 		for(var/datum/objective/pain_hunter/objective in user.mind.objectives)
