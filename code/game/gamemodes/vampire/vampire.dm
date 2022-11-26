@@ -233,6 +233,9 @@
 	draining = null
 	QDEL_NULL(subclass)
 	. = ..()
+/datum/vampire/proc/adjust_nullification(base, extra)
+	// First hit should give full nullification, while subsequent hits increase the value slower
+	nullified = clamp(nullified + extra, base, VAMPIRE_NULLIFICATION_CAP)
 
 /datum/vampire/proc/force_add_ability(path)
 	var/spell = new path(owner)
@@ -462,7 +465,7 @@
 		check_sun()
 	if(istype(get_area(owner), /area/chapel) && !get_ability(/datum/vampire_passive/full))
 		vamp_burn(7)
-	nullified = max(0, nullified - 1)
+	nullified = max(0, nullified - 2)
 
 /datum/vampire/proc/handle_vampire_cloak()
 	if(!ishuman(owner))
