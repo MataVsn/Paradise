@@ -114,7 +114,7 @@
 /obj/effect/dummy/spell_jaunt/bullet_act(blah)
 	return
 /obj/effect/dummy/spell_jaunt/blood_pool
-	name = "sangunine pool"
+	name = "sanguine pool"
 	desc = "a pool of living blood."
 	movespeed = 1.5
 
