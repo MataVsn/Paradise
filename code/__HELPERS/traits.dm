@@ -1,3 +1,5 @@
+#define SIGNAL_REMOVETRAIT(trait_ref) "removetrait [trait_ref]"
+
 // trait accessor defines
 #define ADD_TRAIT(target, trait, source) \
 	do { \
@@ -53,6 +55,38 @@
 				};\
 		}\
 	} while (0)
+/**
+ * Removes all status traits from a target datum which were NOT added by `sources`.
+ *
+ * Arguments:
+ * * target - The datum to remove the traits from.
+ * * sources - The trait source which is being searched for.
+ */
+#define REMOVE_TRAITS_IN(target, sources) \
+	do { \
+		if(target.status_traits) { \
+			var/list/SOURCES = sources; \
+			if(!islist(sources)) { \
+				SOURCES = list(sources); \
+			} \
+\
+			for(var/TRAIT in target.status_traits) { \
+				if(!target.status_traits[TRAIT]) \
+					continue; \
+				target.status_traits[TRAIT] -= SOURCES; \
+				if(!length(target.status_traits[TRAIT])) { \
+					target.status_traits -= TRAIT; \
+					SEND_SIGNAL(target, SIGNAL_REMOVETRAIT(TRAIT)); \
+					if(!target.status_traits) \
+						break; \
+				} \
+			} \
+			if(!length(target.status_traits)) { \
+				target.status_traits = null; \
+			} \
+		} \
+	} while (0)
+
 #define HAS_TRAIT(target, trait) (target.status_traits ? (target.status_traits[trait] ? TRUE : FALSE) : FALSE)
 #define HAS_TRAIT_FROM(target, trait, source) (target.status_traits ? (target.status_traits[trait] ? (source in target.status_traits[trait]) : FALSE) : FALSE)
 
@@ -67,7 +101,8 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_BLOODCRAWL_EAT	"bloodcrawl_eat"
 #define TRAIT_JESTER			"jester"
 #define TRAIT_FORCE_DOORS 		"force_doors"
-
+#define TRAIT_GOTTAGOFAST		"gottagofast"
+#define TRAIT_GOTTAGONOTSOFAST	"gottagonotsofast"
 //
 // common trait sources
 #define ROUNDSTART_TRAIT "roundstart" //cannot be removed without admin intervention
