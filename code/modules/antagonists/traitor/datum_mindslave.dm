@@ -8,6 +8,7 @@
 
 /datum/antagonist/mindslave/on_gain()
 	owner.special_role = special_role
+	var/datum/atom_hud/antag/hud = GLOB.huds[antag_hud_type]
 	// Will print the most recent objective which is probably going the mindslave objective
 	to_chat(owner.current, "<b>New Objective:</b> [owner.objectives[owner.objectives.len].explanation_text]")
 	update_mindslave_icons_added()

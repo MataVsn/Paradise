@@ -10,28 +10,12 @@
 	restricted_jobs = list("AI", "Cyborg")
 	protected_jobs = list("Security Officer", "Warden", "Detective", "Head of Security", "Captain", "Blueshield", "Nanotrasen Representative", "Security Pod Pilot", "Magistrate", "Chaplain", "Brig Physician", "Internal Affairs Agent", "Nanotrasen Navy Officer", "Nanotrasen Navy Field Officer", "Special Operations Officer", "Supreme Commander", "Syndicate Officer")
 	protected_species = list("Machine")
-	required_players = 15
+	required_players = 0
 	required_enemies = 1
 	recommended_enemies = 4
 
-	var/const/prob_int_murder_target = 50 // intercept names the assassination target half the time
-	var/const/prob_right_murder_target_l = 25 // lower bound on probability of naming right assassination target
-	var/const/prob_right_murder_target_h = 50 // upper bound on probability of naimg the right assassination target
-
-	var/const/prob_int_item = 50 // intercept names the theft target half the time
-	var/const/prob_right_item_l = 25 // lower bound on probability of naming right theft target
-	var/const/prob_right_item_h = 50 // upper bound on probability of naming the right theft target
-
-	var/const/prob_int_sab_target = 50 // intercept names the sabotage target half the time
-	var/const/prob_right_sab_target_l = 25 // lower bound on probability of naming right sabotage target
-	var/const/prob_right_sab_target_h = 50 // upper bound on probability of naming right sabotage target
-
-	var/const/prob_right_killer_l = 25 //lower bound on probability of naming the right operative
-	var/const/prob_right_killer_h = 50 //upper bound on probability of naming the right operative
-	var/const/prob_right_objective_l = 25 //lower bound on probability of determining the objective correctly
-	var/const/prob_right_objective_h = 50 //upper bound on probability of determining the objective correctly
-
-	var/vampire_amount = 4
+	///list of minds of soon to be vampires
+	var/list/datum/mind/pre_vampires = list()
 
 /datum/game_mode/vampire/announce()
 	to_chat(world, "<B>Текущий игровой режим — Вампиры!</B>")
@@ -44,31 +28,20 @@
 
 	var/list/datum/mind/possible_vampires = get_players_for_role(ROLE_VAMPIRE)
 
-	var/vampire_scale = 10
-	if(config.traitor_scaling)
-		vampire_scale = config.traitor_scaling
-	vampire_amount = 1 + round(num_players() / vampire_scale)
-	add_game_logs("Number of vampires chosen: [vampire_amount]")
+	var/vampire_amount = 1 + round(num_players() / 10)
 
-	if(possible_vampires.len>0)
-		for(var/i = 0, i < vampire_amount, i++)
-			if(!possible_vampires.len) break
-			var/datum/mind/vampire = pick(possible_vampires)
-			possible_vampires -= vampire
-			vampires += vampire
-			vampire.restricted_roles = restricted_jobs
-			modePlayer += vampires
-			var/datum/mindslaves/slaved = new()
-			slaved.masters += vampire
-			vampire.som = slaved //we MIGT want to mindslave someone
+	if(possible_vampires.len > 0)
+		for(var/i in 1 to vampire_amount)
+			var/datum/mind/vampire = pick_n_take(possible_vampires)
+			pre_vampires += vampire
 			vampire.special_role = SPECIAL_ROLE_VAMPIRE
 		..()
-		return 1
+		return TRUE
 	else
-		return 0
+		return FALSE
 
 /datum/game_mode/vampire/post_setup()
-	for(var/datum/mind/vampire in vampires)
+	for(var/datum/mind/vampire in pre_vampires)
 		vampire.add_antag_datum(/datum/antagonist/vampire)
 	..()
 
@@ -151,6 +124,8 @@
 	name = "Vampire"
 	antag_hud_name = "Vampire"
 	antag_hud_type = ANTAG_HUD_VAMPIRE
+	antag_hud_name = "hudvampire"
+	special_role = SPECIAL_ROLE_VAMPIRE
 	var/bloodtotal = 0
 	var/bloodusable = 0
 	// what vampire subclass the vampire is.
@@ -175,8 +150,10 @@
 	var/list/drained_humans = list()
 
 /datum/antagonist/mindslave/thrall
-	name = "thrall"
+	name = "Vampire Thrall"
 	antag_hud_type = ANTAG_HUD_VAMPIRE
+	antag_hud_name = "vampthrall"
+
 
 /datum/antagonist/vampire/Destroy(force, ...)
 	draining = null
@@ -217,8 +194,9 @@
 		owner.current.update_sight() // Life updates conditionally, so we need to update sight here in case the vamp loses his vision based powers. Maybe one day refactor to be more OOP and on the vampire's ability datum.
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/old_body)
-	for(var/P in powers)
-		remove_ability(P)
+	var/datum/hud/hud = owner.current.hud_used
+	if(hud.vampire_blood_display)
+		hud.remove_vampire_hud()
 	owner.current.alpha = 255
 	REMOVE_TRAITS_IN(owner.current, "vampire")
 
@@ -241,14 +219,14 @@
 		H.LAssailant = null
 	else
 		H.LAssailant = owner
-	while(do_mob(owner, H, suck_rate))
+	while(do_mob(owner.current, H, suck_rate))
 		if(!(owner in SSticker.mode.vampires))
-			to_chat(owner, "<span class='userdanger'>Ваши клыки исчезают!</span>")
+			to_chat(owner.current, "<span class='userdanger'>Your fangs have disappeared!</span>")
 			return
 		owner.current.do_attack_animation(H, ATTACK_EFFECT_BITE)
 		if(unique_suck_id in drained_humans)
 			if(drained_humans[unique_suck_id] >= BLOOD_DRAIN_LIMIT)
-				to_chat(owner, "<span class='warning'>You have drained most of the life force from [H]'s blood, and you will get no more useable blood from them!</span>")
+				to_chat(owner.current, "<span class='warning'>You have drained most of the life force from [H]'s blood, and you will get no more useable blood from them!</span>")
 				H.blood_volume = max(H.blood_volume - 25, 0)
 				owner.current.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, owner.current.nutrition + 5))
 				continue
@@ -256,7 +234,7 @@
 			if(H.ckey || H.player_ghosted) //Requires ckey regardless if monkey or humanoid, or the body has been ghosted before it died
 				blood = min(20, H.blood_volume)
 				adjust_blood(H, blood * BLOOD_GAINED_MODIFIER)
-				to_chat(owner, "<span class='notice'><b>You have accumulated [bloodtotal] unit\s of blood, and have [bloodusable] left to use.</b></span>")
+				to_chat(owner.current, "<span class='notice'><b>You have accumulated [bloodtotal] unit\s of blood, and have [bloodusable] left to use.</b></span>")
 		H.blood_volume = max(H.blood_volume - 25, 0)
 		//Blood level warnings (Code 'borrowed' from Fulp)
 		if(H.blood_volume)
@@ -437,8 +415,16 @@
 	dat += {"To bite someone, target the head and use harm intent with an empty hand. Drink blood to gain new powers.
 		You are weak to holy things, starlight and fire. Don't go into space and avoid the Chaplain, the chapel and especially Holy Water."}
 	to_chat(owner.current, dat)
-	to_chat(owner.current, "<B>You must complete the following tasks:</B>")
-	to_chat(owner.current, "<span class='motd'>For more information, check the wiki page: ([GLOB.configuration.url.wiki_url]/index.php/Vampire)</span>")
 
 /datum/antagonist/vampire/apply_innate_effects(mob/living/new_body)
+	. = ..()
+	var/datum/mindslaves/slaved = new()
+	slaved.masters += owner
+	owner.som = slaved //we MIGHT want to mindslave someone
+
 	check_vampire_upgrade(FALSE)
+
+/datum/hud/proc/remove_vampire_hud()
+	static_inventory -= vampire_blood_display
+	QDEL_NULL(vampire_blood_display)
+	show_hud()

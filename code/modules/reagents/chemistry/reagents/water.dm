@@ -254,10 +254,10 @@
 			if(prob(5))
 				M.AdjustCultSlur(5)//5 seems like a good number...
 				M.say(pick("Av'te Nar'sie","Pa'lid Mors","INO INO ORA ANA","SAT ANA!","Daim'niodeis Arc'iai Le'eones","Egkau'haom'nai en Chaous","Ho Diak'nos tou Ap'iron","R'ge Na'sie","Diabo us Vo'iscum","Si gn'um Co'nu"))
-	if(current_cycle >= 75 && prob(33))	// 30 units, 150 seconds
+	if(current_cycle >= 5 && prob(33))	// 30 units, 150 seconds
 		M.AdjustConfused(3)
 		if(isvampirethrall(M))
-			M.mind.remove_antag_datum(/datum/antagonist/mindslave/thrall) // TODO: MAKE THIS FUCKING WORK YOU BITCH YOU CANNOT HIDE FROM THRALL CODE FOREVER
+			M.mind.remove_antag_datum(/datum/antagonist/mindslave/thrall)
 			holder.remove_reagent(id, volume)
 			M.visible_message("<span class='biggerdanger'>[M] recoils, their skin flushes with colour, regaining their sense of control!</span>")
 			M.SetJitter(0)
