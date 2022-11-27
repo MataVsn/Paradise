@@ -171,7 +171,7 @@
 		owner.AddSpell(spell)
 	if(istype(spell, /datum/vampire_passive))
 		var/datum/vampire_passive/passive = spell
-		passive.owner = owner
+		passive.owner = owner.current
 	powers += spell
 	owner.current.update_sight() // Life updates conditionally, so we need to update sight here in case the vamp gets new vision based on his powers. Maybe one day refactor to be more OOP and on the vampire's ability datum.
 
@@ -195,7 +195,7 @@
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/old_body)
 	var/datum/hud/hud = owner.current.hud_used
-	if(hud.vampire_blood_display)
+	if(hud?.vampire_blood_display)
 		hud.remove_vampire_hud()
 	owner.current.alpha = 255
 	REMOVE_TRAITS_IN(owner.current, "vampire")
