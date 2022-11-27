@@ -87,8 +87,8 @@
 					text += "[genderize_ru(vampire.current.gender, "умер", "умерла", "умерло", "умерли")]"
 				else
 					text += "[genderize_ru(vampire.current.gender, "выжил", "выжила", "выжило", "выжили")]"
-				if(vampire.current.real_name != vampire.name)
-					text += " как [vampire.current.real_name]"
+					if(vampire.vampire.subclass)
+						text += "как [vampire.vampire.subclass.name]"
 			else
 				text += "тело было уничтожено"
 			text += ")"
