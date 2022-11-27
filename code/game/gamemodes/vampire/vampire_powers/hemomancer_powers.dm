@@ -16,10 +16,6 @@
 	var/obj/item/twohanded/required/vamp_claws/claws = new /obj/item/twohanded/required/vamp_claws(user.loc)
 	user.put_in_hands(claws)
 
-/obj/effect/proc_holder/spell/self/vampire/vamp_claws/proc/update_spell_icon()
-	SIGNAL_HANDLER
-	action.IsAvailable()
-
 /obj/effect/proc_holder/spell/self/vampire/vamp_claws/can_cast(mob/user, charge_check, show_message)
 	var/mob/living/L = user
 	if(L.canUnEquip(L.l_hand) && L.canUnEquip(L.r_hand))
