@@ -312,7 +312,7 @@
 
 /datum/mind/proc/memory_edit_vampire(mob/living/carbon/human/H)
 	. = _memory_edit_header("vampire", list("traitorvamp"))
-	if(src in SSticker.mode.vampires)
+	if(has_antag_datum(/datum/antagonist/vampire))
 		. += "<b><font color='red'>VAMPIRE</font></b>|<a href='?src=[UID()];vampire=clear'>no</a>"
 		if(!length(objectives))
 			. += "<br>Objectives are empty! <a href='?src=[UID()];vampire=autoobjectives'>Randomize!</a>"
@@ -1235,15 +1235,14 @@
 	else if(href_list["vampire"])
 		switch(href_list["vampire"])
 			if("clear")
-				if(src in SSticker.mode.vampires)
+				if(has_antag_datum(/datum/antagonist/vampire))
 					remove_antag_datum(/datum/antagonist/vampire)
 					to_chat(current, "<FONT color='red' size = 3><B>Вы ослабли и потеряли свои силы! Вы больше не вампир и теперь останетесь в своей текущей форме!</B></FONT>")
 					log_admin("[key_name(usr)] has de-vampired [key_name(current)]")
 					message_admins("[key_name_admin(usr)] has de-vampired [key_name_admin(current)]")
 			if("vampire")
-				if(!(src in SSticker.mode.vampires))
+				if(!(has_antag_datum(/datum/antagonist/vampire)))
 					add_antag_datum(/datum/antagonist/vampire)
-					SEND_SOUND(current, 'sound/ambience/antag/vampalert.ogg')
 					to_chat(current, "<B><font color='red'>Ваши силы пробудились. Жажда крови нарастает… Вы — вампир!</font></B>")
 					log_admin("[key_name(usr)] has vampired [key_name(current)]")
 					message_admins("[key_name_admin(usr)] has vampired [key_name_admin(current)]")
