@@ -471,7 +471,7 @@
 		owner.alpha = 255
 		return
 	var/turf/simulated/T = get_turf(owner)
-	var/light_available = T.get_lumcount(0.5) * 10
+	var/light_available = T.get_lumcount() * 10
 
 	if(!istype(T))
 		return
@@ -481,7 +481,7 @@
 		REMOVE_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
 		return
 
-	if(light_available <= 2 && !owner.on_fire)
+	if(light_available <= 2)
 		owner.alpha = 38 // round(255 * 0.15)
 		ADD_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
 		return
