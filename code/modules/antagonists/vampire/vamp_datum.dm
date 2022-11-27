@@ -1,125 +1,3 @@
-
-/datum/game_mode
-	var/list/datum/mind/vampires = list()
-	var/list/datum/mind/vampire_enthralled = list() //those controlled by a vampire
-	var/list/vampire_thralls = list() //vampires controlling somebody
-
-/datum/game_mode/vampire
-	name = "vampire"
-	config_tag = "vampire"
-	restricted_jobs = list("AI", "Cyborg")
-	protected_jobs = list("Security Officer", "Warden", "Detective", "Head of Security", "Captain", "Blueshield", "Nanotrasen Representative", "Security Pod Pilot", "Magistrate", "Chaplain", "Brig Physician", "Internal Affairs Agent", "Nanotrasen Navy Officer", "Nanotrasen Navy Field Officer", "Special Operations Officer", "Supreme Commander", "Syndicate Officer")
-	protected_species = list("Machine")
-	required_players = 15
-	required_enemies = 1
-	recommended_enemies = 4
-
-	///list of minds of soon to be vampires
-	var/list/datum/mind/pre_vampires = list()
-
-/datum/game_mode/vampire/announce()
-	to_chat(world, "<B>Текущий игровой режим — Вампиры!</B>")
-	to_chat(world, "<B>На станции есть блюспейс вампиры. Берегите свои шеи и кровь!</B>")
-
-/datum/game_mode/vampire/pre_setup()
-
-	if(config.protect_roles_from_antagonist)
-		restricted_jobs += protected_jobs
-
-	var/list/datum/mind/possible_vampires = get_players_for_role(ROLE_VAMPIRE)
-
-	var/vampire_amount = 1 + round(num_players() / 10)
-
-	if(possible_vampires.len > 0)
-		for(var/i in 1 to vampire_amount)
-			var/datum/mind/vampire = pick_n_take(possible_vampires)
-			pre_vampires += vampire
-			vampire.special_role = SPECIAL_ROLE_VAMPIRE
-		..()
-		return TRUE
-	else
-		return FALSE
-
-/datum/game_mode/vampire/post_setup()
-	for(var/datum/mind/vampire in pre_vampires)
-		vampire.add_antag_datum(/datum/antagonist/vampire)
-	..()
-
-/datum/game_mode/proc/auto_declare_completion_vampire()
-	if(vampires.len)
-		var/text = "<FONT size = 2><B>Вампирами были:</B></FONT>"
-		for(var/datum/mind/vampire in vampires)
-			var/traitorwin = 1
-			var/datum/antagonist/vampire/V = vampire.has_antag_datum(/datum/antagonist/vampire)
-			text += "<br>[vampire.key] [genderize_ru(vampire.current.gender, "был", "была", "было", "были")] [vampire.name] ("
-			if(vampire.current)
-				if(vampire.current.stat == DEAD)
-					text += "[genderize_ru(vampire.current.gender, "умер", "умерла", "умерло", "умерли")]"
-				else
-					text += "[genderize_ru(vampire.current.gender, "выжил", "выжила", "выжило", "выжили")]"
-					if(V.subclass)
-						text += " как [V.subclass.name]"
-			else
-				text += "тело было уничтожено"
-			text += ")"
-
-			if(vampire.objectives.len)//If the traitor had no objectives, don't need to process this.
-				var/count = 1
-				for(var/datum/objective/objective in vampire.objectives)
-					text += "<br><B>Задание №[count]</B>: [objective.explanation_text] "
-					if(objective.check_completion())
-						text += "<font color='green'><B>Успех!</B></font>"
-						SSblackbox.record_feedback("nested tally", "traitor_objective", 1, list("[objective.type]", "SUCCESS"))
-					else
-						text += "<font color='red'>Провал.</font>"
-						SSblackbox.record_feedback("nested tally", "traitor_objective", 1, list("[objective.type]", "FAIL"))
-						traitorwin = 0
-					count++
-
-			var/special_role_text
-			if(vampire.special_role)
-				special_role_text = lowertext(vampire.special_role)
-			else
-				special_role_text = "antagonist"
-
-			if(traitorwin)
-				text += "<br><font color='green'><B>The [special_role_text] was successful!</B></font>"
-				SSblackbox.record_feedback("tally", "traitor_success", 1, "SUCCESS")
-			else
-				text += "<br><font color='red'><B>The [special_role_text] has failed!</B></font>"
-				SSblackbox.record_feedback("tally", "traitor_success", 1, "FAIL")
-		to_chat(world, text)
-	return 1
-
-/datum/game_mode/proc/auto_declare_completion_enthralled()
-	if(vampire_enthralled.len)
-		var/text = "<FONT size = 2><B>Рабами вампиров были:</B></FONT>"
-		for(var/datum/mind/mind in vampire_enthralled)
-			text += "<br>[mind.key] [genderize_ru(mind.current.gender, "был", "была", "было", "были")] [mind.name] ("
-			if(mind.current)
-				if(mind.current.stat == DEAD)
-					text += "[genderize_ru(mind.current.gender, "умер", "умерла", "умерло", "умерли")]"
-				else
-					text += "[genderize_ru(mind.current.gender, "выжил", "выжила", "выжило", "выжили")]"
-				if(mind.current.real_name != mind.name)
-					text += " как [mind.current.real_name]"
-			else
-				text += "тело было уничтожено"
-			text += ")"
-		to_chat(world, text)
-	return 1
-
-/datum/antagonist/vampire/give_objectives()
-	add_objective(/datum/objective/blood)
-	add_objective(/datum/objective/assassinate)
-	add_objective(/datum/objective/steal)
-
-	switch(rand(1,100))
-		if(1 to 80)
-			add_objective(/datum/objective/survive)
-		else
-			add_objective(/datum/objective/escape)
-
 /datum/antagonist/vampire
 	name = "Vampire"
 	antag_hud_name = "Vampire"
@@ -402,6 +280,19 @@
 /datum/antagonist/vampire/vv_edit_var(var_name, var_value)
 	. = ..()
 	check_vampire_upgrade(TRUE)
+
+
+/datum/antagonist/vampire/give_objectives()
+	add_objective(/datum/objective/blood)
+	add_objective(/datum/objective/assassinate)
+	add_objective(/datum/objective/steal)
+
+	switch(rand(1,100))
+		if(1 to 80)
+			add_objective(/datum/objective/survive)
+		else
+			add_objective(/datum/objective/escape)
+
 
 /datum/antagonist/vampire/greet()
 	var/dat
