@@ -481,7 +481,7 @@
 		REMOVE_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
 		return
 
-	if(light_available <= 2)
+	if(light_available <= 2 && !owner.on_fire)
 		owner.alpha = 38 // round(255 * 0.15)
 		ADD_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
 		return
