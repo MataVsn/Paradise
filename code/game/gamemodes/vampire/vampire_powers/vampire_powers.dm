@@ -162,7 +162,7 @@
 			vamp.remove_ability(src)
 
 
-/datum/vampire/proc/add_subclass(subclass_to_add)
+/datum/vampire/proc/add_subclass(subclass_to_add, announce = TRUE)
 	var/datum/vampire_subclass/new_subclass = new subclass_to_add
 	subclass = new_subclass
 	check_vampire_upgrade(announce)

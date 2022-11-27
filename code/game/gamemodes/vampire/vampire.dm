@@ -1,4 +1,3 @@
-#define BLOOD_DRAIN_LIMIT 200 // the amount of blood a vampire can drain from a person.
 
 /datum/game_mode
 	var/list/datum/mind/vampires = list()
@@ -285,10 +284,10 @@
 /datum/vampire/proc/handle_bloodsucking(mob/living/carbon/human/H, suck_rate = 5 SECONDS)
 	draining = H
 	var/unique_suck_id = H.UID()
-	var/unique_suck_id = H.UID()
 	var/blood = 0
 	var/blood_limit_exceeded = FALSE
 	var/blood_volume_warning = 9999 //Blood volume threshold for warnings
+
 	if(owner.is_muzzled())
 		to_chat(owner, "<span class='warning'>[owner.wear_mask] мешает вам укусить [H]!</span>")
 		draining = null

@@ -43,12 +43,12 @@
 	var/duration = 10 SECONDS
 
 /obj/effect/proc_holder/spell/self/vampire/blood_rush/cast(list/targets, mob/user)
-	ADD_TRAIT(user, TRAIT_GOTTAGOFAST, VAMPIRE_TRAIT)
+	ADD_TRAIT(user, GOTTAGOFAST, VAMPIRE_TRAIT)
 	to_chat(user, "<span class='notice'>You feel a rush of energy!</span>")
 	addtimer(CALLBACK(user, /mob/living/carbon/human/.proc/remove_speed), duration)
 
 /mob/living/carbon/human/proc/remove_speed(source)
-	REMOVE_TRAIT(src, TRAIT_GOTTAGOFAST, source)
+	REMOVE_TRAIT(src, GOTTAGOFAST, source)
 
 /obj/effect/proc_holder/spell/targeted/click/charge
 	name = "Charge(30)"

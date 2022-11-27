@@ -248,7 +248,7 @@
 	if(has_gravity(H))
 		if(H.status_flags & GOTTAGOFAST)
 			. -= 1
-		else if(H.status_flags & GOTTAGONOTSOFAST)
+		else if((H.status_flags & GOTTAGONOTSOFAST) || HAS_TRAIT(H, TRAIT_GOTTAGONOTSOFAST))
 			. -= 0.5
 
 		var/ignoreslow = FALSE

@@ -1242,7 +1242,7 @@
 		H.mind.vampire.bloodtotal = 9999
 		H.mind.vampire.add_subclass(SUBCLASS_ANCIENT, FALSE)
 		H.dna.SetSEState(GLOB.jumpblock, TRUE)
-		singlemutcheck(H, GLOB.jumpblock, MUTCHK_FORCED)
+		genemutcheck(H, GLOB.jumpblock, MUTCHK_FORCED)
 		H.update_mutations()
 		H.gene_stability = 100
 
