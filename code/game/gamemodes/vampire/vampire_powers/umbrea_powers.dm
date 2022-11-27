@@ -22,10 +22,16 @@
 		var/mob/living/carbon/human/H = user
 		if(V.iscloaking)
 			H.dna.species.burn_mod *= 1.3
+			user.RegisterSignal(user, COMSIG_LIVING_IGNITED, /mob/living.proc/update_vampire_cloak)
 		else
+			user.UnregisterSignal(user, COMSIG_LIVING_IGNITED)
 			H.dna.species.burn_mod /= 1.3
 	update_name()
 	to_chat(user, "<span class='notice'>You will now be [V.iscloaking ? "hidden" : "seen"] in darkness.</span>")
+
+/mob/living/proc/update_vampire_cloak()
+	SIGNAL_HANDLER
+	mind.vampire.handle_vampire_cloak()
 
 /obj/effect/proc_holder/spell/targeted/click/shadow_snare
 	name = "Shadow Snare (20)"

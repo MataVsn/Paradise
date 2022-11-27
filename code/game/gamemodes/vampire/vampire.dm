@@ -476,7 +476,7 @@
 	if(!istype(T))
 		return
 
-	if(!iscloaking)
+	if(!iscloaking || owner.on_fire)
 		owner.alpha = 255
 		REMOVE_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
 		return
