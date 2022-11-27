@@ -478,12 +478,12 @@
 
 	if(!iscloaking || owner.on_fire)
 		owner.alpha = 255
-		REMOVE_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
+		owner.status_flags &= ~GOTTAGONOTSOFAST
 		return
 
 	if(light_available <= 2)
 		owner.alpha = 38 // round(255 * 0.15)
-		ADD_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)
+		owner.status_flags |= GOTTAGONOTSOFAST
 		return
 
 	REMOVE_TRAIT(owner, TRAIT_GOTTAGONOTSOFAST, VAMPIRE_TRAIT)

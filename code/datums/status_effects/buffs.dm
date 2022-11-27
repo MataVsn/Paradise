@@ -132,11 +132,11 @@
 	duration = 10 SECONDS
 
 /datum/status_effect/blood_rush/on_apply()
-	ADD_TRAIT(owner, TRAIT_GOTTAGOFAST, VAMPIRE_TRAIT)
+	owner.status_flags |= GOTTAGOFAST
 	return TRUE
 
 /datum/status_effect/blood_rush/on_remove()
-	REMOVE_TRAIT(owner, TRAIT_GOTTAGOFAST, VAMPIRE_TRAIT)
+	owner.status_flags &= ~GOTTAGOFAST
 
 /datum/status_effect/exercised
 	id = "Exercised"
