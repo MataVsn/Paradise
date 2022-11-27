@@ -250,7 +250,7 @@
 /obj/item/sleeping_carp_scroll/attack_self(mob/living/carbon/human/user as mob)
 	if(!istype(user) || !user)
 		return
-	if(user.mind && (user.mind.changeling || user.mind.vampire)) //Prevents changelings and vampires from being able to learn it
+	if(user.mind && (user.mind.changeling || user.mind.has_antag_datum(/datum/antagonist/vampire))) //Prevents changelings and vampires from being able to learn it
 		if(user.mind && user.mind.changeling) //Changelings
 			to_chat(user, "<span class ='warning'>We try multiple times, but we are not able to comprehend the contents of the scroll!</span>")
 			return

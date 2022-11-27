@@ -118,7 +118,7 @@
 				C.reagents.add_reagent("toxin", volume * 0.5)
 			else
 				C.blood_volume = min(C.blood_volume + round(volume, 0.1), BLOOD_VOLUME_NORMAL)
-		if(C.mind?.vampire)
+		if(C.mind?.has_antag_datum(/datum/antagonist/vampire))
 			C.set_nutrition(min(NUTRITION_LEVEL_WELL_FED, C.nutrition + 10))
 
 /datum/reagent/blood/on_new(list/data)
@@ -257,7 +257,7 @@
 	if(current_cycle >= 75 && prob(33))	// 30 units, 150 seconds
 		M.AdjustConfused(3)
 		if(isvampirethrall(M))
-			SSticker.mode.remove_vampire_mind(M.mind)
+			M.mind.remove_antag_datum(/datum/antagonist/mindslave/thrall) // TODO: MAKE THIS FUCKING WORK YOU BITCH YOU CANNOT HIDE FROM THRALL CODE FOREVER
 			holder.remove_reagent(id, volume)
 			M.visible_message("<span class='biggerdanger'>[M] recoils, their skin flushes with colour, regaining their sense of control!</span>")
 			M.SetJitter(0)
@@ -288,17 +288,18 @@
 					if(is_type_in_list(I, CLOCK_CLOTHING))
 						H.unEquip(I)
 
-	if(ishuman(M) && M.mind && M.mind.vampire && !M.mind.vampire.get_ability(/datum/vampire_passive/full) && prob(80))
+	var/datum/antagonist/vampire/vamp = M?.mind.has_antag_datum(/datum/antagonist/vampire)
+	if(ishuman(M) && vamp && !vamp.get_ability(/datum/vampire_passive/full) && prob(80))
 		var/mob/living/carbon/V = M
-		if(M.mind.vampire.bloodusable)
+		if(vamp?.bloodusable)
 			M.Stuttering(1)
 			M.Jitter(30)
 			update_flags |= M.adjustStaminaLoss(5, FALSE)
 			if(prob(20))
 				M.emote("scream")
-			M.mind.vampire.adjust_nullification(20, 4)
-			M.mind.vampire.bloodusable = max(M.mind.vampire.bloodusable - 3,0)
-			if(M.mind.vampire.bloodusable)
+			vamp.adjust_nullification(20, 4)
+			vamp.bloodusable = max(vamp.bloodusable - 3,0)
+			if(vamp.bloodusable)
 				V.vomit(0, TRUE, FALSE)
 				V.adjustBruteLoss(3)
 			else
@@ -309,7 +310,7 @@
 			switch(current_cycle)
 				if(1 to 4)
 					to_chat(M, "<span class = 'warning'>Something sizzles in your veins!</span>")
-					M.mind.vampire.adjust_nullification(20, 4)
+					vamp.adjust_nullification(20, 4)
 				if(5 to 12)
 					to_chat(M, "<span class = 'danger'>You feel an intense burning inside of you!</span>")
 					update_flags |= M.adjustFireLoss(1, FALSE)
@@ -317,7 +318,7 @@
 					M.Jitter(20)
 					if(prob(20))
 						M.emote("scream")
-					M.mind.vampire.adjust_nullification(20, 4)
+					vamp.adjust_nullification(20, 4)
 				if(13 to INFINITY)
 					M.visible_message("<span class='danger'>[M] suddenly bursts into flames!</span>",
 						"<span class='danger'>You suddenly ignite in a holy fire!</span>")
@@ -328,14 +329,15 @@
 					M.Jitter(30)
 					if(prob(40))
 						M.emote("scream")
-					M.mind.vampire.adjust_nullification(20, 4)
+					vamp.adjust_nullification(20, 4)
 	return ..() | update_flags
 
 
 /datum/reagent/holywater/reaction_mob(mob/living/M, method=REAGENT_TOUCH, volume)
 	// Vampires have their powers weakened by holy water applied to the skin.
-	if(ishuman(M) && M.mind && M.mind.vampire && !M.mind.vampire.get_ability(/datum/vampire_passive/full))
-		var/mob/living/carbon/human/H=M
+	var/datum/antagonist/vampire/V = M?.mind.has_antag_datum(/datum/antagonist/vampire)
+	if(ishuman(M) && V && !V.get_ability(/datum/vampire_passive/full))
+		var/mob/living/carbon/human/H = M
 		if(method == REAGENT_TOUCH)
 			if(H.wear_mask)
 				to_chat(H, "<span class='warning'>Your mask protects you from the holy water!</span>")
@@ -345,7 +347,7 @@
 				return
 			else
 				to_chat(M, "<span class='warning'>Something holy interferes with your powers!</span>")
-				M.mind.vampire.nullified = max(5, M.mind.vampire.nullified + 2)
+				V.adjust_nullification(5, 2)
 
 
 /datum/reagent/holywater/reaction_turf(turf/simulated/T, volume)

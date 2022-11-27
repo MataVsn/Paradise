@@ -6,7 +6,7 @@
 		SSticker.mode.remove_wizard(mind)
 		SSticker.mode.remove_ninja(mind)
 		SSticker.mode.remove_changeling(mind)
-		SSticker.mode.remove_vampire(mind)
+		mind.remove_antag_datum(/datum/antagonist/vampire)
 		SSticker.mode.remove_thrall(mind, 0)
 		SSticker.mode.remove_shadowling(mind)
 		SSticker.mode.remove_abductor(mind)
