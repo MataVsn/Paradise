@@ -416,7 +416,7 @@
 	if(!C.mind)
 		to_chat(user, "<span class='warning'>[C.name]'s mind is not there for you to enthrall.</span>")
 		return FALSE
-	if(enthrall_safe || (C.mind.has_antag_datum(/datum/antagonist/vampire)) || (C.mind in SSticker.mode.vampire_enthralled))
+	if(enthrall_safe || (C.mind.has_antag_datum(/datum/antagonist/vampire)) || (isvampirethrall(C)))
 		C.visible_message("<span class='warning'>[C] seems to resist the takeover!</span>", "<span class='notice'>You feel a familiar sensation in your skull that quickly dissipates.</span>")
 		return FALSE
 	if(!C.affects_vampire(user))

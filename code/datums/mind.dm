@@ -322,7 +322,7 @@
 	. += _memory_edit_role_enabled(ROLE_VAMPIRE)
 	/** Enthralled ***/
 	. += "<br><b><i>enthralled</i></b>: "
-	if(src in SSticker.mode.vampire_enthralled)
+	if(has_antag_datum(/datum/antagonist/mindslave/thrall))
 		. += "<b><font color='red'>THRALL</font></b>|<a href='?src=[UID()];vampthrall=clear'>no</a>"
 	else
 		. += "thrall|<b>NO</b>"
@@ -463,7 +463,7 @@
 			. += "contractor|<b>NO</b>"
 	// Mindslave
 	. += "<br><b><i>mindslaved</i></b>: "
-	if(has_antag_datum(/datum/antagonist/mindslave))
+	if(has_antag_datum(/datum/antagonist/mindslave, FALSE))
 		. += "<b><font color='red'>MINDSLAVE</font></b>|<a href='?src=[UID()];mindslave=clear'>no</a>"
 	else
 		. += "mindslave|<b>NO</b>"
@@ -1257,8 +1257,8 @@
 	else if(href_list["vampthrall"])
 		switch(href_list["vampthrall"])
 			if("clear")
-				if(src in SSticker.mode.vampire_enthralled)
-					remove_antag_datum(/datum/antagonist/vampire)
+				if(has_antag_datum(/datum/antagonist/mindslave/thrall))
+					remove_antag_datum(/datum/antagonist/mindslave/thrall)
 					log_admin("[key_name(usr)] has de-vampthralled [key_name(current)]")
 					message_admins("[key_name_admin(usr)] has de-vampthralled [key_name_admin(current)]")
 
@@ -1674,7 +1674,7 @@
 	else if(href_list["mindslave"])
 		switch(href_list["mindslave"])
 			if("clear")
-				if(has_antag_datum(/datum/antagonist/mindslave))
+				if(has_antag_datum(/datum/antagonist/mindslave, FALSE))
 					var/mob/living/carbon/human/H = current
 					for(var/i in H.contents)
 						if(istype(i, /obj/item/implant/traitor))
