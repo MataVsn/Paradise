@@ -134,9 +134,6 @@
 	gain_desc = "You have gained the ability to shift into a pool of blood, allowing you to evade pursuers with great mobility."
 	jaunt_duration = 3 SECONDS
 	clothes_req = FALSE
-	panel = "Vampire"
-	school = "vampire"
-	action_background_icon_state = "bg_vampire"
 	action_icon_state = "blood_pool"
 	jaunt_type_path = /obj/effect/dummy/spell_jaunt/blood_pool
 	jaunt_water_effect = FALSE
@@ -156,9 +153,6 @@
 	gain_desc = "You have gained the ability to weaponise pools of blood to damage those stood on them."
 	required_blood = 100
 	charge_max = 100 SECONDS
-	panel = "Vampire"
-	school = "vampire"
-	action_background_icon_state = "bg_vampire"
 	action_icon_state = "blood_spikes"
 
 /obj/effect/proc_holder/spell/vampire/blood_eruption/create_new_targeting()
