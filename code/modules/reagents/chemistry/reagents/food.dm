@@ -13,7 +13,7 @@
 
 /datum/reagent/consumable/on_mob_life(mob/living/M)
 	if(M.mind.has_antag_datum(/datum/antagonist/vampire))
-		return
+		return ..()
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		if(H.can_eat(diet_flags))	//Make sure the species has it's dietflag set, otherwise it can't digest any nutrients
@@ -33,7 +33,7 @@
 /datum/reagent/consumable/nutriment/on_mob_life(mob/living/M)
 	var/update_flags = STATUS_UPDATE_NONE
 	if(M.mind.has_antag_datum(/datum/antagonist/vampire))
-		return
+		return ..() | update_flags
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		if(H.can_eat(diet_flags))	//Make sure the species has it's dietflag set, otherwise it can't digest any nutrients
