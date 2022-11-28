@@ -1241,7 +1241,7 @@
 					log_admin("[key_name(usr)] has de-vampired [key_name(current)]")
 					message_admins("[key_name_admin(usr)] has de-vampired [key_name_admin(current)]")
 			if("vampire")
-				if(!(has_antag_datum(/datum/antagonist/vampire)))
+				if(!has_antag_datum(/datum/antagonist/vampire))
 					add_antag_datum(/datum/antagonist/vampire)
 					to_chat(current, "<B><font color='red'>Ваши силы пробудились. Жажда крови нарастает… Вы — вампир!</font></B>")
 					log_admin("[key_name(usr)] has vampired [key_name(current)]")
