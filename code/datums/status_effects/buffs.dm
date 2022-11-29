@@ -102,29 +102,29 @@
 	. = ..()
 	if(!. || !ishuman(owner))
 		return FALSE
-	ADD_TRAIT(owner, TRAIT_CHUNKYFINGERS, VAMPIRE_TRAIT)
+	ADD_TRAIT(owner, NOGUNS, VAMPIRE_TRAIT)
 	var/mob/living/carbon/human/H = owner
-	H.physiology.brute_mod *= 0.5
-	H.physiology.burn_mod *= 0.8
-	H.physiology.stamina_mod *= 0.5
-	H.physiology.stun_mod *= 0.5
+	H.dna.species.brute_mod *= 0.5
+	H.dna.species.burn_mod *= 0.8
+	H.dna.species.stamina_mod *= 0.5
+	H.dna.species.stun_mod *= 0.5
 	if(owner.mind.vampire.get_ability(/datum/vampire_passive/blood_swell_upgrade))
 		bonus_damage_applied = TRUE
-		H.physiology.melee_bonus += 10
+		H.dna.species.melee_bonus += 10
 		H.dna.species.punchstunthreshold += 8 //higher chance to stun but not 100%
 
 /datum/status_effect/bloodswell/on_remove()
 	if(!ishuman(owner))
 		return
-	REMOVE_TRAIT(owner, TRAIT_CHUNKYFINGERS, VAMPIRE_TRAIT)
+	REMOVE_TRAIT(owner, NOGUNS, VAMPIRE_TRAIT)
 	var/mob/living/carbon/human/H = owner
-	H.physiology.brute_mod /= 0.5
-	H.physiology.burn_mod /= 0.8
-	H.physiology.stamina_mod /= 0.5
-	H.physiology.stun_mod /= 0.5
+	H.dna.species.brute_mod /= 0.5
+	H.dna.species.burn_mod /= 0.8
+	H.dna.species.stamina_mod /= 0.5
+	H.dna.species.stun_mod /= 0.5
 	if(bonus_damage_applied)
 		bonus_damage_applied = FALSE
-		H.physiology.melee_bonus -= 10
+		H.dna.species.melee_bonus -= 10
 		H.dna.species.punchstunthreshold -= 8
 
 /datum/status_effect/blood_rush

@@ -291,7 +291,6 @@
 	draining = H
 	var/unique_suck_id = H.UID()
 	var/blood = 0
-	var/blood_limit_exceeded = FALSE
 	var/blood_volume_warning = 9999 //Blood volume threshold for warnings
 
 	if(owner.is_muzzled())

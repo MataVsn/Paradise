@@ -202,8 +202,7 @@
 			target.mind.vampire.remove_ability(B)
 
 /datum/vampire_passive/blood_spill
-	gain_desc = "You begin reaping blood from nearby creatures"
-	//var/max_targets = 5
+	var/max_beams = 10
 
 /datum/vampire_passive/blood_spill/New()
 	..()
