@@ -81,6 +81,9 @@
 	desc = "This always-on spell allows you to cast magic without your garments."
 	action_icon_state = "no_clothes"
 
+/obj/effect/proc_holder/spell/noclothes/create_new_targeting()
+	return new /datum/spell_targeting/self // Dummy value
+
 /obj/effect/proc_holder/spell/genetic/mutate
 	name = "Mutate"
 	desc = "This spell causes you to turn into a hulk and gain laser vision for a short while."
@@ -110,8 +113,8 @@
 	..()
 
 /obj/effect/proc_holder/spell/genetic/mutate/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
+	return new /datum/spell_targeting/self
+
 
 /obj/effect/proc_holder/spell/smoke
 	name = "Smoke"
@@ -130,8 +133,8 @@
 	action_icon_state = "smoke"
 
 /obj/effect/proc_holder/spell/smoke/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
+	return new /datum/spell_targeting/self
+
 
 /obj/effect/proc_holder/spell/emplosion/disable_tech
 	name = "Disable Tech"
@@ -173,8 +176,8 @@
 	sound2 = 'sound/magic/blink.ogg'
 
 /obj/effect/proc_holder/spell/turf_teleport/blink/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
+	return new /datum/spell_targeting/self
+
 
 /obj/effect/proc_holder/spell/area_teleport/teleport
 	name = "Teleport"
@@ -196,8 +199,8 @@
 	sound2 = 'sound/magic/teleport_app.ogg'
 
 /obj/effect/proc_holder/spell/area_teleport/teleport/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
+	return new /datum/spell_targeting/self
+
 
 /obj/effect/proc_holder/spell/forcewall
 	name = "Force Wall"
@@ -215,8 +218,8 @@
 	var/large = FALSE
 
 /obj/effect/proc_holder/spell/forcewall/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
+	return new /datum/spell_targeting/self
+
 
 /obj/effect/proc_holder/spell/forcewall/cast(list/targets, mob/user = usr)
 	new wall_type(get_turf(user), user)
@@ -329,6 +332,11 @@
 
 	action_icon_state = "blind"
 
+/obj/effect/proc_holder/spell/trigger/blind/create_new_targeting()
+	var/datum/spell_targeting/click/C = new()
+	C.allowed_type = /mob/living
+	return C
+
 /obj/effect/proc_holder/spell/inflict_handler/blind
 	amt_eye_blind = 10
 	amt_eye_blurry = 20
@@ -338,6 +346,9 @@
 	mutations = list(BLINDNESS)
 	duration = 300
 	sound = 'sound/magic/blind.ogg'
+
+/obj/effect/proc_holder/spell/genetic/blind/create_new_targeting()
+	return new /datum/spell_targeting/self // Dummy value since it is never used by an user directly
 
 /obj/effect/proc_holder/spell/fireball
 	name = "Fireball"
@@ -360,9 +371,9 @@
 	active = FALSE
 
 /obj/effect/proc_holder/spell/fireball/create_new_targeting()
-	var/datum/spell_targeting/directional/T = new()
-	T.range = 20
-	return T
+	var/datum/spell_targeting/clicked_atom/C = new()
+	C.range = 20
+	return C
 
 /obj/effect/proc_holder/spell/fireball/update_icon()
 	if(!action)

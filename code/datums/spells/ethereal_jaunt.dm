@@ -22,8 +22,8 @@
 	action_icon_state = "jaunt"
 
 /obj/effect/proc_holder/spell/ethereal_jaunt/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
+	return new /datum/spell_targeting/self
+
 
 /obj/effect/proc_holder/spell/ethereal_jaunt/cast(list/targets, mob/user = usr) //magnets, so mostly hardcoded
 	playsound(get_turf(user), sound1, 50, 1, -1)

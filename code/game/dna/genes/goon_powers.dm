@@ -340,8 +340,8 @@
 	action_icon_state = "genetic_jump"
 
 /obj/effect/proc_holder/spell/leap/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
+	return new /datum/spell_targeting/self
+
 
 /obj/effect/proc_holder/spell/leap/cast(list/targets, mob/user = usr)
 	var/failure = FALSE

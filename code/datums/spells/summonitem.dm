@@ -15,8 +15,8 @@
 	action_icon_state = "summons"
 
 /obj/effect/proc_holder/spell/summonitem/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
+	return new /datum/spell_targeting/self
+
 
 /obj/effect/proc_holder/spell/summonitem/cast(list/targets, mob/user = usr)	for(var/mob/living/target in targets)
 		var/list/hand_items = list(target.get_active_hand(),target.get_inactive_hand())
