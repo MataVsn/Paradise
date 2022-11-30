@@ -175,7 +175,6 @@
 	action_icon_state = "vampire_glare"
 	charge_max = 30 SECONDS
 	stat_allowed = 1
-	range = 1
 	vampire_ability = TRUE
 	panel = "Vampire"
 	school = "vampire"

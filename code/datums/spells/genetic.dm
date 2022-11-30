@@ -15,7 +15,6 @@
 	*/
 
 /obj/effect/proc_holder/spell/genetic/cast(list/targets, mob/user = usr)
-
 	for(var/mob/living/target in targets)
 		for(var/x in mutations)
 			target.mutations.Add(x)

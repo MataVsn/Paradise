@@ -9,8 +9,9 @@
 /datum/spell_targeting/targeted/choose_targets(mob/user, obj/effect/proc_holder/spell/spell, params, atom/clicked_atom)
 	var/list/targets = list()
 	var/list/possible_targets = list()
-	for(var/atom/target in view_or_range(range, user, selection_type))
-		if(valid_target(target, user, spell))
+	var/atom/spell_location = use_turf_of_user ? get_turf(user) : user
+	for(var/atom/target in view_or_range(range, spell_location, selection_type))
+	if(valid_target(target, user, spell))
 			possible_targets += target
 
 	if(!length(possible_targets))
@@ -21,8 +22,8 @@
 	else if(max_targets == 1) // Only one target
 		var/atom/target
 		if(!random_target)
-			target = input("Choose the target for the spell.", "Targeting") as mob in possible_targets			//Adds a safety check post-input to make sure those targets are actually in range.
-			if(target in view_or_range(range, user, selection_type))
+			target = input("Choose the target for the spell.", "Targeting") as anything in possible_targets
+			if(target in view_or_range(range, spell_location, selection_type))
 				targets += target
 		else
 			switch(target_priority)
@@ -31,7 +32,7 @@
 				if(SPELL_TARGET_CLOSEST)
 					for(var/atom/A as anything in possible_targets)
 						if(target)
-							if(get_dist(user, A) < get_dist(user, target))
+							if(get_dist(spell_location, A) < get_dist(spell_location, target))
 								if(spell.los_check(user, A))
 									target = A
 						else
