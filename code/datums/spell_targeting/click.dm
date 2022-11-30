@@ -23,10 +23,10 @@
 		targets.Add(found_others)
 	else
 		switch(random_target_priority) //Add in the rest
-			if(TARGET_RANDOM)
+			if(SPELL_TARGET_RANDOM)
 				while(length(targets) < max_targets && length(found_others)) // Add the others
 					targets.Add(pick_n_take(found_others))
-			if(TARGET_CLOSEST)
+			if(SPELL_TARGET_RANDOM)
 				var/list/distances = list()
 				for(var/target in found_others) // maybe not needed TODO check
 					distances[target] = get_dist(user, target)
