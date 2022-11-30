@@ -92,3 +92,41 @@
 	to_chat(user, "<span class='warning'>You have successfully Enthralled [H]. <i>If [H.p_they()] refuse[H.p_s()] to do as you say just adminhelp.</i></span>")
 	H.Stun(2)
 	add_attack_logs(user, H, "Vampire-thralled")
+
+/obj/effect/proc_holder/spell/thrall_commune
+	name = "Commune"
+	desc = ":^ Thrall gang lmao"
+
+/datum/spell_targeting/select_vampire_thralls/choose_targets(mob/user, obj/effect/proc_holder/spell/spell, params, atom/clicked_atom)
+	var/list/mob/living/targets = list()
+	if(user.mind.vampire)
+		for(var/datum/mind/M as anything in user.mind.som.serv)
+			if(!M.current) // convert to valid_target
+				continue
+			targets += M.current
+	else
+		for(var/datum/mind/M as anything in user.mind.som.masters)
+			if(!M.current) // convert to valid_target
+				continue
+			targets += M.current
+			for(var/datum/mind/MI as anything in user.mind.som.serv)
+				if(!MI.current) // convert to valid_target
+					continue
+				if(MI.current == user) // convert to valid_target
+					continue
+				targets += MI.current
+	return targets
+
+/obj/effect/proc_holder/spell/thrall_commune/create_new_targeting()
+	var/datum/spell_targeting/select_vampire_thralls/T = new
+	T.range = 500
+	return T
+
+/obj/effect/proc_holder/spell/thrall_commune/cast(list/targets, mob/user)
+	var/input = stripped_input(user, "Please choose a message to tell to the other thralls.", "Thrall Commune", "")
+	if(!input)
+		return
+	var/message = "[user.real_name]:[input]"
+
+	for(var/mob/M in targets)
+		to_chat(M, "<span class='shadowling>[message]</span>")
