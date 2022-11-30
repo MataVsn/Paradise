@@ -29,7 +29,7 @@
 /obj/effect/proc_holder/spell/projectile/magic_missile/create_new_targeting()
 	var/datum/spell_targeting/targeted/T = new()
 	T.allowed_type = /mob/living
-	T.max_targets = 0
+	T.max_targets = INFINITY
 	return T
 
 /obj/effect/proc_holder/spell/inflict_handler/magic_missile
@@ -69,7 +69,7 @@
 /obj/effect/proc_holder/spell/projectile/honk_missile/create_new_targeting()
 	var/datum/spell_targeting/targeted/T = new()
 	T.allowed_type = /mob/living
-	T.max_targets = 0
+	T.max_targets = INFINITY
 	return T
 
 /obj/effect/proc_holder/spell/inflict_handler/honk_missile
@@ -244,7 +244,6 @@
 	clothes_req = 1
 	invocation = "TOKI WO TOMARE"
 	invocation_type = "shout"
-	range = 0
 	cooldown_min = 100
 	summon_amt = 1
 	action_icon_state = "time"
@@ -265,7 +264,6 @@
 	clothes_req = 1
 	invocation = "NOUK FHUNMM SACP RISSKA"
 	invocation_type = "shout"
-	range = 1
 
 	summon_type = list(/mob/living/simple_animal/hostile/carp)
 
@@ -285,7 +283,6 @@
 	clothes_req = 0
 	invocation = "none"
 	invocation_type = "none"
-	range = 0
 
 /obj/effect/proc_holder/spell/aoe_turf/conjure/construct/create_new_targeting()
 	var/datum/spell_targeting/aoe/turf/T = new()
@@ -307,7 +304,6 @@
 	invocation = "IA IA"
 	invocation_type = "shout"
 	summon_amt = 10
-	range = 3
 
 	summon_type = list(/mob/living/simple_animal/hostile/creature)
 	cast_sound = 'sound/magic/summonitems_generic.ogg'
@@ -352,14 +348,10 @@
 	clothes_req = FALSE
 	invocation = "ONI SOMA"
 	invocation_type = "shout"
-	//auto_target_single = FALSE // Having this true won't ever find a single target and is just lost processing power
-	range = 20
 	cooldown_min = 20 //10 deciseconds reduction per rank
 
-	//click_radius = -1
 	selection_activated_message		= "<span class='notice'>Your prepare to cast your fireball spell! <B>Left-click to cast at a target!</B></span>"
 	selection_deactivated_message	= "<span class='notice'>You extinguish your fireball...for now.</span>"
-	//allowed_type = /atom		// FIRE AT EVERYTHING
 
 	var/fireball_type = /obj/item/projectile/magic/fireball
 	action_icon_state = "fireball0"
@@ -400,7 +392,6 @@
 	clothes_req = TRUE
 	invocation = "GITTAH WEIGH"
 	invocation_type = "shout"
-	range = 5
 	cooldown_min = 150
 	sound = 'sound/magic/repulse.ogg'
 	var/maxthrow = 5

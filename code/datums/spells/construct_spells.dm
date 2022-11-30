@@ -21,7 +21,6 @@
 	clothes_req = FALSE
 	invocation = "none"
 	invocation_type = "none"
-	range = 0
 	summon_type = list(/turf/simulated/floor/engine/cult)
 	centcom_cancast = FALSE //Stop crashing the server by spawning turfs on transit tiles
 
@@ -35,7 +34,6 @@
 	clothes_req = FALSE
 	invocation = "none"
 	invocation_type = "none"
-	range = 0
 	summon_type = list(/turf/simulated/wall/cult/artificer) //we don't want artificer-based runed metal farms
 	centcom_cancast = FALSE //Stop crashing the server by spawning turfs on transit tiles
 
@@ -47,7 +45,6 @@
 	clothes_req = FALSE
 	invocation = "none"
 	invocation_type = "none"
-	range = 0
 	centcom_cancast = FALSE //Stop crashing the server by spawning turfs on transit tiles
 	delay = 50
 
@@ -63,7 +60,6 @@
 	clothes_req = FALSE
 	invocation = "none"
 	invocation_type = "none"
-	range = 0
 
 	summon_type = list(/obj/item/soulstone)
 
@@ -82,7 +78,6 @@
 	clothes_req = FALSE
 	invocation = "none"
 	invocation_type = "none"
-	range = 0
 
 	summon_type = list(/obj/structure/cult/functional/pylon)
 
@@ -97,7 +92,6 @@
 	clothes_req = FALSE
 	invocation = "none"
 	invocation_type = "none"
-	range = 0
 	summon_type = list(/obj/effect/forcefield/cult)
 	summon_lifespan = 200
 
@@ -129,7 +123,7 @@
 /obj/effect/proc_holder/spell/ethereal_jaunt/shift/jaunt_steam(mobloc)
 	return
 
-/obj/effect/proc_holder/spell/targeted/projectile/magic_missile/lesser
+/obj/effect/proc_holder/spell/projectile/magic_missile/lesser
 	name = "Lesser Magic Missile"
 	desc = "This spell fires several, slow moving, magic projectiles at nearby targets."
 	action_background_icon_state = "bg_cult"
@@ -139,7 +133,12 @@
 	invocation = "none"
 	invocation_type = "none"
 	proj_lifespan = 10
-	max_targets = 6
+
+/obj/effect/proc_holder/spell/projectile/magic_missile/lesser/create_new_targeting()
+	var/datum/spell_targeting/targeted/T = new()
+	T.allowed_type = /mob/living
+	T.max_targets = 6
+	return T
 
 /obj/effect/proc_holder/spell/smoke/disable
 	name = "Paralysing Smoke"
