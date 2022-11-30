@@ -108,7 +108,7 @@
 	icon_state = "m_shield_cult"
 	light_color = LIGHT_COLOR_PURE_RED
 
-/obj/effect/proc_holder/spell/targeted/ethereal_jaunt/shift
+/obj/effect/proc_holder/spell/ethereal_jaunt/shift
 	name = "Phase Shift"
 	desc = "This spell allows you to pass through walls"
 	action_icon_state = "phaseshift"
@@ -121,12 +121,12 @@
 	jaunt_in_type = /obj/effect/temp_visual/dir_setting/wraith
 	jaunt_out_type = /obj/effect/temp_visual/dir_setting/wraith/out
 
-/obj/effect/proc_holder/spell/targeted/ethereal_jaunt/shift/do_jaunt(mob/living/target)
+/obj/effect/proc_holder/spell/ethereal_jaunt/shift/do_jaunt(mob/living/target)
 	target.set_light(0)
 	..()
 	target.set_light(2, 3, l_color = SSticker.cultdat ? SSticker.cultdat.construct_glow : LIGHT_COLOR_BLOOD_MAGIC)
 
-/obj/effect/proc_holder/spell/targeted/ethereal_jaunt/shift/jaunt_steam(mobloc)
+/obj/effect/proc_holder/spell/ethereal_jaunt/shift/jaunt_steam(mobloc)
 	return
 
 /obj/effect/proc_holder/spell/targeted/projectile/magic_missile/lesser
@@ -141,7 +141,7 @@
 	proj_lifespan = 10
 	max_targets = 6
 
-/obj/effect/proc_holder/spell/targeted/smoke/disable
+/obj/effect/proc_holder/spell/smoke/disable
 	name = "Paralysing Smoke"
 	desc = "This spell spawns a cloud of paralysing smoke."
 	action_icon_state = "parasmoke"
@@ -151,8 +151,6 @@
 	clothes_req = FALSE
 	invocation = "none"
 	invocation_type = "none"
-	range = -1
-	include_user = 1
 	cooldown_min = 20 //25 deciseconds reduction per rank
 
 	smoke_spread = 3

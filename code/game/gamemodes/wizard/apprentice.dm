@@ -236,7 +236,7 @@
 	desc = "Школа, практикующая разнообразные техники перемещения. Эфирный прыжок, телепортация и блинк заставят возненавидеть назойливого волшебника!"
 
 /datum/magick_school/motion/kit()
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/ethereal_jaunt(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/ethereal_jaunt(null))
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/area_teleport/teleport(null))
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/turf_teleport/blink(null))
 

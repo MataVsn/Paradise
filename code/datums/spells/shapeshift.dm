@@ -1,12 +1,10 @@
-/obj/effect/proc_holder/spell/targeted/shapeshift
+/obj/effect/proc_holder/spell/shapeshift
 	name = "Shapechange"
 	desc = "Take on the shape of another for a time to use their natural abilities. Once you've made your choice it cannot be changed."
 	clothes_req = 0
 	human_req = 0
 	charge_max = 200
 	cooldown_min = 50
-	range = -1
-	include_user = 1
 	invocation = "RAC'WA NO!"
 	invocation_type = "shout"
 	action_icon_state = "shapeshift"
@@ -18,8 +16,11 @@
 		/mob/living/simple_animal/pet/dog/corgi,
 		/mob/living/simple_animal/hostile/construct/armoured)
 
-/obj/effect/proc_holder/spell/targeted/shapeshift/can_cast(mob/user, charge_check, show_message)
-	if(isliving(user))
+/obj/effect/proc_holder/spell/shapeshift/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/shapeshift/cast(list/targets, mob/user = usr)	if(isliving(user))
 		var/mob/living/target = user
 		if(target.weakened || target.stunned)
 			return FALSE
@@ -43,7 +44,7 @@
 		else
 			Shapeshift(M)
 
-/obj/effect/proc_holder/spell/targeted/shapeshift/proc/Shapeshift(mob/living/caster)
+/obj/effect/proc_holder/spell/shapeshift/proc/Shapeshift(mob/living/caster)
 	if(do_after(caster, 2 SECONDS, target = caster))
 		for(var/mob/living/M in caster)
 			if(M.status_flags & GODMODE)
@@ -64,7 +65,7 @@
 		to_chat(caster, "<span class='warning'>You were interrupted!</span>")
 		charge_counter = charge_max
 
-/obj/effect/proc_holder/spell/targeted/shapeshift/proc/Restore(mob/living/shape)
+/obj/effect/proc_holder/spell/shapeshift/proc/Restore(mob/living/shape)
 	var/mob/living/caster
 	for(var/mob/living/M in shape)
 		if(M in current_casters)
@@ -83,7 +84,7 @@
 	shape.mind.transfer_to(caster)
 	qdel(shape) //Gib it maybe ?
 
-/obj/effect/proc_holder/spell/targeted/shapeshift/dragon
+/obj/effect/proc_holder/spell/shapeshift/dragon
 	name = "Dragon Form"
 	desc = "Take on the shape a lesser ash drake."
 	invocation = "RAAAAAAAAWR!"
@@ -93,7 +94,7 @@
 	current_casters = list()
 	possible_shapes = list(/mob/living/simple_animal/hostile/megafauna/dragon/lesser)
 
-/obj/effect/proc_holder/spell/targeted/shapeshift/bats
+/obj/effect/proc_holder/spell/shapeshift/bats
 	name = "Bat Form"
 	desc = "Take on the shape of a swarm of bats."
 	invocation = "none"
@@ -106,7 +107,7 @@
 	current_casters = list()
 	possible_shapes = list(/mob/living/simple_animal/hostile/scarybat/batswarm)
 
-/obj/effect/proc_holder/spell/targeted/shapeshift/hellhound
+/obj/effect/proc_holder/spell/shapeshift/hellhound
 	name = "Lesser Hellhound Form"
 	desc = "Take on the shape of a Hellhound."
 	invocation = "none"
@@ -121,7 +122,7 @@
 	current_casters = list()
 	possible_shapes = list(/mob/living/simple_animal/hostile/hellhound)
 
-/obj/effect/proc_holder/spell/targeted/shapeshift/hellhound/greater
+/obj/effect/proc_holder/spell/shapeshift/hellhound/greater
 	name = "Greater Hellhound Form"
 	shapeshift_type = /mob/living/simple_animal/hostile/hellhound/greater
 	current_shapes = list(/mob/living/simple_animal/hostile/hellhound/greater)
