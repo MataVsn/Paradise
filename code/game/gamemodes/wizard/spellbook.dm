@@ -218,7 +218,7 @@
 
 /datum/spellbook_entry/magicm
 	name = "Magic Missile"
-	spell_type = /obj/effect/proc_holder/spell/targeted/projectile/magic_missile
+	spell_type = /obj/effect/proc_holder/spell/projectile/magic_missile
 	log_name = "MM"
 	category = "Defensive"
 
@@ -230,7 +230,7 @@
 
 /datum/spellbook_entry/sacred_flame
 	name = "Sacred Flame and Fire Immunity"
-	spell_type = /obj/effect/proc_holder/spell/targeted/sacred_flame
+	spell_type = /obj/effect/proc_holder/spell/sacred_flame
 	cost = 1
 	log_name = "SF"
 	category = "Defensive"
@@ -257,7 +257,7 @@
 
 /datum/spellbook_entry/blink
 	name = "Blink"
-	spell_type = /obj/effect/proc_holder/spell/targeted/turf_teleport/blink
+	spell_type = /obj/effect/proc_holder/spell/turf_teleport/blink
 	log_name = "BL"
 	category = "Mobility"
 
@@ -282,7 +282,7 @@
 
 /datum/spellbook_entry/teleport
 	name = "Teleport"
-	spell_type = /obj/effect/proc_holder/spell/targeted/area_teleport/teleport
+	spell_type = /obj/effect/proc_holder/spell/area_teleport/teleport
 	log_name = "TP"
 	category = "Mobility"
 
@@ -290,7 +290,7 @@
 
 /datum/spellbook_entry/shapeshift
 	name = "Shapechange"
-	spell_type = /obj/effect/proc_holder/spell/targeted/shapeshift
+	spell_type = /obj/effect/proc_holder/spell/shapeshift
 	log_name = "SH"
 	category = "Assistance"
 	cost = 2
@@ -870,7 +870,7 @@
 
 //Single Use Spellbooks
 /obj/item/spellbook/oneuse
-	var/spell = /obj/effect/proc_holder/spell/targeted/projectile/magic_missile //just a placeholder to avoid runtimes if someone spawned the generic
+	var/spell = /obj/effect/proc_holder/spell/projectile/magic_missile //just a placeholder to avoid runtimes if someone spawned the generic
 	var/spellname = "sandbox"
 	var/used = 0
 	name = "spellbook of "
@@ -913,7 +913,7 @@
 	return
 
 /obj/item/spellbook/oneuse/fireball
-	spell = /obj/effect/proc_holder/spell/targeted/click/fireball
+	spell = /obj/effect/proc_holder/spell/click/fireball
 	spellname = "fireball"
 	icon_state = "bookfireball"
 	desc = "This book feels warm to the touch."

@@ -212,9 +212,9 @@
 	desc = "Школа, практикующие заклинания для выживания и исцеления травм, с созданием защитного барьера для самозащиты."
 
 /datum/magick_school/healer/kit()
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/charge(null))
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/summonitem(null))
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/forcewall(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/charge(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/summonitem(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/forcewall(null))
 	owner.equip_or_collect(new /obj/item/gun/magic/staff/healing(owner), slot_r_hand)
 
 	//Нацепляем белый балахон
@@ -262,7 +262,7 @@
 
 /datum/magick_school/sabotage/kit()
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/emplosion/disable_tech(null))
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/charge(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/charge(null))
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/summonitem(null))
 	owner.equip_or_collect(new /obj/item/gun/magic/staff/animate(owner), slot_r_hand)
 
@@ -285,8 +285,8 @@
 	desc = "Школа, практикующая заклинания защиты, не допускающая допуск неприятеля и заставляющая его держать дистанцию!"
 
 /datum/magick_school/defense/kit()
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/forcewall(null))
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/forcewall/greater(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/forcewall(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/forcewall/greater(null))
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/aoe_turf/repulse(null))
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/sacred_flame(null))
 	ADD_TRAIT(owner, RESISTHOT, SUMMON_MAGIC)	//sacred_flame из-за не совсем верной выдачи, без этого, не выдает защиту от огня.
@@ -459,9 +459,9 @@
 	desc = "Старая школа, практикующая заклинания на нанесении ущерба."
 
 /datum/magick_school/destruction/kit()	//старый набор
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/projectile/magic_missile(null))
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/click/fireball(null))
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/lightning(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/projectile/magic_missile(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/click/fireball(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/lightning(null))
 
 	//Стандартный костюм мага-воителя, который есть в башне волшебника и так.
 	owner.equip_or_collect(new /obj/item/clothing/suit/wizrobe/magusred(owner), slot_wear_suit)
