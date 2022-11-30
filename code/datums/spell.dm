@@ -73,7 +73,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 	update_icon()
 
 /obj/effect/proc_holder/spell
-	name = "Spell"
+	name = "Spell" // Only rename this if the spell you're making is not abstract
 	desc = "A wizard spell"
 	panel = "Spells"//What panel the proc holder needs to go on.
 	density = 0
@@ -86,6 +86,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 	var/charge_max = 100 //recharge time in deciseconds if charge_type = "recharge" or starting charges if charge_type = "charges"
 	var/starts_charged = TRUE //Does this spell start ready to go?
 	var/charge_counter = 0 //can only cast spells if it equals recharge, ++ each decisecond if charge_type = "recharge" or -- each cast if charge_type = "charges"
+	var/should_recharge_after_cast = TRUE
 	var/still_recharging_msg = "<span class='notice'>The spell is still recharging.</span>"
 
 	var/holder_var_type = "bruteloss" //only used if charge_type equals to "holder_var"
@@ -140,11 +141,11 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 	var/datum/spell_targeting/targeting
 	/// List with the targeting datums per spell type. Key = src.type, value = the targeting datum created by create_new_targeting()
 	var/static/list/targeting_datums = list()
-	/// If the ability is for vampires
-	var/vampire_ability = FALSE
-	var/required_blood = 0
 	var/gain_desc = null
-	var/deduct_blood_on_cast = TRUE
+	/// Which spell_handler is used in addition to the normal spells behaviour, can be null. Set this in create_new_handler if needed
+	var/datum/spell_handler/custom_handler
+	/// List with the handler datums per spell type. Key = src.type, value = the handler datum created by create_new_handler()
+	var/static/list/spell_handlers = list()
 
 /* Checks if the user can cast the spell
  * @param charge_check If the proc should do the cooldown check
@@ -152,6 +153,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
  * @param user The caster of the spell
 */
 /obj/effect/proc_holder/spell/proc/cast_check(charge_check = TRUE, start_recharge = TRUE, mob/user = usr) //checks if the spell can be cast based on its settings; skipcharge is used when an additional cast_check is called inside the spell
+	// SHOULD_NOT_OVERRIDE(TRUE) Todo for another refactor
 	if(!can_cast(user, charge_check, TRUE))
 		return FALSE
 
@@ -181,6 +183,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
  * * user - Who used this spell?
  */
 /obj/effect/proc_holder/spell/proc/spend_spell_cost(mob/user)
+	SHOULD_CALL_PARENT(TRUE)
 	switch(charge_type)
 		if("recharge")
 			charge_counter = 0 //doesn't start recharging until the targets selecting ends
@@ -188,6 +191,9 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 			charge_counter-- //returns the charge if the targets selecting fails
 		if("holdervar")
 			adjust_var(user, holder_var_type, holder_var_amount)
+
+	custom_handler?.spend_spell_cost(user, src)
+
 	if(action)
 		action.UpdateButtonIcon()
 
@@ -226,6 +232,11 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 		targeting_datums[type] = create_new_targeting()
 		if(!targeting_datums[type])
 			stack_trace("Spell of type [type] did not implement create_new_targeting")
+	if(isnull(spell_handlers[type]))
+		spell_handlers[type] = create_new_handler()
+
+	if(spell_handlers[type] != NONE)
+		custom_handler = spell_handlers[type]
 	targeting = targeting_datums[type]
 
 
@@ -240,7 +251,14 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 /obj/effect/proc_holder/spell/proc/create_new_targeting()
 	RETURN_TYPE(/datum/spell_targeting)
 	return
-
+/**
+ * Creates and returns the handler datum for this spell type.
+ * Override this if you want a custom spell handler.
+ * Should return a value of type [/datum/spell_handler] or NONE
+ */
+/obj/effect/proc_holder/spell/proc/create_new_handler()
+	RETURN_TYPE(/datum/spell_handler)
+	return NONE
 
 /obj/effect/proc_holder/spell/Click()
 	//SHOULD_NOT_OVERRIDE(TRUE)
@@ -293,7 +311,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 	if(!cast_check(TRUE, TRUE, user))
 		return
 
-	perform(targets, user=user)
+	perform(targets, should_recharge_after_cast, user)
 
 /obj/effect/proc_holder/spell/proc/start_recharge()
 	if(action)
@@ -318,7 +336,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
  * * user - The caster of the spell
  */
 
-/obj/effect/proc_holder/spell/proc/perform(list/targets, recharge = 1, mob/user = usr) //if recharge is started is important for the trigger spells
+/obj/effect/proc_holder/spell/proc/perform(list/targets, recharge = TRUE, mob/user = usr) //if recharge is started is important for the trigger spells
+	SHOULD_NOT_OVERRIDE(TRUE)
 	before_cast(targets)
 	invocation()
 	if(user && user.ckey)
@@ -337,7 +356,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 		critfail(targets)
 	else
 		cast(targets, user = user)
-	after_cast(targets)
+	after_cast(targets, user)
 	if(action)
 		action.UpdateButtonIcon()
 
@@ -351,9 +370,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 	return
 
 /obj/effect/proc_holder/spell/proc/before_cast(list/targets)
-	if(vampire_ability)
-		if(!before_cast_vampire(targets))
-			return
+	SHOULD_CALL_PARENT(TRUE)
 	if(overlay)
 		for(var/atom/target in targets)
 			var/location
@@ -369,7 +386,10 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 			spawn(overlay_lifespan)
 				qdel(spell)
 
-/obj/effect/proc_holder/spell/proc/after_cast(list/targets)
+	custom_handler?.before_cast(targets, user, src)
+
+/obj/effect/proc_holder/spell/proc/after_cast(list/targets, mob/user)
+	SHOULD_CALL_PARENT(TRUE)
 	for(var/atom/target in targets)
 		var/location
 		if(istype(target,/mob/living))
@@ -393,6 +413,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 				var/datum/effect_system/smoke_spread/sleeping/smoke = new
 				smoke.set_up(smoke_amt, 0, location) // same here
 				smoke.start()
+	custom_handler?.after_cast(targets, user, src)
+
 /**
  * The proc where the actual spell gets cast.
  *
@@ -414,6 +436,9 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 			charge_counter++
 		if("holdervar")
 			adjust_var(user, holder_var_type, -holder_var_amount)
+
+	custom_handler?.revert_cast(user, src)
+
 	if(action)
 		action.UpdateButtonIcon()
 
@@ -516,7 +541,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 		var/mob/living/carbon/human/H = user
 		var/clothcheck = locate(/obj/effect/proc_holder/spell/noclothes) in user.mob_spell_list
 		var/clothcheck2 = user.mind && (locate(/obj/effect/proc_holder/spell/noclothes) in user.mind.spell_list)
-		if(clothes_req && !clothcheck && !clothcheck2 && !vampire_ability) //clothes check
+		if(clothes_req && !clothcheck && !clothcheck2) //clothes check
 			var/obj/item/clothing/robe = H.wear_suit
 			var/obj/item/clothing/hat = H.head
 			var/obj/item/clothing/shoes = H.shoes
@@ -529,7 +554,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 					to_chat(user, "<span class='notice'>Your outfit isn't magical enough, you should put on your robe and wizard hat, as well as your sandals.</span>")
 				return FALSE
 	else
-		if(clothes_req || human_req || vampire_ability)
+		if(clothes_req || human_req)
 			if(show_message)
 				to_chat(user, "<span class='notice'>This spell can only be cast by humans!</span>")
 			return FALSE
@@ -538,32 +563,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 				to_chat(user, "<span class='notice'>This spell can only be cast by physical beings!</span>")
 			return FALSE
 
-	if(vampire_ability)
-
-		var/datum/vampire/vampire = user.mind.vampire
-
-		if(!vampire)
-			return FALSE
-
-		var/fullpower = vampire.get_ability(/datum/vampire_passive/full)
-
-		if(user.stat >= DEAD)
-			if(show_message)
-				to_chat(user, "<span class='warning'>Not while you're dead!</span>")
-			return FALSE
-
-		if(vampire.nullified >= VAMPIRE_COMPLETE_NULLIFICATION && !fullpower) // above 100 nullification vampire powers are useless
-			if(show_message)
-				to_chat(user, "<span class='warning'>Something is blocking your powers!</span>")
-			return FALSE
-		if(vampire.bloodusable < required_blood)
-			if(show_message)
-				to_chat(user, "<span class='warning'>You require at least [required_blood] units of usable blood to do that!</span>")
-			return FALSE
-		//chapel check
-		if(istype(get_area(user), /area/chapel) && !fullpower)
-			if(show_message)
-				to_chat(user, "<span class='warning'>Your powers are useless on this holy ground.</span>")
-			return FALSE
+	if(custom_handler && !custom_handler.can_cast(user, charge_check, show_message, src))
+		return FALSE
 
 	return TRUE

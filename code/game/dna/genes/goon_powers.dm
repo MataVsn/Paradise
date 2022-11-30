@@ -235,8 +235,8 @@
 	action_icon_state = "genetic_eat"
 
 /obj/effect/proc_holder/spell/eat/create_new_targeting()
-	var/datum/spell_targeting/matter_eater/M = new()
-	return M
+	return new /datum/spell_targeting/matter_eater
+
 
 /obj/effect/proc_holder/spell/eat/can_cast(mob/user = usr, charge_check = TRUE, show_message = FALSE)
 	. = ..()

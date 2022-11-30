@@ -6,6 +6,7 @@
 #include "map_templates.dm"
 #include "reagent_id_typos.dm"
 #include "spawn_humans.dm"
+#include "spell_targeting_test.dm"
 #include "sql.dm"
 #include "subsystem_init.dm"
 #include "timer_sanity.dm"
