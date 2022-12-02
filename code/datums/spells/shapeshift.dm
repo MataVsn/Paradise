@@ -19,16 +19,7 @@
 /obj/effect/proc_holder/spell/shapeshift/create_new_targeting()
 	return new /datum/spell_targeting/self
 
-
-/obj/effect/proc_holder/spell/shapeshift/cast(list/targets, mob/user = usr)	if(isliving(user))
-		var/mob/living/target = user
-		if(target.weakened || target.stunned)
-			return FALSE
-	if(!isturf(user.loc) && !length(current_casters)) //Can't use inside of things, such as a mecha
-		return FALSE
-	. = ..()
-
-/obj/effect/proc_holder/spell/targeted/shapeshift/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/shapeshift/cast(list/targets, mob/user = usr)
 	for(var/mob/living/M in targets)
 		if(!shapeshift_type)
 			var/list/animal_list = list()

@@ -2,7 +2,7 @@
 	name = "Reproduce"
 	desc = "Split yourself in half making a new morph. Can only be used while on a floor. Makes you temporarily unable to vent crawl."
 	hunger_cost = 150 // 5 humans
-	base_cooldown = 30 SECONDS
+	charge_max = 30 SECONDS
 	action_icon_state = "morph_reproduce"
 	create_attack_logs = FALSE
 

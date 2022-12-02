@@ -53,6 +53,11 @@
 	clothes_req = 0
 	range = 5
 
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_dash/create_new_targeting()
+	var/datum/spell_targeting/targeted/T = new()
+	T.range = 5
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_dash/cast(list/targets, mob/user)
 	var/turf/T = get_turf(get_step(user,user.dir))
 	for(var/mob/living/M in T.contents)
@@ -217,7 +222,11 @@
 	action_background_icon_state = "bg_hulk"
 	charge_max = 130
 	clothes_req = 0
-	range = 5
+
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_jump/create_new_targeting()
+	var/datum/spell_targeting/targeted/T = new()
+	T.range = 5
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_jump/cast(list/targets , mob/user)
 	//for(var/turf/T in targets)
@@ -329,6 +338,11 @@
 	charge_max = 250
 	clothes_req = 0
 	range = 2
+
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_honk/create_new_targeting()
+	var/datum/spell_targeting/targeted/T = new()
+	T.range = 2
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_honk/cast(list/target,mob/user)
 	if (user.incapacitated())

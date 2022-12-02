@@ -235,6 +235,7 @@
 	selection_deactivated_message	= "<span class='notice'>Your mind relaxes.</span>"
 
 /obj/effect/proc_holder/spell/enthrall/create_new_targeting()
+	var/datum/spell_targeting/click/T = new()
 	T.range = 1
 	var/datum/spell_targeting/click/T = new()
 	T.click_radius = -1
@@ -680,7 +681,8 @@
 	T.range = 1
 	return T
 
-/obj/effect/proc_holder/spell/shadowling_extend_shuttle/cast_check(charge_check = TRUE, start_recharge = TRUE, mob/living/user = usr)	if(user.incorporeal_move == INCORPOREAL_NORMAL)
+/obj/effect/proc_holder/spell/shadowling_extend_shuttle/cast_check(charge_check = TRUE, start_recharge = TRUE, mob/living/user = usr)
+	if(user.incorporeal_move == INCORPOREAL_NORMAL)
 		return FALSE
 	. = ..()
 
@@ -820,7 +822,8 @@
 	return new /datum/spell_targeting/self
 
 
-/obj/effect/proc_holder/spell/shadowling_phase_shift/cast(list/targets, mob/user = usr)	var/mob/living/simple_animal/ascendant_shadowling/SHA = user
+/obj/effect/proc_holder/spell/shadowling_phase_shift/cast(list/targets, mob/user = usr)
+	var/mob/living/simple_animal/ascendant_shadowling/SHA = user
 	for(SHA in targets)
 		SHA.phasing = !SHA.phasing
 		if(SHA.phasing)
@@ -881,7 +884,8 @@
 	return new /datum/spell_targeting/self
 
 
-/obj/effect/proc_holder/spell/shadowlingAscendantTransmit/cast(list/targets, mob/user = usr)	for(var/mob/living/simple_animal/ascendant_shadowling/target in targets)
+/obj/effect/proc_holder/spell/shadowlingAscendantTransmit/cast(list/targets, mob/user = usr)
+	for(var/mob/living/simple_animal/ascendant_shadowling/target in targets)
 		var/text = stripped_input(target, "What do you want to say to everything on and near [station_name()]?.", "Transmit to World", "")
 		if(!text)
 			return

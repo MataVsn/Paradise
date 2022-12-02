@@ -6,7 +6,7 @@
 	try_auto_target = TRUE
 	/// How big the radius around the clicked atom is to find clicked_atom suitable target. -1 is only the selected atom is considered
 	var/click_radius = 1
-	var/random_target_priority = TARGET_CLOSEST
+	var/random_target_priority = SPELL_TARGET_CLOSEST
 
 
 /datum/spell_targeting/click/choose_targets(mob/user, obj/effect/proc_holder/spell/spell, params, atom/clicked_atom)

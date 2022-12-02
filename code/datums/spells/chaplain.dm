@@ -11,7 +11,6 @@
 
 	selection_activated_message = "<span class='notice'>You prepare a blessing. Click on a target to start blessing.</span>"
 	selection_deactivated_message = "<span class='notice'>The crew will be blessed another time.</span>"
-	range = 1
 	cooldown_min = 20
 	action_icon_state = "shield"
 

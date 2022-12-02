@@ -369,7 +369,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell))
 /obj/effect/proc_holder/spell/proc/write_custom_logs(list/targets, mob/user)
 	return
 
-/obj/effect/proc_holder/spell/proc/before_cast(list/targets)
+/obj/effect/proc_holder/spell/proc/before_cast(list/targets, mob/user)
 	SHOULD_CALL_PARENT(TRUE)
 	if(overlay)
 		for(var/atom/target in targets)

@@ -34,7 +34,8 @@ GLOBAL_LIST_INIT(boo_phrases, list(
 	T.try_auto_target = FALSE
 	return T
 
-/obj/effect/proc_holder/spell/boo/cast(list/targets, mob/user = usr)	var/atom/target = targets[1]
+/obj/effect/proc_holder/spell/boo/cast(list/targets, mob/user = usr)
+	var/atom/target = targets[1]
 	ASSERT(istype(target))
 
 	if(target.get_spooked())

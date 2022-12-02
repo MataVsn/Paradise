@@ -16,7 +16,6 @@
 	playsound(loc, pick(hit_sounds), 25, 1, -1)
 	if(isliving(user))
 		var/mob/living/L = user
-		L.apply_status_effect(STATUS_EFFECT_EXERCISED)
 
 /obj/structure/weightmachine
 	name = "weight machine"
@@ -51,8 +50,6 @@
 		var/finishmessage = pick("You feel stronger!","You feel like you can take on the world!","You feel robust!","You feel indestructible!")
 		icon_state = initial(icon_state)
 		to_chat(user, finishmessage)
-		user.apply_status_effect(STATUS_EFFECT_EXERCISED)
-
 /obj/structure/weightmachine/stacklifter
 	icon = 'icons/goonstation/objects/fitness.dmi'
 	icon_state = "fitnesslifter"
