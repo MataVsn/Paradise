@@ -129,7 +129,7 @@
 			H.set_species(/datum/species/skeleton)
 		if(2)
 			if(user.mind)
-				if(locate(/obj/effect/proc_holder/spell/targeted/shapeshift/dragon) in user.mind.spell_list)
+				if(locate(/obj/effect/proc_holder/spell/shapeshift/dragon) in user.mind.spell_list)
 					to_chat(user, "<span class='danger'>Familiar power courses through you! But you already can shift into dragons...")
 				else
 					to_chat(user, "<span class='danger'>Power courses through you! You can now shift your form at will.")

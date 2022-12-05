@@ -1,7 +1,7 @@
 /proc/isvampirethrall(mob/living/M)
 	return istype(M) && M.mind && SSticker.mode && (M.mind in SSticker.mode.vampire_enthralled)
 
-/obj/effect/proc_holder/spell/targeted/enthrall
+/obj/effect/proc_holder/spell/enthrall
 	name = "Enthrall (150)"
 	desc = "You use a large portion of your power to sway those loyal to none to be loyal to you only."
 	gain_desc = "You have gained the ability to thrall people to your will."
@@ -14,7 +14,7 @@
 	school = "vampire"
 	action_background_icon_state = "bg_vampire"
 
-/obj/effect/proc_holder/spell/targeted/enthrall/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/enthrall/cast(list/targets, mob/user = usr)
 	var/datum/vampire/vampire = user.mind.vampire
 	for(var/mob/living/target in targets)
 		user.visible_message("<span class='warning'>[user] bites [target]'s neck!</span>", "<span class='warning'>You bite [target]'s neck and begin the flow of power.</span>")
@@ -29,7 +29,7 @@
 				revert_cast(user)
 				to_chat(user, "<span class='warning'>You or your target either moved or you dont have enough usable blood.</span>")
 
-/obj/effect/proc_holder/spell/targeted/enthrall/proc/can_enthrall(mob/living/user, mob/living/carbon/C)
+/obj/effect/proc_holder/spell/enthrall/proc/can_enthrall(mob/living/user, mob/living/carbon/C)
 	var/enthrall_safe = 0
 	for(var/obj/item/implant/mindshield/L in C)
 		if(L && L.implanted)
@@ -59,7 +59,7 @@
 		return FALSE
 	return TRUE
 
-/obj/effect/proc_holder/spell/targeted/enthrall/proc/handle_enthrall(mob/living/user, mob/living/carbon/human/H)
+/obj/effect/proc_holder/spell/enthrall/proc/handle_enthrall(mob/living/user, mob/living/carbon/human/H)
 	if(!istype(H))
 		return 0
 	var/ref = "\ref[user.mind]"

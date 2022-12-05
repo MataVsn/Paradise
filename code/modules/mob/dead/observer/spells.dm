@@ -9,7 +9,7 @@ GLOBAL_LIST_INIT(boo_phrases, list(
 	"It feels like someone's standing behind you.",
 ))
 
-/obj/effect/proc_holder/spell/targeted/click/boo
+/obj/effect/proc_holder/spell/click/boo
 	name = "Boo!"
 	desc = "Fuck with the living."
 	selection_deactivated_message	= "<span class='shadowling'>Your presence will not be known. For now.</span>"

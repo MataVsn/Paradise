@@ -374,7 +374,7 @@
 		L.mutations |= MUTE
 		L.status_flags |= GODMODE
 		L.mind.transfer_to(holder_animal)
-		var/obj/effect/proc_holder/spell/targeted/exit_possession/P = new /obj/effect/proc_holder/spell/targeted/exit_possession
+		var/obj/effect/proc_holder/spell/exit_possession/P = new /obj/effect/proc_holder/spell/exit_possession
 		holder_animal.mind.AddSpell(P)
 		holder_animal.verbs -= /mob/living/verb/pulled
 

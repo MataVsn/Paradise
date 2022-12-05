@@ -3,7 +3,7 @@
 /datum/dna/gene/basic/grant_spell/morph
 	name = "Morphism"
 	desc = "Enables the subject to reconfigure their appearance to that of any human."
-	spelltype =/obj/effect/proc_holder/spell/targeted/morph
+	spelltype =/obj/effect/proc_holder/spell/morph
 	activation_messages = list("Your body feels if can alter its appearance.")
 	deactivation_messages = list("Your body doesn't feel capable of altering its appearance.")
 	instability = GENE_INSTABILITY_MINOR

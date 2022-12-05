@@ -1,7 +1,6 @@
 //Status effects are used to apply temporary or permanent effects to mobs. Mobs are aware of their status effects at all times.
 //This file contains their code, plus code for applying and removing them.
 //When making a new status effect, add a define to status_effects.dm in __DEFINES for ease of use!
-
 /datum/status_effect
 	var/id = "effect" //Used for screen alerts.
 	var/duration = -1 //How long the status effect lasts in DECISECONDS. Enter -1 for an effect that never ends unless removed through some means.
@@ -147,7 +146,7 @@
 // STACKING EFFECTS //
 //////////////////////
 
-/datum/status_effect/stacking
+/datum/status_effect
 	id = "stacking_base"
 	duration = -1 //removed under specific conditions
 	alert_type = null

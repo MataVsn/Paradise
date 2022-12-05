@@ -53,7 +53,7 @@
 		still_recharging_msg = "<span class='warning'>You'll have to wait before you can give your vow of silence again!</span>"
 	..()
 
-/obj/effect/proc_holder/spell/targeted/mime/speak/cast(list/targets,mob/user = usr)
+/obj/effect/proc_holder/spell/mime/speak/cast(list/targets,mob/user = usr)
 	for(var/mob/living/carbon/human/H in targets)
 		H.mind.miming=!H.mind.miming
 		if(H.mind.miming)
@@ -112,7 +112,7 @@
 			to_chat(user, "<span class='notice'>Holster your fingers first.</span>")
 			revert_cast(user)
 
-/obj/effect/proc_holder/spell/targeted/mime/fingergun/fake
+/obj/effect/proc_holder/spell/mime/fingergun/fake
 	desc = "Pretend you're shooting bullets out of your fingers! 6 bullets available per cast. Use your fingers to holster them manually."
 	gun = /obj/item/gun/projectile/revolver/fingergun/fake
 

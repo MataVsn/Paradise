@@ -51,7 +51,6 @@
 	action_background_icon_state = "bg_hulk"
 	charge_max = 130
 	clothes_req = 0
-	range = 5
 
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_dash/create_new_targeting()
 	var/datum/spell_targeting/targeted/T = new()
@@ -337,7 +336,6 @@
 	action_background_icon_state = "bg_hulk"
 	charge_max = 250
 	clothes_req = 0
-	range = 2
 
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_honk/create_new_targeting()
 	var/datum/spell_targeting/targeted/T = new()
@@ -376,7 +374,11 @@
 	action_background_icon_state = "bg_hulk"
 	charge_max = 350
 	clothes_req = 0
-	range = 2
+
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_joke/create_new_targeting()
+	var/datum/spell_targeting/targeted/T = new()
+	T.range = 2
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_joke/cast(list/targets,mob/user)
 	if (user.incapacitated())
@@ -407,7 +409,11 @@
 	action_background_icon_state = "bg_hulk"
 	charge_max = 200
 	clothes_req = 0
-	range = 2
+
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_mill/create_new_targeting()
+	var/datum/spell_targeting/targeted/T = new()
+	T.range = 2
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_mill/cast(list/targets,mob/user = user)
 	if (user.lying || user.incapacitated())
@@ -451,19 +457,24 @@
 		M.adjust_fire_stacks(20)
 		M.IgniteMob()
 
-/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_spit
+/obj/effect/proc_holder/spell/hulk/hulk_spit
 	name = "Fire Spit"
 	desc = "Вы харкаете во врага зеленой соплей и поджигаете его."
 	panel = "Hulk"
 	invocation_type = "shout"
 	action_icon_state = "harchok_hulk"
 	action_background_icon_state = "bg_hulk"
-	allowed_type = /atom
 	charge_max = 250
 	clothes_req = 0
-	range = 20
 
-/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_spit/cast(list/targets,mob/user)
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_spit/create_new_targeting()
+	var/datum/spell_targeting/targeted/T = new()
+	T.allowed_type = /atom
+	T.range = 20
+	return T
+
+
+/obj/effect/proc_holder/spell/hulk/hulk_spit/cast(list/targets,mob/user)
 	var/target = targets[1]
 	if (user.lying || user.incapacitated())
 		to_chat(user, "<span class='warning'>You can't do that right now!</span>")
@@ -483,19 +494,23 @@
 
 //Laser
 
-/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_lazor
+/obj/effect/proc_holder/spell/hulk/hulk_lazor
 	name = "LazorZ"
 	desc = "Вы стреляете из глаз слабеньким лазером. Может помочь, если хитрые СБшники прячутся за стеклами."
 	panel = "Hulk"
 	invocation_type = "shout"
 	action_icon_state = "lazer_hulk"
 	action_background_icon_state = "bg_hulk"
-	allowed_type = /atom
 	charge_max = 70
 	clothes_req = 0
-	range = 20
 
-/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_lazor/cast(list/targets,mob/user)
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_lazor/create_new_targeting()
+	var/datum/spell_targeting/targeted/T = new()
+	T.allowed_type = /atom
+	T.range = 20
+	return T
+
+/obj/effect/proc_holder/spell/hulk/hulk_lazor/cast(list/targets,mob/user)
 	var/target = targets[1]
 	if (user.lying || user.incapacitated())
 		to_chat(user, "<span class='warning'>You can't right now!</span>")

@@ -19,8 +19,8 @@
 
 /datum/vampire_subclass/dantalion
 	name = "dantalion"
-	standard_powers = list(/obj/effect/proc_holder/spell/targeted/enthrall = 150,
-							/obj/effect/proc_holder/spell/targeted/thrall_commune = 150,)
+	standard_powers = list(/obj/effect/proc_holder/spell/enthrall = 150,
+							/obj/effect/proc_holder/spell/thrall_commune = 150,)
 	fully_powered_abilities = list(/datum/vampire_passive/full)
 /datum/vampire_subclass/umbrae
 	name = "umbrae"
