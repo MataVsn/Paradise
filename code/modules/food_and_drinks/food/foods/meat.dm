@@ -101,6 +101,12 @@
 	icon_state = "bearmeat"
 	foodtype = MEAT | TOXIC | RAW
 
+/obj/item/reagent_containers/food/snacks/monstermeat/mothroach
+	name = "mothroach meat"
+	desc = "A light slab of meat."
+	icon_state = "mothroachmeat"
+	foodtype = RAW | MEAT | GROSS
+
 /obj/item/reagent_containers/food/snacks/monstermeat/bearmeat
 	name = "bear meat"
 	desc = "A very manly slab of meat."

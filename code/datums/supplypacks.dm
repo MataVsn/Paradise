@@ -1252,6 +1252,12 @@ GLOBAL_LIST_INIT(all_supply_groups, list(SUPPLY_EMERGENCY,SUPPLY_SECURITY,SUPPLY
 	containertype = /obj/structure/closet/critter/deer
 	containername = "deer crate"
 
+/datum/supply_packs/organic/mothroach
+	name = "mothroach Crate"
+	cost = 30
+	containertype = /obj/structure/closet/critter/mothroach
+	containername = "mothroach crate"
+
 ////// hippy gear
 
 /datum/supply_packs/organic/hydroponics // -- Skie
