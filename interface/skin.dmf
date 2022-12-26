@@ -214,7 +214,7 @@ window "outputwindow"
 		title = "Output window"
 		can-close = false
 		can-minimize = false
-		is-pane = true
+		is-pane = trueasd
 	elem "browseroutput"
 		type = BROWSER
 		pos = 0,0
