@@ -21,7 +21,8 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 	/mob/living/silicon/ai/proc/toggle_camera_light,
 	/mob/living/silicon/ai/proc/botcall,
 	/mob/living/silicon/ai/proc/change_arrival_message,
-	/mob/living/silicon/ai/proc/arrivals_announcement
+	/mob/living/silicon/ai/proc/arrivals_announcement,
+	/mob/living/silicon/ai/proc/ai_change_voice,
 ))
 
 //Not sure why this is necessary...
@@ -107,7 +108,7 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 
 	/// If our AI doesn't want to be the arrivals announcer, this gets set to FALSE.
 	var/announce_arrivals = TRUE
-	var/arrivalmsg = "$name, $rank, has arrived on the station."
+	var/arrivalmsg = "$name, $rank, прибыл на станцию."
 
 	var/list/all_eyes = list()
 
@@ -121,8 +122,8 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 
 /mob/living/silicon/ai/New(loc, var/datum/ai_laws/L, var/obj/item/mmi/B, var/safety = 0)
 	announcement = new()
-	announcement.title = "A.I. Announcement"
-	announcement.announcement_type = "A.I. Announcement"
+	announcement.title = "Оповещение ИИ"
+	announcement.announcement_type = "Оповещение ИИ"
 	announcement.announcer = name
 	announcement.newscast = 0
 
@@ -1144,6 +1145,12 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 	set category = "AI Commands"
 	toggle_sensor_mode()
 
+/mob/living/silicon/ai/proc/ai_change_voice()
+	set name = "Change Voice"
+	set desc = "Express yourself!"
+	set category = "AI Commands"
+	change_voice()
+
 /mob/living/silicon/ai/proc/arrivals_announcement()
 	set name = "Toggle Arrivals Announcer"
 	set desc = "Change whether or not you wish to announce arrivals."
@@ -1369,6 +1376,32 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 
 /mob/living/silicon/ai/proc/camera_visibility(mob/camera/aiEye/moved_eye)
 	GLOB.cameranet.visibility(moved_eye, client, all_eyes)
+
+/mob/living/silicon/ai/var/current_camera = 0
+
+/mob/living/silicon/ai/proc/check_for_binded_cameras(client/user)
+	if(!length(stored_locations))
+		to_chat(user, "<span class='warning'>You have no stored camera positions</span>")
+		return FALSE
+	return TRUE
+
+/mob/living/silicon/ai/proc/update_binded_camera(client/user)
+	var/camname
+	camname = stored_locations[current_camera]
+	ai_goto_location(camname)
+	to_chat(user, "<span class='notice'>Now you on camera position: [camname]</span>")
+
+/mob/living/silicon/ai/proc/current_camera_next(client/user)
+	if(current_camera >= length(stored_locations))
+		current_camera = 1
+	else
+		current_camera += 1
+
+/mob/living/silicon/ai/proc/current_camera_back(client/user)
+	if(current_camera <= 1)
+		current_camera = length(stored_locations)
+	else
+		current_camera -= 1
 
 /mob/living/silicon/ai/handle_fire()
 	return

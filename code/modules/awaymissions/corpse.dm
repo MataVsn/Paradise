@@ -162,6 +162,12 @@
 		uses--
 	if(!permanent && !uses)
 		qdel(src)
+	if(plr)
+		for(var/i in 1 to 10)
+			if(M.change_voice())
+				break
+	else
+		M.tts_seed = pick(SStts.tts_seeds)
 
 // Base version - place these on maps/templates.
 /obj/effect/mob_spawn/human
@@ -216,7 +222,7 @@
 	if(!mob_name)
 		mob_name = id_job
 	return ..()
-	
+
 /obj/effect/mob_spawn/human/use_prefs_prompt(mob/user)
 	if(allow_prefs_prompt)
 		if(!(user.client))
@@ -282,7 +288,8 @@
 		H.equipOutfit(outfit)
 		for(var/del_type in del_types)
 			var/obj/item/I = locate(del_type) in H
-			qdel(I)
+			if(I)
+				qdel(I)
 
 		if(disable_pda)
 			// We don't want corpse PDAs to show up in the messenger list.

@@ -6,6 +6,7 @@
 	var/list/species_restricted = null //Only these species can wear this kit.
 	var/scan_reagents = 0 //Can the wearer see reagents while it's equipped?
 	var/gunshot_residue //Used by forensics.
+	var/is_improoved_by_potion = FALSE //used for xenobio potions
 
 	/*
 		Sprites used when the clothing item is refit. This is done by setting icon_override.
@@ -35,6 +36,7 @@
 	var/magical = FALSE
 	var/dyeable = FALSE
 	w_class = WEIGHT_CLASS_SMALL
+
 
 /obj/item/clothing/proc/weldingvisortoggle(mob/user) //proc to toggle welding visors on helmets, masks, goggles, etc.
 	if(!can_use(user))
@@ -564,6 +566,8 @@ BLIND     // can't see anything
 	var/ignore_suitadjust = 1
 	var/adjust_flavour = null
 	var/list/hide_tail_by_species = null
+	max_integrity = 400
+	integrity_failure = 160
 
 	sprite_sheets = list(
 		"Monkey" = 'icons/mob/species/monkey/suit.dmi',

@@ -184,8 +184,12 @@ GLOBAL_LIST_EMPTY(channel_to_radio_key)
 
 /mob/living/custom_emote(var/m_type=EMOTE_VISUAL,var/message = null)
 	if(client)
+		if(last_emote == "me")
+			if(handle_emote_CD(10) == 1)
+				return
+		last_emote = "me"
 		client.check_say_flood(5)
-		if(client.prefs.muted & MUTE_IC)
+		if(client?.prefs.muted & MUTE_IC)
 			to_chat(src, "<span class='danger'>You cannot speak in IC (Muted).</span>")
 			return
 	. = ..()
@@ -193,12 +197,12 @@ GLOBAL_LIST_EMPTY(channel_to_radio_key)
 /mob/living/say(var/message, var/verb = "says", var/sanitize = TRUE, var/ignore_speech_problems = FALSE, var/ignore_atmospherics = FALSE)
 	if(client)
 		client.check_say_flood(5)
-		if(client.prefs.muted & MUTE_IC)
+		if(client?.prefs.muted & MUTE_IC)
 			to_chat(src, "<span class='danger'>You cannot speak in IC (Muted).</span>")
 			return
 
 	if(sanitize)
-		message = trim_strip_html_properly(message)
+		message = trim_strip_html_properly(message, 512)
 
 	if(stat)
 		if(stat == DEAD)
@@ -218,6 +222,10 @@ GLOBAL_LIST_EMPTY(channel_to_radio_key)
 			message = copytext_char(message, 3)
 
 	message = trim_left(message)
+
+	var/ending = copytext(message, length(message))
+	if(!(ending in list("!", "?", ",", ".")))
+		message += "."
 
 	//parse the language code and consume it
 	var/list/message_pieces = parse_languages(message)
@@ -372,7 +380,7 @@ GLOBAL_LIST_EMPTY(channel_to_radio_key)
 /mob/living/emote(act, type, message, force) //emote code is terrible, this is so that anything that isn't already snowflaked to shit can call the parent and handle emoting sanely
 	if(client)
 		client.check_say_flood(5)
-		if(client.prefs.muted & MUTE_IC)
+		if(client?.prefs.muted & MUTE_IC)
 			to_chat(src, "<span class='danger'>You cannot speak in IC (Muted).</span>")
 			return
 
@@ -391,7 +399,14 @@ GLOBAL_LIST_EMPTY(channel_to_radio_key)
 		to_chat(src, "<span class='notice'>Unusable emote '[act]'. Say *help for a list.</span>")
 
 /mob/living/whisper(message as text)
-	message = trim_strip_html_properly(message)
+	message = trim_strip_html_properly(message, 512)
+
+	if(!message)
+		return
+
+	var/ending = copytext(message, length(message))
+	if(!(ending in list("!", "?", ",", ".")))
+		message += "."
 
 	//parse the language code and consume it
 	var/list/message_pieces = parse_languages(message)
@@ -401,13 +416,13 @@ GLOBAL_LIST_EMPTY(channel_to_radio_key)
 		return 1
 	// Log it here since it skips the default way say handles it
 	create_log(SAY_LOG, "(whisper) '[message]'")
-	whisper_say(message_pieces)
+	SSspeech_controller.queue_say_for_mob(src, message_pieces, SPEECH_CONTROLLER_QUEUE_WHISPER_VERB)
 
 // for weird circumstances where you're inside an atom that is also you, like pai's
 /mob/living/proc/get_whisper_loc()
 	return src
 
-/mob/living/proc/whisper_say(list/message_pieces, verb = "whispers")
+/mob/living/whisper_say(list/message_pieces, verb = "whispers")
 	if(client)
 		if(client.prefs.muted & MUTE_IC)
 			to_chat(src, "<span class='danger'>You cannot speak in IC (Muted).</span>")

@@ -2,6 +2,7 @@
 	name = "alien"
 	voice_name = "alien"
 	speak_emote = list("hisses")
+	tts_seed = "Ladyvashj"
 	bubble_icon = "alien"
 	icon = 'icons/mob/alien.dmi'
 	gender = NEUTER
@@ -168,6 +169,8 @@
 		usr.hud_used.nightvisionicon.icon_state = "nightvision0"
 
 	update_sight()
+	if(ventcrawler)
+		update_pipe_vision(loc)
 
 /mob/living/carbon/alien/assess_threat(var/mob/living/simple_animal/bot/secbot/judgebot, var/lasercolor)
 	if(judgebot.emagged == 2)

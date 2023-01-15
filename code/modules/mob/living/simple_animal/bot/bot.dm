@@ -17,6 +17,7 @@
 	can_strip = 0
 
 	speak_emote = list("states")
+	tts_seed = "Glados"
 	friendly = "boops"
 	bubble_icon = "machine"
 	faction = list("neutral", "silicon")
@@ -175,10 +176,10 @@
 
 
 /mob/living/simple_animal/bot/med_hud_set_health()
-	return //we use a different hud
+	return diag_hud_set_bothealth() //we use a different hud
 
 /mob/living/simple_animal/bot/med_hud_set_status()
-	return //we use a different hud
+	return diag_hud_set_botstat() //we use a different hud
 
 /mob/living/simple_animal/bot/update_canmove(delay_action_updates = 0)
 	. = ..()
@@ -246,10 +247,6 @@
 	if(amount > 0 && prob(10))
 		new /obj/effect/decal/cleanable/blood/oil(loc)
 	. = ..()
-
-/mob/living/simple_animal/bot/updatehealth(reason = "none given")
-	..(reason)
-	diag_hud_set_bothealth()
 
 /mob/living/simple_animal/bot/handle_automated_action()
 	diag_hud_set_botmode()

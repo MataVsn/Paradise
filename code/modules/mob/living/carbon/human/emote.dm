@@ -37,6 +37,14 @@
 				on_CD = handle_emote_CD()
 				emote("gasp")
 				return
+	switch(act)
+		if("growl", "growls","purr", "purrs","purrl","drone", "drones", "hum", "hums",\
+		"rumble", "rumbles","clack", "clacks","click", "clicks","warble", "warbles","salute",\
+		"salutes","clap", "claps","deathgasp", "deathgasps","moan", "moans","slap", "slaps","snap", "snaps")	//If you are strangled you will not be able to gather your thoughts to make sounds or gestures,
+			if(garroted_by.len)																						//not to mention saluting, spanking and finger-snapping
+				on_CD = handle_emote_CD()
+				emote("twitch")	//we pretend that the victim is trying to do something so that it doesn't look like hugs from the outside
+				return
 
 	switch(act)		//This switch adds cooldowns to some emotes
 		if("ping", "pings", "buzz", "buzzes", "beep", "beeps", "yes", "no", "buzz2")
@@ -169,6 +177,8 @@
 			on_CD = handle_emote_CD()
 		if("gasp", "gasps")
 			on_CD = handle_emote_CD()
+		if("salute", "salutes")
+			on_CD = handle_emote_CD()
 		if("deathgasp", "deathgasps")
 			on_CD = handle_emote_CD(50)
 		if("sneeze", "sneezes")
@@ -177,7 +187,10 @@
 			on_CD = handle_emote_CD()
 		//Everything else, including typos of the above emotes
 		else
-			on_CD = FALSE	//If it doesn't induce the cooldown, we won't check for the cooldown
+			if(last_emote == act)
+				on_CD = handle_emote_CD(10)
+			else
+				on_CD = handle_emote_CD(5)		//no "snuffle" "sniff" spam
 
 	if(!force && on_CD == 1)		// Check if we need to suppress the emote attempt.
 		return			// Suppress emote, you're still cooling off.
@@ -199,7 +212,6 @@
 					m_type = 2
 				else
 					message = "издает очень громкий шум[M ? " на [M]" : ""]."
-					playsound(loc, 'sound/goonstation/voice/howl.ogg', 25, 1, 10, frequency = get_age_pitch())
 					m_type = 2
 
 		if("growl", "growls")
@@ -446,8 +458,6 @@
 
 		if("salute", "salutes")
 			if(!restrained())
-				if(handle_emote_CD())
-					return
 				var/M = handle_emote_param(param)
 
 				message = "салюту[pluralize_ru(src.gender,"ет","ют")][M ? " [M]" : ""]!"
@@ -1195,6 +1205,9 @@
 			to_chat(src, emotelist)
 		else
 			to_chat(src, "<span class='notice'>Неизвестный эмоут '[act]'. Введи *help для отображения списка.</span>")
+
+	last_emote = act
+
 	..()
 
 /mob/living/carbon/human/verb/pose()

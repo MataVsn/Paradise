@@ -153,6 +153,12 @@
 /mob/living/proc/ObjBump(obj/O)
 	return
 
+/mob/living/get_pull_push_speed_modifier(current_delay)
+	if(!canmove)
+		return pull_push_speed_modifier * 1.2
+	var/average_delay = (movement_delay() + current_delay) / 2
+	return current_delay > average_delay ? pull_push_speed_modifier : (average_delay / current_delay)
+
 //Called when we want to push an atom/movable
 /mob/living/proc/PushAM(atom/movable/AM, force = move_force)
 
@@ -188,7 +194,12 @@
 				return
 	if(pulling == AM)
 		stop_pulling()
-	AM.glide_size = src.glide_size
+
+	if(client)
+		client.current_move_delay *= AM.get_pull_push_speed_modifier(client.current_move_delay)
+		glide_for(client.current_move_delay)
+
+	AM.glide_size = glide_size
 	var/current_dir
 	if(isliving(AM))
 		current_dir = AM.dir
@@ -296,18 +307,24 @@
 		message_admins("[key_name_admin(user)] set [key_name_admin(src)] on fire with [I]")
 		add_attack_logs(user, src, "set on fire with [I]")
 
-/mob/living/proc/updatehealth(reason = "none given")
+/mob/living/update_stat(reason = "none given", should_log = FALSE)
 	if(status_flags & GODMODE)
-		health = maxHealth
-		stat = CONSCIOUS
-		return
-	health = maxHealth - getOxyLoss() - getToxLoss() - getFireLoss() - getBruteLoss() - getCloneLoss()
-
-	update_stat("updatehealth([reason])")
+		if(stat != CONSCIOUS && stat != DEAD)
+			WakeUp()
 	med_hud_set_health()
 	med_hud_set_status()
 	update_health_hud()
+	update_damage_hud()
+	if(should_log)
+		log_debug("[src] update_stat([reason][status_flags & GODMODE ? ", GODMODE" : ""])")
 
+/mob/living/proc/updatehealth(reason = "none given", should_log = FALSE)
+	if(status_flags & GODMODE)
+		health = maxHealth
+		update_stat("updatehealth([reason])", should_log)
+		return
+	health = maxHealth - getOxyLoss() - getToxLoss() - getFireLoss() - getBruteLoss() - getCloneLoss()
+	update_stat("updatehealth([reason])", should_log)
 
 //This proc is used for mobs which are affected by pressure to calculate the amount of pressure that actually
 //affects them once clothing is factored in. ~Errorage
@@ -575,11 +592,15 @@
 			return
 
 		var/pull_dir = get_dir(src, pulling)
+		pulling.glide_size = glide_size
 		if(get_dist(src, pulling) > 1 || (moving_diagonally != SECOND_DIAG_STEP && ((pull_dir - 1) & pull_dir))) // puller and pullee more than one tile away or in diagonal position
 			if(isliving(pulling))
 				var/mob/living/M = pulling
 				if(M.lying && !M.buckled && (prob(M.getBruteLoss() * 200 / M.maxHealth)))
 					M.makeTrail(dest)
+			else
+				pulling.pixel_x = initial(pulling.pixel_x)
+				pulling.pixel_y = initial(pulling.pixel_y)
 			pulling.Move(dest, get_dir(pulling, dest), movetime) // the pullee tries to reach our previous position
 			if(pulling && get_dist(src, pulling) > 1) // the pullee couldn't keep up
 				stop_pulling()

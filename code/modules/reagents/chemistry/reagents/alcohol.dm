@@ -107,7 +107,7 @@
 	overdose_threshold = 30
 	dizzy_adj = 5
 	alcohol_perc = 0.7
-	drink_icon = "absinthebottle"
+	drink_icon = "absintheglass"
 	drink_name = "Glass of Absinthe"
 	drink_desc = "The green fairy is going to get you now!"
 	taste_description = "fucking pain"
@@ -1205,9 +1205,9 @@
 /datum/reagent/consumable/ethanol/synthanol/on_mob_life(mob/living/M)
 	metabolization_rate = REAGENTS_METABOLISM
 	if(!(M.dna.species.reagent_tag & PROCESS_SYN))
-		metabolization_rate += 3.6 //gets removed from organics very fast
+		metabolization_rate += 9 * REAGENTS_METABOLISM //gets removed from organics very fast
 		if(prob(25))
-			metabolization_rate += 15
+			metabolization_rate += 40 * REAGENTS_METABOLISM
 			M.fakevomit()
 	return ..()
 

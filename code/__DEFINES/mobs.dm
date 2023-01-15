@@ -63,10 +63,6 @@
 // How many units of reagent are consumed per tick, by default.
 #define  REAGENTS_METABOLISM 0.4
 
-// By defining the effect multiplier this way, it'll exactly adjust
-// all effects according to how they originally were with the 0.4 metabolism
-#define REAGENTS_EFFECT_MULTIPLIER REAGENTS_METABOLISM / 0.8 // Nerf all reagents by half
-
 // Factor of how fast mob nutrition decreases
 #define	HUNGER_FACTOR 0.1
 
@@ -219,6 +215,7 @@
 #define isvoxarmalis(A) (is_species(A, /datum/species/vox/armalis))
 #define iskidan(A) (is_species(A, /datum/species/kidan))
 #define isslimeperson(A) (is_species(A, /datum/species/slime))
+#define isnucleation(A) (is_species(A, /datum/species/nucleation))
 #define isgrey(A) (is_species(A, /datum/species/grey))
 #define isdiona(A) (is_species(A, /datum/species/diona))
 #define ismachineperson(A) (is_species(A, /datum/species/machine))

@@ -373,7 +373,7 @@
 #define EXPLOSION_BLOCK_PROC -1
 
 // The SQL version required by this version of the code
-#define SQL_VERSION 25
+#define SQL_VERSION 29
 
 // Vending machine stuff
 #define CAT_NORMAL 1
@@ -500,3 +500,7 @@
 
 /// Send to the mentor Discord webhook
 #define DISCORD_WEBHOOK_MENTOR "MENTOR"
+
+#define TTS_SEED_DEFAULT_FEMALE "tyrande"
+#define TTS_SEED_DEFAULT_MALE "arthas"
+#define TTS_SEED_ANNOUNCER "anubarak"
