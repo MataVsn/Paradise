@@ -1553,3 +1553,6 @@
 	return TRUE
 
 #undef OCCUPANT_LOGGING
+
+/obj/mecha/proc/speedreload()
+	step_in = initial(step_in)

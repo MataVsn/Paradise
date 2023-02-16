@@ -574,3 +574,21 @@
 		if(M.equipment.len < M.max_equip)
 			return TRUE
 	return FALSE
+
+/obj/item/mecha_parts/mecha_equipment/medical/improved_exosuit_control_system
+	name = "improved exosuit control system"
+	desc = "temp desc"
+	icon = 'icons/mecha/mecha_equipment.dmi'
+	icon_state = "move_plating"
+	origin_tech = "materials=5;engineering=5;magnets=4;powerstorage=4"
+	energy_drain = 20
+	var/impr = 1
+
+/obj/item/mecha_parts/mecha_equipment/medical/improved_exosuit_control_system/can_attach(obj/mecha/M)
+	if(!istype(M, /obj/mecha/medical/odysseus))
+		return
+	var/obj/mecha/medical/odysseus/O = M
+	if(O.equipment.len < O.max_equip)
+		O.step_in = impr
+		return TRUE
+	return FALSE
