@@ -45,3 +45,7 @@
 		builtin_hud_user = 0
 
 	. = ..()
+
+/obj/mecha/medical/odysseus/RebootSpeed()
+	src.step_in = initial(step_in)
+	return TRUE

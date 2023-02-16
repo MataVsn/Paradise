@@ -592,3 +592,17 @@
 		O.step_in = impr
 		return TRUE
 	return FALSE
+
+/obj/item/mecha_parts/mecha_equipment/medical/improved_exosuit_control_system/attach(obj/mecha/M)
+	if(!istype(M, /obj/mecha/medical/odysseus))
+		return
+	var/obj/mecha/medical/odysseus/O = M
+	O.step_in = impr
+	return ..()
+
+/obj/item/mecha_parts/mecha_equipment/medical/improved_exosuit_control_system/detach(obj/mecha/M)
+	if(!istype(M, /obj/mecha/medical/odysseus))
+		return
+	var/obj/mecha/medical/odysseus/O = M
+	O.RebootSpeed
+	return ..()
