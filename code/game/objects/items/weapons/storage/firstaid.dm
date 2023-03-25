@@ -184,20 +184,6 @@
 /obj/item/storage/firstaid/machine/empty
 	empty = TRUE
 
-
-/obj/item/storage/firstaid/tactical
-	name = "first-aid kit"
-	icon_state = "bezerk"
-	desc = "I hope you've got insurance."
-	max_w_class = WEIGHT_CLASS_NORMAL
-	treatment_oxy = "perfluorodecalin"
-	treatment_brute = "bicaridine"
-	treatment_fire = "kelotane"
-	treatment_tox = "charcoal"
-	req_one_access =list(ACCESS_SYNDICATE)
-	med_bot_skin = "bezerk"
-	syndicate_aligned = TRUE
-
 /obj/item/storage/firstaid/tactical
 	name = "NT first-aid kit"
 	icon_state = "NTfirstaid"
@@ -211,6 +197,10 @@
 	med_bot_skin = "bezerk"
 	syndicate_aligned = FALSE
 
+/obj/item/storage/firstaid/tactical/sst
+	name = "suspicious first-aid kit"
+	syndicate_aligned = TRUE
+
 /obj/item/storage/firstaid/tactical/New()
 	..()
 	if(empty)
@@ -222,6 +212,29 @@
 
 /obj/item/storage/firstaid/tactical/empty
 	empty = TRUE
+
+/obj/item/storage/firstaid/ertm
+	name = "NT ert-aid kit"
+	icon_state = "NTertaid"
+	desc = "I hope you've got insurance."
+	max_w_class = WEIGHT_CLASS_NORMAL
+	treatment_oxy = "perfluorodecalin"
+	treatment_brute = "bicaridine"
+	treatment_fire = "kelotane"
+	treatment_tox = "charcoal"
+	med_bot_skin = "bezerk"
+
+/obj/item/storage/firstaid/ertm/New()
+	..()
+	if(empty)
+		return
+	new /obj/item/reagent_containers/hypospray/ertm/hydrocodone(src)
+	new /obj/item/reagent_containers/hypospray/ertm/perfluorodecalin(src)
+	new /obj/item/reagent_containers/hypospray/ertm/pentic_acid(src)
+	new /obj/item/reagent_containers/hypospray/ertm/epinephrine(src)
+	new	/obj/item/reagent_containers/hypospray/ertm/mannitol(src)
+	new /obj/item/reagent_containers/hypospray/ertm/oculine(src)
+	new /obj/item/reagent_containers/hypospray/ertm/omnisal(src)
 
 /obj/item/storage/firstaid/syndie
 	name = "first-aid tacticool kit"

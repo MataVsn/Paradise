@@ -7,6 +7,9 @@
 	var/scan_reagents = 0 //Can the wearer see reagents while it's equipped?
 	var/gunshot_residue //Used by forensics.
 	var/is_improoved_by_potion = FALSE //used for xenobio potions
+	var/list/faction_restricted = null
+	var/teleportation = FALSE //used for xenobio potions
+	var/slime_potions
 
 	/*
 		Sprites used when the clothing item is refit. This is done by setting icon_override.
@@ -35,6 +38,8 @@
 	var/species_disguise = null
 	var/magical = FALSE
 	var/dyeable = FALSE
+	var/heal_bodypart = null	//If a bodypart or an organ is specified here, it will slowly regenerate while the clothes are worn. Currently only implemented for eyes, though.
+	var/heal_rate = 1
 	w_class = WEIGHT_CLASS_SMALL
 
 
@@ -104,13 +109,21 @@
 				if(H.dna.species.name in species_restricted)
 					wearable = 1
 
-			if (wearable && ("lesser form" in species_restricted) && issmall(H))
+			if(wearable && ("lesser form" in species_restricted) && issmall(H))
 				wearable = 0
 
 			if(!wearable)
-				to_chat(M, "<span class='warning'>Your species cannot wear [src].</span>")
+				to_chat(M, "<span class='warning'>You cannot wear [src].</span>")
+				return 0
+	if(faction_restricted && istype(M,/mob/living/carbon/human))
+		var/mob/living/carbon/human/H = M
+
+		if(H.faction)
+			if(H.faction in faction_restricted)
+				to_chat(M, "<span class='warning'>You cannot wear [src].</span>")
 				return 0
 	return 1
+
 
 /obj/item/clothing/proc/refit_for_species(var/target_species)
 	//Set species_restricted list
@@ -444,20 +457,19 @@ BLIND     // can't see anything
 		mask_adjusted = 0
 		slot_flags = initial(slot_flags)
 		if(flags_inv != initial(flags_inv))
-			if(initial(flags_inv) & HIDEFACE) //If the mask is one that hides the face and can be adjusted yet lost that trait when it was adjusted, make it hide the face again.
-				flags_inv |= HIDEFACE
+			if(initial(flags_inv) & HIDENAME) //If the mask is one that hides the face and can be adjusted yet lost that trait when it was adjusted, make it hide the face again.
+				flags_inv |= HIDENAME
 		if(flags != initial(flags))
 			if(initial(flags) & AIRTIGHT) //If the mask is airtight and thus, one that you'd be able to run internals from yet can't because it was adjusted, make it airtight again.
 				flags |= AIRTIGHT
 		if(flags_cover != initial(flags_cover))
 			if(initial(flags_cover) & MASKCOVERSMOUTH) //If the mask covers the mouth when it's down and can be adjusted yet lost that trait when it was adjusted, make it cover the mouth again.
 				flags_cover |= MASKCOVERSMOUTH
-		if(H.head == src && flags_inv == HIDEFACE) //Means that only things like bandanas and balaclavas will be affected since they obscure the identity of the wearer.
+		if(H.head == src && flags_inv == HIDENAME) //Means that only things like bandanas and balaclavas will be affected since they obscure the identity of the wearer.
 			if(H.l_hand && H.r_hand) //If both hands are occupied, drop the object on the ground.
 				user.unEquip(src)
 			else //Otherwise, put it in an available hand, the active one preferentially.
-				src.loc = user
-				H.head = null
+				user.unEquip(src)
 				user.put_in_hands(src)
 	else
 		icon_state += "_up"
@@ -471,19 +483,18 @@ BLIND     // can't see anything
 																Otherwise, they adjusted it while it was in their hands or some such so we won't be needing to turn off internals.*/
 			H.internal = null
 			H.update_action_buttons_icon()
-		if(flags_inv & HIDEFACE) //Means that only things like bandanas and balaclavas will be affected since they obscure the identity of the wearer.
-			flags_inv &= ~HIDEFACE /*Done after the above to avoid having to do a check for initial(src.flags_inv == HIDEFACE).
+		if(flags_inv & HIDENAME) //Means that only things like bandanas and balaclavas will be affected since they obscure the identity of the wearer.
+			flags_inv &= ~HIDENAME /*Done after the above to avoid having to do a check for initial(src.flags_inv == HIDENAME).
 									This reveals the user's face since the bandana will now be going on their head.*/
 		if(flags_cover & MASKCOVERSMOUTH) //Mask won't cover the mouth any more since it's been pushed out of the way. Allows for CPRing with adjusted masks.
 			flags_cover &= ~MASKCOVERSMOUTH
 		if(flags & AIRTIGHT) //If the mask was airtight, it won't be anymore since you just pushed it off your face.
 			flags &= ~AIRTIGHT
-		if(user.wear_mask == src && initial(flags_inv) == HIDEFACE) //Means that you won't have to take off and put back on simple things like breath masks which, realistically, can just be pulled down off your face.
+		if(user.wear_mask == src && initial(flags_inv) == HIDENAME) //Means that you won't have to take off and put back on simple things like breath masks which, realistically, can just be pulled down off your face.
 			if(H.l_hand && H.r_hand) //If both hands are occupied, drop the object on the ground.
 				user.unEquip(src)
 			else //Otherwise, put it in an available hand, the active one preferentially.
-				src.loc = user
-				user.wear_mask = null
+				user.unEquip(src)
 				user.put_in_hands(src)
 	H.wear_mask_update(src, toggle_off = mask_adjusted)
 	usr.update_inv_wear_mask()
@@ -658,7 +669,7 @@ BLIND     // can't see anything
 	item_state = "s_helmet"
 	permeability_coefficient = 0.01
 	armor = list("melee" = 0, "bullet" = 0, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 100, "rad" = 50, "fire" = 80, "acid" = 70)
-	flags_inv = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE
+	flags_inv = HIDEMASK|HIDEHEADSETS|HIDEGLASSES|HIDENAME
 	cold_protection = HEAD
 	min_cold_protection_temperature = SPACE_HELM_MIN_TEMP_PROTECT
 	heat_protection = HEAD
@@ -694,7 +705,7 @@ BLIND     // can't see anything
 	resistance_flags = NONE
 	hide_tail_by_species = null
 	species_restricted = list("exclude", "Wryn", "lesser form")
-
+	faction_restricted = list("ashwalker")
 
 // Under clothing
 /obj/item/clothing/under
@@ -882,3 +893,29 @@ BLIND     // can't see anything
 		"Neara" = 'icons/mob/species/monkey/neck.dmi',
 		"Stok" = 'icons/mob/species/monkey/neck.dmi'
 		)
+
+/obj/item/clothing/hit_reaction(mob/living/carbon/human/owner, atom/movable/hitby, attack_text = "the attack", final_block_chance = 0, damage = 0, attack_type = MELEE_ATTACK)
+	if(!teleportation)
+		return ..()
+	if(prob(5))
+		var/mob/living/carbon/human/H = owner
+		owner.visible_message("<span class='danger'>The teleport slime potion flings [H] clear of [attack_text]!</span>")
+		var/list/turfs = new/list()
+		for(var/turf/T in orange(3, H))
+			if(istype(T, /turf/space))
+				continue
+			if(T.density)
+				continue
+			if(T.x>world.maxx-3 || T.x<3)
+				continue
+			if(T.y>world.maxy-3 || T.y<3)
+				continue
+			turfs += T
+		if(!turfs.len)
+			turfs += pick(/turf in orange(3, H))
+		var/turf/picked = pick(turfs)
+		if(!isturf(picked))
+			return
+		H.forceMove(picked)
+		return 1
+	return ..()

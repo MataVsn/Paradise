@@ -44,7 +44,8 @@
 
 /obj/machinery/computer/cryopod/New()
 	..()
-	for(var/T in GLOB.potential_theft_objectives)
+
+	for(var/T in GLOB.potential_theft_objectives + GLOB.potential_theft_objectives_hard + GLOB.potential_theft_objectives_medium /*+ GLOB.potential_theft_objectives_collect*/)
 		theft_cache += new T
 
 /obj/machinery/computer/cryopod/attack_ai()
@@ -253,7 +254,10 @@
 		/obj/item/clothing/gloves/color/black/forensics,
 		/obj/item/spacepod_key,
 		/obj/item/nullrod,
-		/obj/item/key
+		/obj/item/key,
+		/obj/item/door_remote,
+		/obj/item/stamp,
+		/obj/item/sensor_device/command
 	)
 	// These items will NOT be preserved
 	var/list/do_not_preserve_items = list (
@@ -396,6 +400,10 @@
 	if(is_sacrifice_target(occupant.mind))
 		if(!SSticker.mode.cult_objs.find_new_sacrifice_target())
 			SSticker.mode.cult_objs.ready_to_summon()
+
+	// We should track when taipan players get despawned
+	if(occupant.mind in GLOB.taipan_players_active)
+		GLOB.taipan_players_active -= occupant.mind
 
 	//Update any existing objectives involving this mob.
 	if(occupant.mind)
@@ -579,6 +587,9 @@
 			willing = willing_time_divisor
 	else
 		willing = 1
+
+	if(istype(L.loc, /obj/machinery/cryopod))
+		return
 
 	if(willing)
 		if(!Adjacent(L) && !Adjacent(user))

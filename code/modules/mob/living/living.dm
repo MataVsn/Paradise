@@ -156,7 +156,7 @@
 /mob/living/get_pull_push_speed_modifier(current_delay)
 	if(!canmove)
 		return pull_push_speed_modifier * 1.2
-	var/average_delay = (movement_delay() + current_delay) / 2
+	var/average_delay = (movement_delay(TRUE) + current_delay) / 2
 	return current_delay > average_delay ? pull_push_speed_modifier : (average_delay / current_delay)
 
 //Called when we want to push an atom/movable
@@ -256,6 +256,9 @@
 		return FALSE
 	if(status_flags & FAKEDEATH)
 		return FALSE
+	return ..()
+
+/mob/living/run_pointed(atom/A)
 	if(!..())
 		return FALSE
 	var/obj/item/hand_item = get_active_hand()
@@ -598,6 +601,21 @@
 				var/mob/living/M = pulling
 				if(M.lying && !M.buckled && (prob(M.getBruteLoss() * 200 / M.maxHealth)))
 					M.makeTrail(dest)
+				if(ishuman(pulling))
+					var/mob/living/carbon/human/H = pulling
+					var/obj/item/organ/external/head
+					if(!H.lying)
+						if(H.confused > 0 && prob(4))
+							H.setStaminaLoss(100)
+							head = H.get_organ("head")
+							head?.receive_damage(5, 0, FALSE)
+							pulling.stop_pulling()
+							visible_message("<span class='danger'>Ноги [H] путаются и [genderize_ru(H.gender,"он","она","оно","они")] с грохотом падает на пол, сильно ударяясь головой!</span>")
+						if(H.m_intent == MOVE_INTENT_WALK && prob(4))
+							H.setStaminaLoss(100)
+							head = H.get_organ("head")
+							head?.receive_damage(5, 0, FALSE)
+							visible_message("<span class='danger'>[H] не поспевает за [src] и с грохотом падает на пол, сильно ударяясь головой!</span>")
 			else
 				pulling.pixel_x = initial(pulling.pixel_x)
 				pulling.pixel_y = initial(pulling.pixel_y)
@@ -739,6 +757,10 @@
 	set name = "Resist"
 	set category = "IC"
 
+	DEFAULT_QUEUE_OR_CALL_VERB(VERB_CALLBACK(src, .proc/run_resist))
+
+///proc extender of [/mob/living/verb/resist] meant to make the process queable if the server is overloaded when the verb is called
+/mob/living/proc/run_resist()
 	if(!can_resist())
 		return
 	changeNext_move(CLICK_CD_RESIST)
@@ -835,8 +857,7 @@
 		fixed = TRUE
 	if(on && !floating && !fixed)
 		animate(src, pixel_y = pixel_y + 2, time = 10, loop = -1)
-		sleep(10)
-		animate(src, pixel_y = pixel_y - 2, time = 10, loop = -1)
+		animate(pixel_y = pixel_y - 2, time = 10, loop = -1)
 		floating = TRUE
 	else if(((!on || fixed) && floating))
 		animate(src, pixel_y = get_standard_pixel_y_offset(lying), time = 10)

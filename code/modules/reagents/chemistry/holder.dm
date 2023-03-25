@@ -387,6 +387,20 @@
 		R.on_update(A)
 	update_total()
 
+/datum/reagents/proc/find_blood_group(var/datum/chemical_reaction/reaction)
+	for(var/K in reaction.required_blood_group)
+		var/datum/reagent/I = has_reagent("blood", reaction.required_reagents["blood"])
+		if(I.data["blood_group"] == K)
+			return TRUE
+	return FALSE
+
+/datum/reagents/proc/find_blood_species(var/datum/chemical_reaction/reaction)
+	for(var/K in reaction.required_blood_species)
+		var/datum/reagent/I = has_reagent("blood", reaction.required_reagents["blood"])
+		if(I.data["blood_species"] == K)
+			return TRUE
+	return FALSE
+
 /datum/reagents/proc/handle_reactions()
 	if(flags & REAGENT_NOREACT)
 		return //Yup, no reactions here. No siree.
@@ -413,6 +427,13 @@
 				for(var/B in C.required_reagents)
 					if(!has_reagent(B, C.required_reagents[B]))
 						break
+					if((B == "blood") && (C.required_blood_group || C.required_blood_species))
+						if(C.required_blood_group)
+							if(!find_blood_group(C))
+								break
+						if(C.required_blood_species)
+							if(!find_blood_species(C))
+								break
 					total_matching_reagents++
 					multipliers += round(get_reagent_amount(B) / C.required_reagents[B])
 				for(var/B in C.required_catalysts)
@@ -558,26 +579,34 @@
 			var/obj/item/organ/external/head/affecting = H.get_organ("head")
 			if(affecting)
 				if(chem_temp > H.dna.species.heat_level_1)
+					var/mult = H.dna.species.heatmod
 					if(H.reagent_safety_check())
-						to_chat(H, "<span class='danger'>You are scalded by the hot chemicals!</span>")
-						affecting.receive_damage(0, round(log(chem_temp / 50) * 10))
-						H.emote("scream")
+						if(mult > 0)
+							to_chat(H, "<span class='danger'>You are scalded by the hot chemicals!</span>")
+							affecting.receive_damage(0, round(log(chem_temp / 50) * 10))
+							H.emote("scream")
 						H.adjust_bodytemperature(min(max((chem_temp - T0C) - 20, 5), 500))
 				else if(chem_temp < H.dna.species.cold_level_1)
+					var/mult = H.dna.species.coldmod
 					if(H.reagent_safety_check(FALSE))
-						to_chat(H, "<span class='danger'>You are frostbitten by the freezing cold chemicals!</span>")
-						affecting.receive_damage(0, round(log(T0C - chem_temp / 50) * 10))
-						H.emote("scream")
+						if(mult > 0)
+							to_chat(H, "<span class='danger'>You are frostbitten by the freezing cold chemicals!</span>")
+							affecting.receive_damage(0, round(log(T0C - chem_temp / 50) * 10))
+							H.emote("scream")
 						H.adjust_bodytemperature(- min(max(T0C - chem_temp - 20, 5), 500))
 
 		if(method == REAGENT_INGEST)
 			if(chem_temp > H.dna.species.heat_level_1)
-				to_chat(H, "<span class='danger'>You scald yourself trying to consume the boiling hot substance!</span>")
-				H.adjustFireLoss(7)
+				var/mult = H.dna.species.heatmod
+				if(mult > 0)
+					to_chat(H, "<span class='danger'>You scald yourself trying to consume the boiling hot substance!</span>")
+					H.adjustFireLoss(7)
 				H.adjust_bodytemperature(min(max((chem_temp - T0C) - 20, 5), 700))
 			else if(chem_temp < H.dna.species.cold_level_1)
-				to_chat(H, "<span class='danger'>You frostburn yourself trying to consume the freezing cold substance!</span>")
-				H.adjustFireLoss(7)
+				var/mult = H.dna.species.coldmod
+				if(mult > 0)
+					to_chat(H, "<span class='danger'>You frostburn yourself trying to consume the freezing cold substance!</span>")
+					H.adjustFireLoss(7)
 				H.adjust_bodytemperature(- min(max((T0C - chem_temp) - 20, 5), 700))
 
 	for(var/AB in reagent_list)

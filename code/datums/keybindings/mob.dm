@@ -22,11 +22,15 @@
 	name = "Выложить вещь в руке"
 	keys = list("Q", "Northwest")
 
+/datum/keybinding/mob/drop_held_object/can_use(client/C, mob/M)
+	return !isrobot(M) && ..()   //robots on 'q' have their own proc for drop, in keybindinds/robot.dm
+
 /datum/keybinding/mob/drop_held_object/down(client/C)
 	. = ..()
 	var/obj/item/I = C.mob.get_active_hand()
 	if(I)
 		C.mob.drop_item(I)
+		SEND_SIGNAL(C.mob, COMSIG_MOB_DROP_ITEM, keys, C)
 	else
 		to_chat(C, "<span class='warning'>You have nothing to drop in your hand!</span>")
 

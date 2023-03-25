@@ -8,6 +8,8 @@
 		spellremove(src)
 	mobspellremove(src)
 	QDEL_LIST(viruses)
+	for(var/alert in alerts)
+		clear_alert(alert)
 	ghostize()
 	QDEL_LIST_ASSOC_VAL(tkgrabbed_objects)
 	for(var/I in tkgrabbed_objects)
@@ -177,7 +179,7 @@
 	var/obj/item/W = get_active_hand()
 
 	if(istype(W))
-		equip_to_slot_if_possible(W, slot)
+		advanced_equip_to_slot_if_possible(W, slot)
 	else if(!restrained())
 		W = get_item_by_slot(slot)
 		if(W)
@@ -195,6 +197,8 @@
 	return 0
 
 
+/mob/proc/advanced_equip_to_slot_if_possible(obj/item/W, slot, del_on_fail = 0, disable_warning = 0)
+	return equip_to_slot_if_possible(W, slot, del_on_fail, disable_warning)
 
 //This is a SAFE proc. Use this instead of equip_to_slot()!
 //set del_on_fail to have it delete W if it fails to equip
@@ -267,14 +271,19 @@ GLOBAL_LIST_INIT(slot_equipment_priority, list( \
 
 //puts the item "W" into an appropriate slot in a human's inventory
 //returns 0 if it cannot, 1 if successful
-/mob/proc/equip_to_appropriate_slot(obj/item/W)
+/mob/proc/equip_to_appropriate_slot(obj/item/W, var/ignore_obscured = TRUE)
 	if(!istype(W)) return 0
 
 	for(var/slot in GLOB.slot_equipment_priority)
 		if(istype(W,/obj/item/storage/) && slot == slot_head) // Storage items should be put on the belt before the head
 			continue
-		if(equip_to_slot_if_possible(W, slot, FALSE, TRUE)) //del_on_fail = 0; disable_warning = 0
-			return 1
+		if(ignore_obscured)
+			if(equip_to_slot_if_possible(W, slot, del_on_fail = FALSE, disable_warning = TRUE))
+				return 1
+		else
+			if(advanced_equip_to_slot_if_possible(W, slot, del_on_fail = FALSE, disable_warning = TRUE))
+				return 1
+
 
 	return 0
 
@@ -601,6 +610,9 @@ GLOBAL_LIST_INIT(slot_equipment_priority, list( \
 	set name = "Examine"
 	set category = "IC"
 
+	DEFAULT_QUEUE_OR_CALL_VERB(VERB_CALLBACK(src, .proc/run_examinate, A))
+
+/mob/proc/run_examinate(atom/A)
 	if(!has_vision(information_only = TRUE) && !isobserver(src))
 		to_chat(src, "<span class='notice'>Здесь что-то есть, но вы не видите — что именно.</span>")
 		return 1
@@ -625,14 +637,20 @@ GLOBAL_LIST_INIT(slot_equipment_priority, list( \
 		return
 	if(!isturf(loc) || istype(A, /obj/effect/temp_visual/point))
 		return FALSE
-	if(!(A in view(src)))
+
+	DEFAULT_QUEUE_OR_CALL_VERB(VERB_CALLBACK(src, .proc/run_pointed, A))
+
+/// possibly delayed verb that finishes the pointing process starting in [/mob/verb/pointed()].
+/// either called immediately or in the tick after pointed() was called, as per the [DEFAULT_QUEUE_OR_CALL_VERB()] macro
+/mob/proc/run_pointed(atom/A)
+	if(client && !(A in view(client.view, src)))
 		return FALSE
+
+	changeNext_move(CLICK_CD_POINT)
 
 	var/tile = get_turf(A)
 	if(!tile)
 		return FALSE
-
-	changeNext_move(CLICK_CD_POINT)
 	var/obj/P = new /obj/effect/temp_visual/point(tile)
 	P.invisibility = invisibility
 	if(get_turf(src) != tile)
@@ -719,6 +737,7 @@ GLOBAL_LIST_INIT(slot_equipment_priority, list( \
 
 	msg = copytext(msg, 1, MAX_MESSAGE_LEN)
 	msg = sanitize_simple(html_encode(msg), list("\n" = "<BR>"))
+	msg = sanitize_censored_patterns(msg)
 
 	var/combined = length(memory + msg)
 	if(mind && (combined < MAX_PAPER_MESSAGE_LEN))
@@ -1057,8 +1076,18 @@ GLOBAL_LIST_INIT(slot_equipment_priority, list( \
 
 // this function displays the station time in the status panel
 /mob/proc/show_stat_station_time()
+	stat(null, "Current Map: [SSmapping.map_datum.name]")
+	if(SSmapping.next_map)
+		stat(null, "Next Map: [SSmapping.next_map.name]")
 	stat(null, "Round Time: [worldtime2text()]")
 	stat(null, "Station Time: [station_time_timestamp()]")
+	stat(null, "Server TPS: [world.fps]")
+	stat(null, "Desired Client FPS: [client?.prefs?.clientfps]")
+	stat(null, "Time Dilation: [round(SStime_track.time_dilation_current,1)]% " + \
+				"AVG:([round(SStime_track.time_dilation_avg_fast,1)]%, " + \
+				"[round(SStime_track.time_dilation_avg,1)]%, " + \
+				"[round(SStime_track.time_dilation_avg_slow,1)]%)")
+	stat(null, "Ping: [round(client.lastping, 1)]ms (Average: [round(client.avgping, 1)]ms)")
 
 // this function displays the shuttles ETA in the status panel if the shuttle has been called
 /mob/proc/show_stat_emergency_shuttle_eta()
@@ -1180,18 +1209,19 @@ GLOBAL_LIST_INIT(slot_equipment_priority, list( \
 
 
 /mob/proc/become_mouse()
-	var/timedifference = world.time - client.time_died_as_mouse
-	if(client.time_died_as_mouse && timedifference <= GLOB.mouse_respawn_time * 600)
-		var/timedifference_text
-		timedifference_text = time2text(GLOB.mouse_respawn_time * 600 - timedifference,"mm:ss")
-		to_chat(src, "<span class='warning'>You may only spawn again as a mouse more than [GLOB.mouse_respawn_time] minutes after your death. You have [timedifference_text] left.</span>")
+	var/timedifference = world.time - client.time_joined_as_mouse
+	if(client.time_joined_as_mouse && timedifference <= GLOB.mouse_respawn_time * 600)
+		var/timedifference_text = time2text(GLOB.mouse_respawn_time * 600 - timedifference,"mm:ss")
+		to_chat(src, "<span class='warning'>You may only spawn again as a mouse more than [GLOB.mouse_respawn_time] minutes after last spawn. You have [timedifference_text] left.</span>")
 		return
 
 	//find a viable mouse candidate
 	var/list/found_vents = get_valid_vent_spawns(min_network_size = 0, station_levels_only = FALSE, z_level = z)
 	if(length(found_vents))
+		client.time_joined_as_mouse = world.time
 		var/obj/vent_found = pick(found_vents)
-		var/mob/living/simple_animal/mouse/host = new(vent_found.loc)
+		var/choosen_type = prob(90) ? /mob/living/simple_animal/mouse : /mob/living/simple_animal/mouse/rat
+		var/mob/living/simple_animal/mouse/host = new choosen_type(vent_found.loc)
 		host.ckey = src.ckey
 		if(istype(get_area(vent_found), /area/syndicate/unpowered/syndicate_space_base))
 			host.faction += "syndicate"
@@ -1484,3 +1514,13 @@ GLOBAL_LIST_INIT(slot_equipment_priority, list( \
  */
 /mob/proc/update_runechat_msg_location()
 	return
+
+///Makes a call in the context of a different usr. Use sparingly
+/world/proc/invoke_callback_with_usr(mob/user_mob, datum/callback/invoked_callback, ...)
+	var/temp = usr
+	usr = user_mob
+	if (length(args) > 2)
+		. = invoked_callback.Invoke(arglist(args.Copy(3)))
+	else
+		. = invoked_callback.Invoke()
+	usr = temp

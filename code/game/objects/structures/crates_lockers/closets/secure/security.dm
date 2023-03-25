@@ -16,7 +16,6 @@
 	new /obj/item/book/manual/faxes(src)
 	new /obj/item/storage/backpack/duffel/captain(src)
 	new /obj/item/clothing/suit/captunic(src)
-	new /obj/item/clothing/suit/captunic/capjacket(src)
 	new /obj/item/clothing/neck/mantle/captain(src)
 	new /obj/item/clothing/neck/cloak/captain(src)
 	new /obj/item/clothing/under/captainparade(src)
@@ -34,7 +33,18 @@
 	new /obj/item/door_remote/captain(src)
 	new /obj/item/reagent_containers/food/drinks/mug/cap(src)
 	new /obj/item/tank/internals/emergency_oxygen/double(src)
-
+	new /obj/item/clothing/head/caphat/blue(src)
+	new /obj/item/clothing/head/caphat/office(src)
+	new /obj/item/clothing/head/caphat/beret(src)
+	new /obj/item/clothing/under/captainparade/alt(src)
+	new /obj/item/clothing/under/captainparade/dress(src)
+	new /obj/item/clothing/under/captainparade/office(src)
+	new /obj/item/clothing/suit/captunic/coat(src)
+	new /obj/item/clothing/suit/captunic/parade(src)
+	new /obj/item/clothing/suit/captunic/parade/alt(src)
+	new /obj/item/clothing/shoes/laceup/cap(src)
+	new /obj/item/clothing/suit/captunic/bomber(src)
+	new /obj/item/clothing/suit/captunic/jacket(src)
 
 /obj/structure/closet/secure_closet/hop
 	name = "head of personnel's locker"
@@ -72,10 +82,8 @@
 	icon_off = "hopsecureoff"
 
 /obj/structure/closet/secure_closet/hop2/populate_contents()
-	new /obj/item/clothing/under/rank/head_of_personnel(src)
 	new /obj/item/clothing/neck/mantle/head_of_personnel(src)
 	new /obj/item/clothing/neck/cloak/head_of_personnel(src)
-	new /obj/item/clothing/under/dress/dress_hop(src)
 	new /obj/item/clothing/under/dress/dress_hr(src)
 	new /obj/item/clothing/under/lawyer/female(src)
 	new /obj/item/clothing/under/lawyer/black(src)
@@ -86,6 +94,10 @@
 	new /obj/item/clothing/shoes/leather(src)
 	new /obj/item/clothing/shoes/white(src)
 	new /obj/item/clothing/under/rank/head_of_personnel_whimsy(src)
+	new /obj/item/clothing/under/rank/head_of_personnel_alt(src)
+	new /obj/item/clothing/under/rank/head_of_personnel_f(src)
+	new /obj/item/clothing/suit/hop_jacket(src)
+	new /obj/item/clothing/suit/hop_jacket/female(src)
 
 
 /obj/structure/closet/secure_closet/hos
@@ -109,6 +121,7 @@
 	new /obj/item/clothing/under/rank/head_of_security/formal(src)
 	new /obj/item/clothing/under/rank/head_of_security/corp(src)
 	new /obj/item/clothing/under/rank/head_of_security/skirt(src)
+	new /obj/item/clothing/under/rank/head_of_security/alt(src)
 	new /obj/item/clothing/suit/armor/hos(src)
 	new /obj/item/clothing/suit/armor/hos/alt(src)
 	new /obj/item/clothing/head/HoS(src)
@@ -130,6 +143,7 @@
 	new /obj/item/reagent_containers/food/drinks/mug/hos(src)
 	new /obj/item/organ/internal/cyberimp/eyes/hud/security(src)
 	new /obj/item/clothing/accessory/medal/security(src)
+	new /obj/item/clothing/glasses/hud/security/sunglasses/aviators(src)
 
 /obj/structure/closet/secure_closet/warden
 	name = "warden's locker"
@@ -256,6 +270,7 @@
 	new /obj/item/clothing/under/fluff/jay_turtleneck(src)
 	new /obj/item/clothing/mask/gas/sechailer/blue(src)
 	new /obj/item/clothing/mask/gas/sechailer(src)
+	new /obj/item/sensor_device/command(src)
 
 /obj/structure/closet/secure_closet/ntrep
 	name = "\improper Nanotrasen Representative's locker"

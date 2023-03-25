@@ -1196,7 +1196,7 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 	if(istype(W, /obj/item/wrench))
 		if(anchored)
 			user.visible_message("<span class='notice'>\The [user] starts to unbolt \the [src] from the plating...</span>")
-			if(!do_after(user, 40 * W.toolspeed, target = src))
+			if(!do_after(user, 40 * W.toolspeed * gettoolspeedmod(user), target = src))
 				user.visible_message("<span class='notice'>\The [user] decides not to unbolt \the [src].</span>")
 				return
 			user.visible_message("<span class='notice'>\The [user] finishes unfastening \the [src]!</span>")
@@ -1204,7 +1204,7 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 			return
 		else
 			user.visible_message("<span class='notice'>\The [user] starts to bolt \the [src] to the plating...</span>")
-			if(!do_after(user, 40 * W.toolspeed, target = src))
+			if(!do_after(user, 40 * W.toolspeed * gettoolspeedmod(user), target = src))
 				user.visible_message("<span class='notice'>\The [user] decides not to bolt \the [src].</span>")
 				return
 			user.visible_message("<span class='notice'>\The [user] finishes fastening down \the [src]!</span>")
@@ -1291,13 +1291,16 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 	return get_dist(src, A) <= max(viewscale[1]*0.5,viewscale[2]*0.5)
 
 /mob/living/silicon/ai/proc/relay_speech(mob/living/M, list/message_pieces, verb)
-	var/message = combine_message(message_pieces, verb, M)
+	var/message_clean = combine_message(message_pieces, M)
+	message_clean = replace_characters(message_clean, list("+"))
+
+	var/message = verb_message(message_pieces, message_clean, verb)
+
 	var/name_used = M.GetVoice()
 	//This communication is imperfect because the holopad "filters" voices and is only designed to connect to the master only.
 	var/rendered = "<i><span class='game say'>Relayed Speech: <span class='name'>[name_used]</span> [message]</span></i>"
 	if(client?.prefs.toggles2 & PREFTOGGLE_2_RUNECHAT)
-		var/message_clean = combine_message(message_pieces, null, M)
-		create_chat_message(M.runechat_msg_location, message_clean,TRUE, FALSE)
+		create_chat_message(M.runechat_msg_location, message_clean, TRUE, FALSE)
 	show_message(rendered, 2)
 
 /mob/living/silicon/ai/proc/malfhacked(obj/machinery/power/apc/apc)
@@ -1378,6 +1381,16 @@ GLOBAL_LIST_INIT(ai_verbs_default, list(
 	GLOB.cameranet.visibility(moved_eye, client, all_eyes)
 
 /mob/living/silicon/ai/var/current_camera = 0
+
+/mob/living/silicon/ai/proc/set_camera_by_index(client/user, var/camnum)
+	var/camnum_length = length(stored_locations)
+	if(camnum > camnum_length || (camnum == 0 && camnum_length < 10))
+		to_chat(user, "<span class='warning'>You have no stored camera on [camnum] position</span>")
+		return FALSE
+	if(camnum == 0)
+		camnum = 10
+	current_camera = camnum
+	return TRUE
 
 /mob/living/silicon/ai/proc/check_for_binded_cameras(client/user)
 	if(!length(stored_locations))

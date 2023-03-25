@@ -84,6 +84,13 @@
 	else
 		return 1
 
+/obj/structure/windoor_assembly/attack_hand(mob/user)
+	if(user.a_intent == INTENT_HARM && ishuman(user) && user.dna.species.obj_damage)
+		user.changeNext_move(CLICK_CD_MELEE)
+		attack_generic(user, user.dna.species.obj_damage)
+		return
+	. = ..()
+
 /obj/structure/windoor_assembly/attackby(obj/item/W, mob/user, params)
 	//I really should have spread this out across more states but thin little windoors are hard to sprite.
 	add_fingerprint(user)
@@ -97,7 +104,7 @@
 					return
 				to_chat(user, "<span class='notice'>You start to reinforce the windoor with plasteel...</span>")
 
-				if(do_after(user, 40 * P.toolspeed, target = src))
+				if(do_after(user, 40 * P.toolspeed * gettoolspeedmod(user), target = src))
 					if(!src || secure || P.get_amount() < 2)
 						return
 					playsound(loc, P.usesound, 100, 1)
@@ -114,7 +121,7 @@
 			else if(iscoil(W) && anchored)
 				user.visible_message("[user] wires the windoor assembly.", "You start to wire the windoor assembly...")
 
-				if(do_after(user, 40 * W.toolspeed, target = src))
+				if(do_after(user, 40 * W.toolspeed * gettoolspeedmod(user), target = src))
 					if(!src || !anchored || state != "01")
 						return
 					var/obj/item/stack/cable_coil/CC = W
@@ -137,7 +144,7 @@
 				user.drop_item()
 				W.forceMove(src)
 
-				if(do_after(user, 40 * W.toolspeed, target = src))
+				if(do_after(user, 40 * W.toolspeed * gettoolspeedmod(user), target = src))
 					if(!src || electronics)
 						W.forceMove(loc)
 						return

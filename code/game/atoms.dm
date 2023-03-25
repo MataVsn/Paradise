@@ -69,6 +69,8 @@
 	var/drain_act_protected = FALSE
 	var/list/description_holders = list("info" = null, "antag" = null, "fluff" = null)
 
+	var/tts_seed = "Arthas"
+
 /atom/New(loc, ...)
 	SHOULD_CALL_PARENT(TRUE)
 	if(GLOB.use_preloader && (src.type == GLOB._preloader.target_path))//in case the instanciated atom is creating other atoms in New()
@@ -240,6 +242,10 @@
 		return loc.return_air()
 	else
 		return null
+
+///Return the air if we can analyze it
+/atom/proc/return_analyzable_air()
+	return null
 
 /atom/proc/check_eye(mob/user)
 	return
@@ -435,6 +441,9 @@
 /atom/proc/emag_act()
 	return
 
+/atom/proc/cmag_act()
+	return
+
 /atom/proc/fart_act(mob/living/M)
 	return FALSE
 
@@ -444,6 +453,18 @@
 /atom/proc/rpd_blocksusage()
 	// Atoms that return TRUE prevent RPDs placing any kind of pipes on their turf.
 	return FALSE
+
+// Wrapper, called by an RCD
+/atom/proc/rcd_act(mob/user, obj/item/rcd/our_rcd, rcd_mode)
+	if(rcd_mode == RCD_MODE_DECON)
+		return rcd_deconstruct_act(user, our_rcd)
+	return rcd_construct_act(user, our_rcd, rcd_mode)
+
+/atom/proc/rcd_deconstruct_act(mob/user, obj/item/rcd/our_rcd)
+	return RCD_NO_ACT
+
+/atom/proc/rcd_construct_act(mob/user, obj/item/rcd/our_rcd, rcd_mode)
+	return RCD_NO_ACT
 
 /atom/proc/hitby(atom/movable/AM, skipcatch, hitpush, blocked, datum/thrownthing/throwingdatum)
 	if(density && !has_gravity(AM)) //thrown stuff bounces off dense stuff in no grav, unless the thrown stuff ends up inside what it hit(embedding, bola, etc...).
@@ -786,13 +807,13 @@ GLOBAL_LIST_EMPTY(blood_splatter_icons)
 	if(lip_style && !(head && head.flags_inv & HIDEMASK))
 		lip_style = null
 		update_body()
-	if(glasses && !(wear_mask && wear_mask.flags_inv & HIDEEYES))
+	if(glasses && !(wear_mask && wear_mask.flags_inv & HIDEGLASSES))
 		if(glasses.clean_blood())
 			update_inv_glasses()
-	if(l_ear && !(wear_mask && wear_mask.flags_inv & HIDEEARS))
+	if(l_ear && !(wear_mask && wear_mask.flags_inv & HIDEHEADSETS))
 		if(l_ear.clean_blood())
 			update_inv_ears()
-	if(r_ear && !(wear_mask && wear_mask.flags_inv & HIDEEARS))
+	if(r_ear && !(wear_mask && wear_mask.flags_inv & HIDEHEADSETS))
 		if(r_ear.clean_blood())
 			update_inv_ears()
 	if(belt)
@@ -889,19 +910,57 @@ GLOBAL_LIST_EMPTY(blood_splatter_icons)
 /atom/proc/atom_say(message)
 	if(!message)
 		return
+	var/message_tts = message
+	message = replace_characters(message, list("+"))
+
 	var/list/speech_bubble_hearers = list()
 	for(var/mob/M in get_mobs_in_view(7, src))
 		M.show_message("<span class='game say'><span class='name'>[src]</span> [atom_say_verb], \"[message]\"</span>", 2, null, 1)
 		if(M.client)
 			speech_bubble_hearers += M.client
 
-			if((M.client.prefs.toggles2 & PREFTOGGLE_2_RUNECHAT) && M.can_hear() && M.stat != UNCONSCIOUS)
+			if(!M.can_hear() || M.stat == UNCONSCIOUS)
+				continue
+
+			if(M.client.prefs.toggles2 & PREFTOGGLE_2_RUNECHAT)
 				M.create_chat_message(src, message, FALSE, TRUE)
+
+			var/effect = SOUND_EFFECT_RADIO
+			var/traits = TTS_TRAIT_RATE_MEDIUM
+			INVOKE_ASYNC(GLOBAL_PROC, /proc/tts_cast, src, M, message_tts, tts_seed, TRUE, effect, traits)
 
 	if(length(speech_bubble_hearers))
 		var/image/I = image('icons/mob/talk.dmi', src, "[bubble_icon][say_test(message)]", FLY_LAYER)
 		I.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA
 		INVOKE_ASYNC(GLOBAL_PROC, /.proc/flick_overlay, I, speech_bubble_hearers, 30)
+
+/atom/proc/select_voice(mob/user, silent_target = FALSE)
+	if(!ismob(src) && !user)
+		return null
+	var/tts_test_str = "Так звучит мой голос."
+
+	var/tts_seeds
+	if(user && check_rights(R_ADMIN, 0, user))
+		tts_seeds = SStts.tts_seeds_names
+	else
+		tts_seeds = SStts.get_available_seeds(src)
+
+	var/new_tts_seed = input(user || src, "Choose your preferred voice:", "Character Preference", tts_seed) as null|anything in tts_seeds
+	if(!new_tts_seed)
+		return null
+	if(!silent_target && ismob(src) && src != user)
+		INVOKE_ASYNC(GLOBAL_PROC, /proc/tts_cast, null, src, tts_test_str, new_tts_seed, FALSE)
+	if(user)
+		INVOKE_ASYNC(GLOBAL_PROC, /proc/tts_cast, null, user, tts_test_str, new_tts_seed, FALSE)
+	return new_tts_seed
+
+/atom/proc/change_voice(mob/user)
+	set waitfor = FALSE
+	var/new_tts_seed = select_voice(user)
+	if(!new_tts_seed)
+		return null
+	tts_seed = new_tts_seed
+	return new_tts_seed
 
 /atom/proc/speech_bubble(bubble_state = "", bubble_loc = src, list/bubble_recipients = list())
 	return

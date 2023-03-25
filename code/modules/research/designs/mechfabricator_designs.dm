@@ -875,6 +875,26 @@
 	construction_time = 200
 	category = list("Exosuit Equipment")
 
+/datum/design/improved_exosuit_control_system
+    name = "Improved Exosuit Control System"
+    id = "mech_improved_exosuit_control_system"
+    build_type = MECHFAB
+    build_path = /obj/item/mecha_parts/mecha_equipment/medical/improved_exosuit_control_system
+    req_tech = list("engineering" = 7, "materials" = 6, "magnets" = 5, "powerstorage"= 5)
+    materials = list(MAT_METAL=15000,MAT_TITANIUM=2000,MAT_GOLD=1000)
+    construction_time = 200
+    category = list("Exosuit Equipment")
+
+/datum/design/syringe_gun_upgrade
+	name = "Additional System for the Reproduction of Reagents"
+	id = "mech_syringe_gun_upgrade"
+	build_type = MECHFAB
+	build_path = /obj/item/mecha_parts/mecha_equipment/medical/syringe_gun_upgrade
+	req_tech = list("materials" = 7, "engineering" = 6, "biotech" = 7, "bluespace" = 6, "toxins" = 6)
+	materials = list(MAT_METAL=8000,MAT_DIAMOND=1000,MAT_GLASS=1000,MAT_GOLD=1000,MAT_URANIUM=500,MAT_BLUESPACE=1000)
+	construction_time = 200
+	category = list("Exosuit Equipment")
+
 /datum/design/mech_generator
 	name = "Exosuit Equipment (Plasma Generator)"
 	id = "mech_generator"
@@ -1053,7 +1073,7 @@
 	desc = "A weapon that violates the Geneva Convention at 3 rounds per minute"
 	id = "clusterbang_launcher"
 	build_type = MECHFAB
-	req_tech = list("combat"= 5, "materials" = 5, "syndicate" = 3)
+	req_tech = list("combat"= 5, "materials" = 5, "syndicate" = 4)
 	build_path = /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/flashbang/clusterbang
 	materials = list(MAT_METAL=20000,MAT_GOLD=10000,MAT_URANIUM=10000)
 	construction_time = 100
@@ -1308,7 +1328,7 @@
 	id = "borg_upgade_abductor_medi"
 	build_type = MECHFAB
 	build_path = /obj/item/borg/upgrade/abductor_medi
-	req_tech = list("biotech" = 7, "materials" = 7, "abductor" = 4)
+	req_tech = list("biotech" = 7, "materials" = 7, "abductor" = 3)
 	materials = list(MAT_METAL = 18000, MAT_GLASS = 1500, MAT_SILVER = 13000, MAT_GOLD = 1000, MAT_PLASMA = 4000, MAT_TITANIUM = 12000, MAT_DIAMOND = 1000) //Base abductor engineering tools *8 + IMS cost
 	construction_time = 120
 	category = list("Cyborg Upgrade Modules")

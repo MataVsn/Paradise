@@ -585,7 +585,7 @@
 	item_state = "clockhood"
 	desc = "A hood worn by the followers of ratvar."
 	flags = BLOCKHAIR
-	flags_inv = HIDEFACE
+	flags_inv = HIDENAME
 	flags_cover = HEADCOVERSEYES
 	armor = list(melee = 30, bullet = 10, laser = 5, energy = 5, bomb = 0, bio = 0, rad = 0, fire = 10, acid = 10)
 	magical = TRUE
@@ -658,8 +658,8 @@
 			var/mob/living/carbon/carbon = user
 			if(carbon.wear_suit != src)
 				return
-			user.visible_message("<span class='danger'>[usr] concentrates as [user.p_their()] curiass shifts his plates!</span>",
-			"<span class='notice'>The [src] becomes more hardened as the plates becomes to shift for any attack!</span>")
+			user.visible_message("<span class='danger'>[user] concentrates as [user.p_their()] curiass shifts his plates!</span>",
+			"<span class='notice'>The [src.name] becomes more hardened as the plates becomes to shift for any attack!</span>")
 			//armor = list("melee" = 80, "bullet" = 60, "laser" = 50, "energy" = 50, "bomb" = 100, "bio" = 100, "rad" = 100, "fire" = 100, "acid" = 100)
 			armor = harden_armor
 			flags |= NODROP
@@ -671,8 +671,8 @@
 			playsound(loc, 'sound/effects/phasein.ogg', 100, 1)
 			set_light(2, 1, COLOR_WHITE)
 			addtimer(CALLBACK(src, /atom./proc/set_light, 0), 0.2 SECONDS)
-			usr.visible_message("<span class='disarm'>[user]'s [src] emits a blinding light!</span>", "<span class='danger'>Your [src] emits a blinding light!</span>")
-			for(var/mob/living/carbon/M in oviewers(3, src))
+			user.visible_message("<span class='disarm'>[user]'s [src.name] emits a blinding light!</span>", "<span class='danger'>Your [src.name] emits a blinding light!</span>")
+			for(var/mob/living/carbon/M in oviewers(3, user))
 				if(isclocker(M))
 					return
 				if(M.flash_eyes(2, 1))
@@ -839,7 +839,8 @@
 	item_state = "clockwork_helmet"
 	w_class = WEIGHT_CLASS_NORMAL
 	resistance_flags = FIRE_PROOF | ACID_PROOF
-	flags_inv = HIDEEARS|HIDEEYES|HIDEFACE
+	flags_inv = HIDEHEADSETS|HIDEGLASSES|HIDENAME
+	flags_cover = HEADCOVERSMOUTH|HEADCOVERSEYES
 	armor = list(melee = 45, bullet = 65, laser = 10, energy = 0, bomb = 60, bio = 0, rad = 0, fire = 100, acid = 100)
 
 /obj/item/clothing/head/helmet/clockwork/equipped(mob/living/user, slot)
@@ -984,7 +985,8 @@
 /obj/item/mmi/robotic_brain/clockwork/transfer_personality(mob/candidate)
 	searching = FALSE
 	brainmob.key = candidate.key
-	brainmob.real_name = "[pick(list("Nycun", "Oenib", "Havsbez", "Ubgry", "Fvreen"))]-[rand(10, 99)]"
+	brainmob.name = "[pick(list("Nycun", "Oenib", "Havsbez", "Ubgry", "Fvreen"))]-[rand(10, 99)]"
+	brainmob.real_name = brainmob.name
 	name = "[src] ([brainmob.name])"
 	brainmob.mind.assigned_role = "Soul Vessel Cube"
 	visible_message("<span class='notice'>[src] chimes quietly.</span>")
@@ -1003,7 +1005,7 @@
 		to_chat(user, "<span class='notice'>You begin to exorcise [src].</span>")
 		playsound(src, 'sound/hallucinations/veryfar_noise.ogg', 40, TRUE)
 		if(do_after(user, 40, target = src))
-			var/obj/item/mmi/robotic_brain/purified = new(get_turf(src))
+			var/obj/item/mmi/robotic_brain/positronic/purified = new(get_turf(src))
 			if(brainmob.key)
 				SSticker.mode.remove_clocker(brainmob.mind)
 				purified.transfer_identity(brainmob)

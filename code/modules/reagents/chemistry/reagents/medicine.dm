@@ -638,6 +638,10 @@
 			M.Drowsy(20)
 	return ..() | update_flags
 
+/datum/reagent/medicine/morphine/syntmorphine
+	name = "Syntmorphine"
+	id = "syntmorphine"
+
 /datum/reagent/medicine/oculine
 	name = "Oculine"
 	id = "oculine"
@@ -657,7 +661,7 @@
 			var/obj/item/organ/internal/ears/ears = C.get_int_organ(/obj/item/organ/internal/ears)
 			if(istype(ears))
 				ears.AdjustEarDamage(-1)
-				if(ears.ear_damage < 25 && prob(30))
+				if(ears.damage < 25 && prob(30))
 					ears.deaf = 0
 		update_flags |= M.AdjustEyeBlurry(-1, FALSE)
 		update_flags |= M.AdjustEarDamage(-1)
@@ -828,6 +832,19 @@
 /datum/reagent/medicine/mannitol/on_mob_life(mob/living/M)
 	var/update_flags = STATUS_UPDATE_NONE
 	update_flags |= M.adjustBrainLoss(-3, FALSE)
+	return ..() | update_flags
+
+/datum/reagent/medicine/fomepizole
+	name = "Fomepizole"
+	id = "fomepizole"
+	description = "Fomepizone is a competitive ADH inhibitor. It is used to block metabolism of ethanol to their toxic metabolites."
+	color = "#95bb72"
+	taste_description = "sanity"
+
+/datum/reagent/medicine/fomepizole/on_mob_life(mob/living/M)
+	var/update_flags = STATUS_UPDATE_NONE
+	update_flags |= M.AdjustDizzy(-60, FALSE)
+	update_flags |= M.AdjustJitter(-10, FALSE)
 	return ..() | update_flags
 
 /datum/reagent/medicine/mutadone
@@ -1329,6 +1346,7 @@
 	metabolization_rate = REAGENTS_METABOLISM
 	shock_reduction = 20
 	taste_description = "blessing"
+	can_synth = FALSE
 
 /datum/reagent/medicine/zessulblood/on_mob_life(mob/living/M)
 	var/update_flags = STATUS_UPDATE_NONE

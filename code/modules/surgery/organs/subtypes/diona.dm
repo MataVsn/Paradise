@@ -81,51 +81,87 @@
 /obj/item/organ/diona/process()
 	return
 
-/obj/item/organ/internal/heart/diona // Turns into a nymph instantly, no transplanting possible.
+/obj/item/organ/internal/brain/diona
 	species_type = /datum/species/diona
 	name = "neural strata"
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "nymph"
 	dead_icon = null
+	parent_organ = "chest"
 
-/obj/item/organ/internal/heart/diona/update_icon()
-	return
-
-/obj/item/organ/internal/lungs/diona
+/obj/item/organ/internal/kidneys/diona
 	species_type = /datum/species/diona
-	name = "respiratory vacuoles"
+	name = "filtrating vacuoles"
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "nymph"
 
-/obj/item/organ/internal/brain/diona // Turns into a nymph instantly, no transplanting possible.
+/obj/item/organ/internal/lungs/diona
 	species_type = /datum/species/diona
 	name = "gas bladder"
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "nymph"
 
-/obj/item/organ/internal/kidneys/diona // Turns into a nymph instantly, no transplanting possible.
+/obj/item/organ/internal/appendix/diona
 	species_type = /datum/species/diona
 	name = "polyp segment"
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "nymph"
 
-/obj/item/organ/internal/appendix/diona // Turns into a nymph instantly, no transplanting possible.
+/obj/item/organ/internal/heart/diona
 	species_type = /datum/species/diona
 	name = "anchoring ligament"
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "nymph"
+	parent_organ = "groin"
 
-/obj/item/organ/internal/eyes/diona // Turns into a nymph instantly, no transplanting possible.
+/obj/item/organ/internal/heart/diona/update_icon()
+	return
+
+/obj/item/organ/internal/eyes/diona
 	species_type = /datum/species/diona
 	name = "receptor node"
 	icon = 'icons/mob/alien.dmi'
 	icon_state = "claw"
+	parent_organ = "chest"
 
-//TODO:Make absorb rads on insert
-
-/obj/item/organ/internal/liver/diona // Turns into a nymph instantly, no transplanting possible.
+/obj/item/organ/internal/liver/diona
 	species_type = /datum/species/diona
 	name = "nutrient vessel"
 	icon = 'icons/mob/alien.dmi'
 	icon_state = "claw"
 	alcohol_intensity = 0.5
+
+/obj/item/organ/internal/ears/diona
+	species_type = /datum/species/diona
+	name = "oscillatory catcher"
+	icon = 'icons/mob/alien.dmi'
+	icon_state = "claw"
+	desc = "A strange organic object used by a Gestalt for orientation in a three-dimensional projection."
+	parent_organ = "groin"
+
+/datum/component/diona_internals
+
+/datum/component/diona_internals/Initialize()
+	if(!isatom(parent))
+		return COMPONENT_INCOMPATIBLE
+	if(istype(parent, /obj/item/organ/internal))
+		RegisterSignal(parent, COMSIG_CARBON_LOSE_ORGAN, .proc/transform_organ)
+
+/datum/component/diona_internals/proc/transform_organ()
+	if(is_int_organ(parent))
+		var/obj/item/organ/internal/organ = parent
+		var/mob/living/simple_animal/diona/nymph = new /mob/living/simple_animal/diona(get_turf(organ.owner))
+		nymph.health = round(clamp(1 - organ.damage / organ.min_broken_damage, 0, 1) * nymph.maxHealth)
+
+		if(istype(organ, /obj/item/organ/internal/brain))
+			var/obj/item/organ/internal/brain/brain = organ
+			if(brain.brainmob)
+				nymph.random_name = FALSE
+				nymph.real_name = brain.brainmob.real_name
+				nymph.name = brain.brainmob.real_name
+				var/datum/mind/mind = brain.brainmob.mind
+				mind.transfer_to(nymph)
+
+		qdel(organ)
+
+
