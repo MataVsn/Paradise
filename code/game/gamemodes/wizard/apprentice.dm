@@ -322,7 +322,7 @@
 	desc = "Школа, практикующая оживление статики, и каменение динамики."
 
 /datum/magick_school/sculpt/kit()
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/flesh_to_stone(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/touch/flesh_to_stone(null))
 	owner.equip_or_collect(new /obj/item/gun/magic/staff/animate(owner), slot_r_hand)
 
 	//Костюм настоящего художника-скульптора.
