@@ -602,13 +602,13 @@
 /datum/action/spell_action/IsMayActive()
 	if(!target)
 		return FALSE
-	var/obj/effect/proc_holder/spell/targeted/click/S = target
+	var/obj/effect/proc_holder/spell/S = target
 	if(!istype(S))
 		return ..()
 	return TRUE
 
 /datum/action/spell_action/toggle_active_overlay()
-	var/obj/effect/proc_holder/spell/targeted/click/S = target
+	var/obj/effect/proc_holder/spell/S = target
 	var/image/I = image('icons/mob/screen_gen.dmi', icon_state = "selector")
 	I.plane = FLOAT_PLANE + 1.1
 	I.layer = FLOAT_LAYER

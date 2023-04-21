@@ -2084,8 +2084,8 @@
 			SSticker.mode.update_devil_icons_removed(src)
 			special_role = null
 			RemoveSpell(/obj/effect/proc_holder/spell/targeted/infernal_jaunt)
-			RemoveSpell(/obj/effect/proc_holder/spell/targeted/click/fireball/hellish)
-			RemoveSpell(/obj/effect/proc_holder/spell/targeted/click/summon_contract)
+			RemoveSpell(/obj/effect/proc_holder/spell/fireball/hellish)
+			RemoveSpell(/obj/effect/proc_holder/spell/summon_contract)
 			RemoveSpell(/obj/effect/proc_holder/spell/targeted/conjure_item/pitchfork)
 			RemoveSpell(/obj/effect/proc_holder/spell/targeted/conjure_item/pitchfork/greater)
 			RemoveSpell(/obj/effect/proc_holder/spell/targeted/conjure_item/pitchfork/ascended)

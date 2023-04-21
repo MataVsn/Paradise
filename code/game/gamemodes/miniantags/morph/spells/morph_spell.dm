@@ -23,18 +23,18 @@
 			to_chat(user, "<span class='warning'>You require at least [hunger_cost] stored food to use this ability!</span>")
 		return FALSE
 
-/obj/effect/proc_holder/spell/targeted/click/morph_spell
+/obj/effect/proc_holder/spell/morph_spell
 	action_background_icon_state = "bg_morph"
 	clothes_req = FALSE
 	/// How much food it costs the morph to use this
 	var/hunger_cost = 0
 
-/obj/effect/proc_holder/spell/targeted/click/morph_spell/Initialize(mapload)
+/obj/effect/proc_holder/spell/morph_spell/Initialize(mapload)
 	. = ..()
 	if(hunger_cost)
 		name = "[name] ([hunger_cost])"
 
-/obj/effect/proc_holder/spell/targeted/click/morph_spell/can_cast(mob/living/simple_animal/hostile/morph/user, charge_check, show_message)
+/obj/effect/proc_holder/spell/morph_spell/can_cast(mob/living/simple_animal/hostile/morph/user, charge_check, show_message)
 	. = ..()
 	if(!.)
 		return

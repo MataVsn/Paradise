@@ -55,11 +55,11 @@
 	/// How much weaken a successful ambush attack applies
 	var/ambush_weaken = 3
 	/// The spell the morph uses to morph
-	var/obj/effect/proc_holder/spell/targeted/click/mimic/morph/mimic_spell
+	var/obj/effect/proc_holder/spell/mimic/morph/mimic_spell
 	/// The ambush action used by the morph
 	var/obj/effect/proc_holder/spell/targeted/morph_spell/ambush/ambush_spell
 	/// The spell the morph uses to pass through airlocks
-	var/obj/effect/proc_holder/spell/targeted/click/morph_spell/pass_airlock/pass_airlock_spell
+	var/obj/effect/proc_holder/spell/morph_spell/pass_airlock/pass_airlock_spell
 
 	/// How much the morph has gathered in terms of food. Used to reproduce and such
 	var/gathered_food = 20 // Start with a bit to use abilities
@@ -80,7 +80,7 @@
 	ambush_spell = new
 	AddSpell(ambush_spell)
 	AddSpell(new /obj/effect/proc_holder/spell/targeted/morph_spell/reproduce)
-	AddSpell(new /obj/effect/proc_holder/spell/targeted/click/morph_spell/open_vent)
+	AddSpell(new /obj/effect/proc_holder/spell/morph_spell/open_vent)
 	pass_airlock_spell = new
 	AddSpell(pass_airlock_spell)
 	GLOB.morphs_alive_list += src

@@ -57,7 +57,7 @@
 //WIDOW//
 
 //VENOM SPIT
-/obj/effect/proc_holder/spell/targeted/click/fireball/terror
+/obj/effect/proc_holder/spell/fireball/terror
 	name = "Venom spit"
 	desc = "Spit an acid that creates smoke filled with drugs and venom on impact."
 	charge_max = 250
@@ -69,7 +69,7 @@
 	action_background_icon_state = "bg_terror"
 	sound = 'sound/creatures/terrorspiders/spit2.ogg'
 
-/obj/effect/proc_holder/spell/targeted/click/fireball/terror/update_icon()
+/obj/effect/proc_holder/spell/fireball/terror/update_icon()
 	return
 
 /obj/item/projectile/terrorspider/widow/venom
@@ -92,7 +92,7 @@
 	return ..()
 
 //SMOKE SPIT
-/obj/effect/proc_holder/spell/targeted/click/fireball/terror/smoke
+/obj/effect/proc_holder/spell/fireball/terror/smoke
 	name = "Smoke spit"
 	desc = "Spit an acid that creates smoke on impact."
 	charge_max = 100

@@ -304,7 +304,7 @@
 
 /datum/magick_school/fire/kit()
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/smoke(null))
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/click/fireball(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/fireball(null))
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/sacred_flame(null))
 	ADD_TRAIT(owner, RESISTHOT, SUMMON_MAGIC)
 
@@ -447,7 +447,7 @@
 
 /datum/magick_school/replace/kit()		//старый набор
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/aoe_turf/knock(null))
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/click/mind_transfer(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/mind_transfer(null))
 
 	//Нацепляем простой фиолетовый балахон
 	owner.equip_or_collect(new /obj/item/clothing/suit/wizrobe/psypurple(owner), slot_wear_suit)
@@ -461,7 +461,7 @@
 
 /datum/magick_school/destruction/kit()	//старый набор
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/projectile/magic_missile(null))
-	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/click/fireball(null))
+	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/fireball(null))
 	owner.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/lightning(null))
 
 	//Стандартный костюм мага-воителя, который есть в башне волшебника и так.

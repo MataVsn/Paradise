@@ -21,18 +21,18 @@
 	action_background_icon_state = "bg_demon"
 
 
-/obj/effect/proc_holder/spell/targeted/click/summon_contract
+/obj/effect/proc_holder/spell/summon_contract
 	name = "Summon infernal contract"
 	desc = "Skip making a contract by hand, just do it by magic."
 	invocation_type = "whisper"
 	invocation = "Just sign on the dotted line."
 	selection_activated_message = "<span class='notice'>You prepare a detailed contract. Click on a target to summon the contract in his hands.</span>"
 	selection_deactivated_message = "<span class='notice'>You archive the contract for later use.</span>"
-	include_user = FALSE
+	//include_user = FALSE
 	range = 5
-	auto_target_single = FALSE	// Prevent an accidental contract from summoning
-	click_radius = -1 // Precision clicking required
-	allowed_type = /mob/living/carbon
+	//auto_target_single = FALSE	// Prevent an accidental contract from summoning
+	//click_radius = -1 // Precision clicking required
+	//allowed_type = /mob/living/carbon
 	clothes_req = FALSE
 	school = "conjuration"
 	charge_max = 150
@@ -40,7 +40,14 @@
 	action_icon_state = "spell_default"
 	action_background_icon_state = "bg_demon"
 
-/obj/effect/proc_holder/spell/targeted/click/summon_contract/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/summon_contract/create_new_targeting()
+	var/datum/spell_targeting/click/T = new()
+	T.try_auto_target = FALSE
+	T.click_radius = -1
+	T.range = 5
+	return T
+
+/obj/effect/proc_holder/spell/summon_contract/cast(list/targets, mob/user = usr)
 	for(var/target in targets)
 		var/mob/living/carbon/C = target
 		if(C.mind && user.mind)
@@ -69,7 +76,7 @@
 			to_chat(user,"<span class='notice'>[C] seems to not be sentient. You are unable to summon a contract for them.</span>")
 
 
-/obj/effect/proc_holder/spell/targeted/click/fireball/hellish
+/obj/effect/proc_holder/spell/fireball/hellish
 	name = "Hellfire"
 	desc = "This spell launches hellfire at the target."
 	school = "evocation"
@@ -80,7 +87,7 @@
 	fireball_type = /obj/item/projectile/magic/fireball/infernal
 	action_background_icon_state = "bg_demon"
 
-/obj/effect/proc_holder/spell/targeted/click/fireball/hellish/cast(list/targets, mob/living/user = usr)
+/obj/effect/proc_holder/spell/fireball/hellish/cast(list/targets, mob/living/user = usr)
 	add_attack_logs(user, targets, "has fired a Hellfire ball", ATKLOG_FEW)
 	.=..()
 
@@ -167,7 +174,7 @@
 	action_icon_state = "sintouch"
 	action_background_icon_state = "bg_demon"
 	random_target = TRUE
-	random_target_priority = TARGET_RANDOM
+	random_target_priority = SPELL_TARGET_RANDOM
 	max_targets = 3
 	invocation = "TASTE SIN AND INDULGE!!"
 	invocation_type = "shout"

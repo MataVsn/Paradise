@@ -28,8 +28,8 @@
 	melee_damage_upper = 20
 	melee_damage_type = TOX
 	web_type = /obj/structure/spider/terrorweb/widow
-	special_abillity = list(/obj/effect/proc_holder/spell/targeted/click/fireball/terror/smoke,
-							/obj/effect/proc_holder/spell/targeted/click/fireball/terror)
+	special_abillity = list(/obj/effect/proc_holder/spell/fireball/terror/smoke,
+							/obj/effect/proc_holder/spell/fireball/terror)
 	stat_attack = UNCONSCIOUS // ensures they will target people in crit, too!
 	spider_tier = TS_TIER_2
 	spider_intro_text = "Будучи Вдовой Ужаса, ваша цель - внести хаос на поле боя при помощи своих плевков, вы также смертоносны вблизи и с каждым укусом вводите в противников опасный яд. Несмотря на скорость и смертоносность, вы довольно хрупки, поэтому не стоит атаковать тяжело вооружённых противников!"

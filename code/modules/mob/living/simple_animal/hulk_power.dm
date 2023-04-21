@@ -437,19 +437,24 @@
 		M.adjust_fire_stacks(20)
 		M.IgniteMob()
 
-/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_spit
+/obj/effect/proc_holder/spell/hulk/hulk_spit
 	name = "Fire Spit"
 	desc = "Вы харкаете во врага зеленой соплей и поджигаете его."
 	panel = "Hulk"
 	invocation_type = "shout"
 	action_icon_state = "harchok_hulk"
 	action_background_icon_state = "bg_hulk"
-	allowed_type = /atom
+	//allowed_type = /atom
 	charge_max = 250
 	clothes_req = 0
-	range = 20
 
-/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_spit/cast(list/targets,mob/user)
+/obj/effect/proc_holder/spell/hulk/hulk_spit/create_new_targeting()
+	var/datum/spell_targeting/click/T = new()
+	T.range = 20
+	T.allowed_type = /atom
+	return T
+
+/obj/effect/proc_holder/spell/hulk/hulk_spit/cast(list/targets,mob/user)
 	var/target = targets[1]
 	if (user.lying || user.incapacitated())
 		to_chat(user, "<span class='warning'>You can't do that right now!</span>")
@@ -469,19 +474,24 @@
 
 //Laser
 
-/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_lazor
+/obj/effect/proc_holder/spell/hulk/hulk_lazor
 	name = "LazorZ"
 	desc = "Вы стреляете из глаз слабеньким лазером. Может помочь, если хитрые СБшники прячутся за стеклами."
 	panel = "Hulk"
 	invocation_type = "shout"
 	action_icon_state = "lazer_hulk"
 	action_background_icon_state = "bg_hulk"
-	allowed_type = /atom
+	//allowed_type = /atom
 	charge_max = 70
 	clothes_req = 0
-	range = 20
 
-/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_lazor/cast(list/targets,mob/user)
+/obj/effect/proc_holder/spell/hulk/hulk_lazor/create_new_targeting()
+	var/datum/spell_targeting/click/T = new()
+	T.range = 20
+	T.allowed_type = /atom
+	return T
+
+/obj/effect/proc_holder/spell/hulk/hulk_lazor/cast(list/targets,mob/user)
 	var/target = targets[1]
 	if (user.lying || user.incapacitated())
 		to_chat(user, "<span class='warning'>You can't right now!</span>")

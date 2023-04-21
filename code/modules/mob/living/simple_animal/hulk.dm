@@ -83,8 +83,8 @@
 	health_regen = 1.5
 
 	hulk_powers = list(/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_mill,
-	/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_spit,
-	/obj/effect/proc_holder/spell/targeted/click/hulk/hulk_lazor)
+	/obj/effect/proc_holder/spell/hulk/hulk_spit,
+	/obj/effect/proc_holder/spell/hulk/hulk_lazor)
 
 /mob/living/simple_animal/hulk/Life()
 	if(HAS_TRAIT(src, TRAIT_PACIFISM) || GLOB.pacifism_after_gt)
