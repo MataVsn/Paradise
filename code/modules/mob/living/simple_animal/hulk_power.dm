@@ -9,6 +9,10 @@
 	charge_max = 100
 	clothes_req = 0
 
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_transform/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_transform/cast(list/targets, mob/user)
 	if(HAS_TRAIT(user, TRAIT_PACIFISM) || GLOB.pacifism_after_gt)
 		to_chat(user, "<span class='warning'>Not enough angry power.")
@@ -52,6 +56,10 @@
 	charge_max = 130
 	clothes_req = 0
 	range = 5
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_dash/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 5
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_dash/cast(list/targets, mob/user)
 	var/turf/T = get_turf(get_step(user,user.dir))
@@ -219,6 +227,11 @@
 	clothes_req = 0
 	range = 5
 
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_jump/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 5
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_jump/cast(list/targets , mob/user)
 	//for(var/turf/T in targets)
 	var/failure = 0
@@ -330,6 +343,11 @@
 	clothes_req = 0
 	range = 2
 
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_honk/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 2
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_honk/cast(list/target,mob/user)
 	if (user.incapacitated())
 		to_chat(user, "<span class='red'>You can't right now!</span>")
@@ -364,6 +382,11 @@
 	clothes_req = 0
 	range = 2
 
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_joke/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 2
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_joke/cast(list/targets,mob/user)
 	if (user.incapacitated())
 		to_chat(user, "<span class='warning'>You can't right now!</span>")
@@ -394,6 +417,11 @@
 	charge_max = 200
 	clothes_req = 0
 	range = 2
+
+/obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_mill/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 2
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/hulk/hulk_mill/cast(list/targets,mob/user = user)
 	if (user.lying || user.incapacitated())

@@ -71,6 +71,11 @@
 	var/mob/living/summoner = null
 	var/list/stunning_hallucinations = list("singulo", "koolaid", "fake")
 
+/obj/effect/proc_holder/spell/aoe_turf/guardian/fire/hallucination/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 10
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/guardian/fire/hallucination/cast(list/targets, mob/user = usr)
 	for(var/turf/T in targets)
 		for(var/mob/target in T.contents)

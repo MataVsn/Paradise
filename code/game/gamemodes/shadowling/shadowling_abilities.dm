@@ -75,6 +75,11 @@
 	var/blacklisted_lights = list(/obj/item/flashlight/flare, /obj/item/flashlight/slime)
 	action_icon_state = "veil"
 
+/obj/effect/proc_holder/spell/aoe_turf/veil/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 5
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/veil/can_cast(mob/living/user = usr, charge_check = TRUE, show_message = FALSE)
 	if(user.incorporeal_move == INCORPOREAL_NORMAL)
 		return FALSE
@@ -181,6 +186,11 @@
 	charge_max = 250
 	clothes_req = 0
 	action_icon_state = "icy_veins"
+
+/obj/effect/proc_holder/spell/aoe_turf/flashfreeze/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 5
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/flashfreeze/can_cast(mob/living/user = usr, charge_check = TRUE, show_message = FALSE)
 	if(user.incorporeal_move == INCORPOREAL_NORMAL)
@@ -452,10 +462,13 @@
 	name = "Sonic Screech"
 	desc = "Deafens, stuns, and confuses nearby people. Also shatters windows."
 	panel = "Shadowling Abilities"
-	range = 7
 	charge_max = 300
 	clothes_req = 0
 	action_icon_state = "screech"
+
+/obj/effect/proc_holder/spell/aoe_turf/unearthly_screech/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/unearthly_screech/can_cast(mob/living/user = usr, charge_check = TRUE, show_message = FALSE)
 	if(user.incorporeal_move == INCORPOREAL_NORMAL)
@@ -498,6 +511,10 @@
 	charge_max = 600
 	clothes_req = FALSE
 	action_icon_state = "null_charge"
+
+/obj/effect/proc_holder/spell/aoe_turf/null_charge/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/null_charge/can_cast(mob/living/user = usr, charge_check = TRUE, show_message = FALSE)
 	if(user.incorporeal_move == INCORPOREAL_NORMAL)
@@ -831,6 +848,11 @@
 	charge_max = 100
 	clothes_req = 0
 	action_icon_state = "lightning_storm"
+
+/obj/effect/proc_holder/spell/aoe_turf/ascendant_storm/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 6
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/ascendant_storm/cast(list/targets, mob/user = usr)
 	var/mob/living/simple_animal/ascendant_shadowling/SHA = user

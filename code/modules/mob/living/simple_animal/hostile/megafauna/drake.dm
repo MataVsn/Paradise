@@ -667,6 +667,11 @@ Difficulty: Medium
 	action_icon_state = "tailsweep"
 	action_background_icon_state = "bg_alien"
 
+/obj/effect/proc_holder/spell/aoe_turf/repulse/spacedragon/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 1
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/repulse/spacedragon/cast(list/targets, mob/user = usr)
 	if(iscarbon(user))
 		var/mob/living/carbon/C = user

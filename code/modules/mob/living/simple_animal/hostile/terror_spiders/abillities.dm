@@ -41,6 +41,11 @@
 	range = 6
 	sound = 'sound/creatures/terrorspiders/heal.ogg'
 
+/obj/effect/proc_holder/spell/aoe_turf/terror/healing_lesser/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 6
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/terror/healing_lesser/cast(list/targets, mob/user = usr)
 	for(var/turf/T in targets)
 		for(var/mob/target in T.contents)
@@ -167,6 +172,11 @@
 	cast_sound = 'sound/creatures/terrorspiders/mod_defence.ogg'
 	summon_type = list(/obj/effect/forcefield/terror)
 
+/obj/effect/proc_holder/spell/aoe_turf/conjure/terror/shield/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 0
+	return T
+
 /obj/effect/forcefield/terror
 	desc = "Thick protective membrane produced by Guardians of Terror."
 	name = "Guardian shield"
@@ -263,6 +273,11 @@
 	range = 6
 	sound = 'sound/creatures/terrorspiders/princess_shriek.ogg'
 
+/obj/effect/proc_holder/spell/aoe_turf/terror/princess/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 6
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/terror/princess/cast(list/targets, mob/user = usr)
 	for(var/turf/T in targets)
 		for(var/mob/target in T.contents)
@@ -292,6 +307,11 @@
 	charge_max = 350
 	clothes_req = FALSE
 	range = 2
+
+/obj/effect/proc_holder/spell/aoe_turf/terror/slam/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 2
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/terror/slam/cast(list/targets, mob/user = usr)
 	playsound(usr, 'sound/creatures/terrorspiders/prince_attack.ogg', 150, 0)
@@ -323,6 +343,11 @@
 	cast_sound = 'sound/creatures/terrorspiders/jelly.ogg'
 	summon_type = list(/obj/structure/spider/royaljelly)
 
+/obj/effect/proc_holder/spell/aoe_turf/conjure/terror/jelly/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 0
+	return T
+
 //MASS HEAL
 /obj/effect/proc_holder/spell/aoe_turf/terror/healing
 	name = "Massive healing"
@@ -333,6 +358,11 @@
 	clothes_req = FALSE
 	range = 7
 	sound = 'sound/creatures/terrorspiders/heal.ogg'
+
+/obj/effect/proc_holder/spell/aoe_turf/terror/healing/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 7
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/terror/healing/cast(list/targets, mob/user = usr)
 	for(var/turf/T in targets)
@@ -359,6 +389,11 @@
 	clothes_req = FALSE
 	range = 7
 	sound = 'sound/creatures/terrorspiders/queen_shriek.ogg'
+
+/obj/effect/proc_holder/spell/aoe_turf/terror/queen/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 7
+	return T
 
 /obj/effect/proc_holder/spell/aoe_turf/terror/queen/cast(list/targets, mob/user = usr)
 	for(var/turf/T in targets)
