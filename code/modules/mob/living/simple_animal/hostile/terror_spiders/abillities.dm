@@ -5,19 +5,21 @@
 //LURKER//
 
 //STEALTH AKA INVISIBILLITY
-/obj/effect/proc_holder/spell/targeted/genetic/terror/stealth
+/obj/effect/proc_holder/spell/genetic/terror/stealth
 	name = "Stealth"
 	desc = "Become completely invisible for a short time."
 	charge_max = 300
 	action_icon_state = "stealth"
 	action_background_icon_state = "bg_terror"
 	clothes_req = FALSE
-	range = -1
-	include_user = 1
 	duration = 70
 	sound = 'sound/creatures/terrorspiders/stealth.ogg'
 
-/obj/effect/proc_holder/spell/targeted/genetic/terror/stealth/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/genetic/terror/stealth/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/genetic/terror/stealth/cast(list/targets, mob/user = usr)
 	for(var/mob/living/target in targets)
 		target.alpha = 0
 		target.visible_message("<span class='warning'>[target] suddenly disappears!</span>", "<span class='purple'>You are invisible now!</span>")
@@ -122,35 +124,39 @@
 //DESTROYER//
 
 //EMP
-/obj/effect/proc_holder/spell/targeted/terror/emp
+/obj/effect/proc_holder/spell/terror/emp
 	name = "EMP shriek"
 	desc = "Emits a shriek that causes EMP pulse."
 	action_icon_state = "emp_new"
 	action_background_icon_state = "bg_terror"
 	charge_max = 400
 	clothes_req = FALSE
-	range = -1
-	include_user = 1
 	sound = 'sound/creatures/terrorspiders/brown_shriek.ogg'
 
-/obj/effect/proc_holder/spell/targeted/terror/emp/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/terror/emp/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/terror/emp/cast(list/targets, mob/user = usr)
 	for(var/mob/living/target in targets)
 		if(isturf(usr.loc)) //to avoid cast from vents
 			empulse(usr.loc, 3, 2, TRUE, cause = usr)
 
 //EXPLOSION
-/obj/effect/proc_holder/spell/targeted/terror/burn
+/obj/effect/proc_holder/spell/terror/burn
 	name = "Burn!"
 	desc = "Release your energy to create a massive fire ring."
 	action_icon_state = "explosion"
 	action_background_icon_state = "bg_terror"
 	charge_max = 600
 	clothes_req = FALSE
-	range = -1
-	include_user = 1
 	sound = 'sound/creatures/terrorspiders/brown_shriek.ogg'
 
-/obj/effect/proc_holder/spell/targeted/terror/burn/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/terror/burn/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/terror/burn/cast(list/targets, mob/user = usr)
 	for(var/mob/living/target in targets)
 		if(isturf(usr.loc)) //to avoid cast from vents
 			explosion(usr.loc, flame_range = 5, cause = usr)
@@ -196,18 +202,20 @@
 //DEFILER//
 
 //SMOKE
-/obj/effect/proc_holder/spell/targeted/terror/smoke
+/obj/effect/proc_holder/spell/terror/smoke
 	name = "Smoke"
 	desc = "Erupt a smoke to confuse your enemies."
 	charge_max = 100
 	clothes_req = FALSE
-	range = -1
-	include_user = 1
 	sound = 'sound/creatures/terrorspiders/attack2.ogg'
 	action_icon_state = "smoke"
 	action_background_icon_state = "bg_terror"
 
-/obj/effect/proc_holder/spell/targeted/terror/smoke/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/terror/smoke/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/terror/smoke/cast(list/targets, mob/user = usr)
 	for(var/mob/living/target in targets)
 		if(isturf(usr.loc)) //to avoid cast from vents
 			var/datum/effect_system/smoke_spread/smoke = new
@@ -215,18 +223,20 @@
 			smoke.start()
 
 //PARALYSING SMOKE
-/obj/effect/proc_holder/spell/targeted/terror/parasmoke
+/obj/effect/proc_holder/spell/terror/parasmoke
 	name = "Paralyzing Smoke"
 	desc = "Erupt a smoke to paralyze your enemies."
 	charge_max = 400
 	clothes_req = FALSE
-	range = -1
-	include_user = 1
 	sound = 'sound/creatures/terrorspiders/attack2.ogg'
 	action_icon_state = "biohazard"
 	action_background_icon_state = "bg_terror"
 
-/obj/effect/proc_holder/spell/targeted/terror/parasmoke/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/terror/parasmoke/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/terror/parasmoke/cast(list/targets, mob/user = usr)
 	for(var/mob/living/target in targets)
 		if(isturf(usr.loc)) //to avoid cast from vents
 			var/datum/effect_system/smoke_spread/chem/S = new
@@ -237,18 +247,20 @@
 			S.start()
 
 //INFESTING SMOKE
-/obj/effect/proc_holder/spell/targeted/terror/infest
+/obj/effect/proc_holder/spell/terror/infest
 	name = "Infesting Smoke"
 	desc = "Erupt a smoke to infest your enemies with spider eggs."
 	charge_max = 600
 	clothes_req = FALSE
-	range = -1
-	include_user = 1
 	sound = 'sound/creatures/terrorspiders/white_shriek.ogg'
 	action_icon_state = "biohazard2"
 	action_background_icon_state = "bg_terror"
 
-/obj/effect/proc_holder/spell/targeted/terror/infest/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/terror/infest/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/terror/infest/cast(list/targets, mob/user = usr)
 	for(var/mob/living/target in targets)
 		if(isturf(usr.loc)) //to avoid cast from vents
 			var/datum/effect_system/smoke_spread/chem/S = new

@@ -92,19 +92,21 @@
 	.=..()
 
 
-/obj/effect/proc_holder/spell/targeted/infernal_jaunt
+/obj/effect/proc_holder/spell/infernal_jaunt
 	name = "Infernal Jaunt"
 	desc = "Use hellfire to phase out of existence."
 	charge_max = 200
 	clothes_req = FALSE
 	selection_type = "range"
-	range = -1
 	cooldown_min = 0
 	overlay = null
-	include_user = TRUE
 	action_icon_state = "jaunt"
 	action_background_icon_state = "bg_demon"
 	phase_allowed = TRUE
+
+/obj/effect/proc_holder/spell/infernal_jaunt/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
 
 /obj/effect/proc_holder/spell/targeted/infernal_jaunt/cast(list/targets, mob/living/user = usr)
 	if(istype(user))

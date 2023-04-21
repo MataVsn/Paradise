@@ -57,7 +57,7 @@
 	/// The spell the morph uses to morph
 	var/obj/effect/proc_holder/spell/mimic/morph/mimic_spell
 	/// The ambush action used by the morph
-	var/obj/effect/proc_holder/spell/targeted/morph_spell/ambush/ambush_spell
+	var/obj/effect/proc_holder/spell/morph_spell/ambush/ambush_spell
 	/// The spell the morph uses to pass through airlocks
 	var/obj/effect/proc_holder/spell/morph_spell/pass_airlock/pass_airlock_spell
 
@@ -79,7 +79,7 @@
 	AddSpell(mimic_spell)
 	ambush_spell = new
 	AddSpell(ambush_spell)
-	AddSpell(new /obj/effect/proc_holder/spell/targeted/morph_spell/reproduce)
+	AddSpell(new /obj/effect/proc_holder/spell/morph_spell/reproduce)
 	AddSpell(new /obj/effect/proc_holder/spell/morph_spell/open_vent)
 	pass_airlock_spell = new
 	AddSpell(pass_airlock_spell)
@@ -99,8 +99,8 @@
 
 /mob/living/simple_animal/hostile/morph/wizard/New()
 	. = ..()
-	AddSpell(new /obj/effect/proc_holder/spell/targeted/smoke)
-	AddSpell(new /obj/effect/proc_holder/spell/targeted/forcewall)
+	AddSpell(new /obj/effect/proc_holder/spell/smoke)
+	AddSpell(new /obj/effect/proc_holder/spell/forcewall)
 
 
 /mob/living/simple_animal/hostile/morph/proc/try_eat(atom/movable/item)

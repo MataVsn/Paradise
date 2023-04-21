@@ -20,7 +20,7 @@
 
 /mob/living/simple_animal/hostile/guardian/protector/New()
 	..()
-	AddSpell(new /obj/effect/proc_holder/spell/targeted/forcewall/greater/guardian)
+	AddSpell(new /obj/effect/proc_holder/spell/forcewall/greater/guardian)
 
 /mob/living/simple_animal/hostile/guardian/protector/ToggleMode()
 	if(cooldown > world.time)
@@ -79,7 +79,7 @@
 		to_chat(summoner, "<span class='danger'>Ваш [name] под атакой, поглощая урон!</span>")
 		visible_message("<span class='danger'>[src] поглотил урон!</span>")
 
-/obj/effect/proc_holder/spell/targeted/forcewall/greater/guardian
+/obj/effect/proc_holder/spell/forcewall/greater/guardian
 	name = "Голографическая силовая стена"
 	desc = "Создает перед вами непробиваемый барьер, через который могут проходить вы и ваш хозяин."
 	clothes_req = FALSE

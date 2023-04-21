@@ -25,9 +25,9 @@
 	gender = MALE
 	web_type = /obj/structure/spider/terrorweb/white
 	delay_web = 20
-	special_abillity = list(/obj/effect/proc_holder/spell/targeted/terror/smoke,
-							/obj/effect/proc_holder/spell/targeted/terror/parasmoke,
-							/obj/effect/proc_holder/spell/targeted/terror/infest)
+	special_abillity = list(/obj/effect/proc_holder/spell/terror/smoke,
+							/obj/effect/proc_holder/spell/terror/parasmoke,
+							/obj/effect/proc_holder/spell/terror/infest)
 	spider_intro_text = "Будучи Осквернителем Ужаса, ваша цель - атаковать ничего не подозревающих гуманоидов, чтобы заразить их яйцами. Вы наносите мало урона, но можете парализовать цель за два укуса, а ваш яд заставит её замолчать. Вы также можете генерировать различные дымы вредящие противникам. И помните, не нужно убивать заражённых, они послужат носителями для новых пауков!"
 
 

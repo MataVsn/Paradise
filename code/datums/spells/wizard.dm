@@ -74,7 +74,7 @@
 	desc = "This always-on spell allows you to cast magic without your garments."
 	action_icon_state = "no_clothes"
 
-/obj/effect/proc_holder/spell/targeted/genetic/mutate
+/obj/effect/proc_holder/spell/genetic/mutate
 	name = "Mutate"
 	desc = "This spell causes you to turn into a hulk and gain laser vision for a short while."
 
@@ -84,8 +84,6 @@
 	invocation = "BIRUZ BENNAR"
 	invocation_type = "shout"
 	message = "<span class='notice'>You feel strong! You feel a pressure building behind your eyes!</span>"
-	range = -1
-	include_user = 1
 	centcom_cancast = 0
 
 	mutations = list(LASER, HULK)
@@ -95,7 +93,11 @@
 	action_icon_state = "mutate"
 	sound = 'sound/magic/mutate.ogg'
 
-/obj/effect/proc_holder/spell/targeted/genetic/mutate/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/genetic/mutate/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/genetic/mutate/cast(list/targets, mob/user = usr)
 	for(var/mob/living/target in targets)
 		target.dna.SetSEState(GLOB.hulkblock, 1)
 		genemutcheck(target, GLOB.hulkblock, null, MUTCHK_FORCED)
@@ -104,7 +106,7 @@
 			genemutcheck(target, GLOB.hulkblock, null, MUTCHK_FORCED)
 	..()
 
-/obj/effect/proc_holder/spell/targeted/smoke
+/obj/effect/proc_holder/spell/smoke
 	name = "Smoke"
 	desc = "This spell spawns a cloud of choking smoke at your location and does not require wizard garb."
 
@@ -113,8 +115,6 @@
 	clothes_req = 0
 	invocation = "none"
 	invocation_type = "none"
-	range = -1
-	include_user = 1
 	cooldown_min = 20 //25 deciseconds reduction per rank
 
 	smoke_spread = 2
@@ -122,15 +122,17 @@
 
 	action_icon_state = "smoke"
 
-/obj/effect/proc_holder/spell/targeted/emplosion/disable_tech
+/obj/effect/proc_holder/spell/infinite_guns/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/emplosion/disable_tech
 	name = "Disable Tech"
 	desc = "This spell disables all weapons, cameras and most other technology in range."
 	charge_max = 400
 	clothes_req = 1
 	invocation = "NEC CANTIO"
 	invocation_type = "shout"
-	range = -1
-	include_user = 1
 	cooldown_min = 200 //50 deciseconds reduction per rank
 
 	emp_heavy = 6
@@ -138,7 +140,11 @@
 
 	sound = 'sound/magic/disable_tech.ogg'
 
-/obj/effect/proc_holder/spell/targeted/turf_teleport/blink
+/obj/effect/proc_holder/spell/emplosion/disable_tech/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/turf_teleport/blink
 	name = "Blink"
 	desc = "This spell randomly teleports you a short distance."
 
@@ -147,8 +153,6 @@
 	clothes_req = 1
 	invocation = "none"
 	invocation_type = "none"
-	range = -1
-	include_user = 1
 	cooldown_min = 5 //4 deciseconds reduction per rank
 
 
@@ -165,7 +169,11 @@
 	sound1 = 'sound/magic/blink.ogg'
 	sound2 = 'sound/magic/blink.ogg'
 
-/obj/effect/proc_holder/spell/targeted/area_teleport/teleport
+/obj/effect/proc_holder/spell/turf_teleport/blink/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/area_teleport/teleport
 	name = "Teleport"
 	desc = "This spell teleports you to a type of area of your selection."
 
@@ -174,8 +182,6 @@
 	clothes_req = 1
 	invocation = "SCYAR NILA"
 	invocation_type = "shout"
-	range = -1
-	include_user = 1
 	cooldown_min = 200 //100 deciseconds reduction per rank
 
 	smoke_spread = 1
@@ -186,7 +192,11 @@
 	sound1 = 'sound/magic/teleport_diss.ogg'
 	sound2 = 'sound/magic/teleport_app.ogg'
 
-/obj/effect/proc_holder/spell/targeted/forcewall
+/obj/effect/proc_holder/spell/area_teleport/teleport/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/forcewall
 	name = "Force Wall"
 	desc = "This spell creates a small unbreakable wall that only you can pass through, and does not need wizard garb. Lasts 30 seconds."
 
@@ -197,13 +207,15 @@
 	invocation_type = "whisper"
 	sound = 'sound/magic/forcewall.ogg'
 	action_icon_state = "shield"
-	range = -1
-	include_user = TRUE
 	cooldown_min = 50 //12 deciseconds reduction per rank
 	var/wall_type = /obj/effect/forcefield/wizard
 	var/large = FALSE
 
-/obj/effect/proc_holder/spell/targeted/forcewall/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/forcewall/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
+
+/obj/effect/proc_holder/spell/forcewall/cast(list/targets, mob/user = usr)
 	new wall_type(get_turf(user), user)
 	if(large) //Extra THICK
 		if(user.dir == SOUTH || user.dir == NORTH)
@@ -213,7 +225,7 @@
 			new wall_type(get_step(user, NORTH), user)
 			new wall_type(get_step(user, SOUTH), user)
 
-/obj/effect/proc_holder/spell/targeted/forcewall/greater
+/obj/effect/proc_holder/spell/forcewall/greater
 	name = "Greater Force Wall"
 	desc = "Create a larger magical barrier that only you can pass through, but requires wizard garb. Lasts 30 seconds."
 
