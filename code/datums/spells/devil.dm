@@ -108,7 +108,7 @@
 	var/datum/spell_targeting/self/S = new()
 	return S
 
-/obj/effect/proc_holder/spell/targeted/infernal_jaunt/cast(list/targets, mob/living/user = usr)
+/obj/effect/proc_holder/spell/infernal_jaunt/cast(list/targets, mob/living/user = usr)
 	if(istype(user))
 		if(istype(user.loc, /obj/effect/dummy/slaughter))
 			var/continuing = 0
@@ -197,11 +197,9 @@
 		H.Weaken(2)
 		H.Stun(2)
 
-/obj/effect/proc_holder/spell/targeted/summon_dancefloor
+/obj/effect/proc_holder/spell/summon_dancefloor
 	name = "Summon Dancefloor"
 	desc = "When what a Devil really needs is funk."
-	include_user = TRUE
-	range = -1
 	clothes_req = FALSE
 
 	school = "conjuration"
@@ -215,6 +213,9 @@
 	var/dancefloor_exists = FALSE
 //	var/datum/effect_system/smoke_spread/transparent/dancefloor_devil/smoke
 
+/obj/effect/proc_holder/spell/summon_dancefloor/create_new_targeting()
+	var/datum/spell_targeting/self/S = new()
+	return S
 
 /obj/effect/proc_holder/spell/targeted/summon_dancefloor/cast(list/targets, mob/user = usr)
 	LAZYINITLIST(dancefloor_turfs)
