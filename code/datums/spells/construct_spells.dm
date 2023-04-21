@@ -5,6 +5,11 @@
 	action_icon_state = "artificer"
 	action_background_icon_state = "bg_cult"
 
+/obj/effect/proc_holder/spell/aoe_turf/conjure/build/create_new_targeting()
+	var/datum/spell_targeting/aoe/turf/T = new()
+	T.range = 0
+	return T
+
 /obj/effect/proc_holder/spell/aoe_turf/conjure/build/floor
 	name = "Summon Cult Floor"
 	desc = "This spell constructs a cult floor"
