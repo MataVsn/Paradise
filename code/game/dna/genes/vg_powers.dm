@@ -3,7 +3,7 @@
 /datum/dna/gene/basic/grant_spell/morph
 	name = "Morphism"
 	desc = "Enables the subject to reconfigure their appearance to that of any human."
-	spelltype =/obj/effect/proc_holder/spell/morph
+	spelltype =/obj/effect/proc_holder/spell/targeted/morph
 	activation_messages = list("Your body feels if can alter its appearance.")
 	deactivation_messages = list("Your body doesn't feel capable of altering its appearance.")
 	instability = GENE_INSTABILITY_MINOR
@@ -13,7 +13,7 @@
 	..()
 	block = GLOB.morphblock
 
-/obj/effect/proc_holder/spell/morph
+/obj/effect/proc_holder/spell/targeted/morph
 	name = "Morph"
 	desc = "Mimic the appearance of your choice!"
 	panel = "Abilities"
@@ -22,15 +22,13 @@
 	clothes_req = 0
 	stat_allowed = 0
 	invocation_type = "none"
+	range = -1
+	include_user = 1
 	selection_type = "range"
 
 	action_icon_state = "genetic_morph"
 
-/obj/effect/proc_holder/spell/morph/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/morph/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/morph/cast(list/targets, mob/user = usr)
 	if(!ishuman(user))
 		return
 

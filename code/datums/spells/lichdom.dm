@@ -1,4 +1,4 @@
-/obj/effect/proc_holder/spell/lichdom
+/obj/effect/proc_holder/spell/targeted/lichdom
 	name = "Bind Soul"
 	desc = "A dark necromantic pact that can forever bind your soul to an item of your choosing. So long as both your body and the item remain intact and on the same plane you can revive from death, though the time between reincarnations grows steadily with use."
 	school = "necromancy"
@@ -7,8 +7,10 @@
 	centcom_cancast = 0
 	invocation = "NECREM IMORTIUM!"
 	invocation_type = "shout"
+	range = -1
 	level_max = 0 //cannot be improved
 	cooldown_min = 10
+	include_user = 1
 
 	var/obj/marked_item
 	var/mob/living/current_body
@@ -17,11 +19,7 @@
 
 	action_icon_state = "skeleton"
 
-/obj/effect/proc_holder/spell/lichdom/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/lichdom/Destroy()
+/obj/effect/proc_holder/spell/targeted/lichdom/Destroy()
 	for(var/datum/mind/M in SSticker.mode.wizards) //Make sure no other bones are about
 		for(var/obj/effect/proc_holder/spell/S in M.spell_list)
 			if(istype(S,/obj/effect/proc_holder/spell/targeted/lichdom) && S != src)
@@ -30,7 +28,7 @@
 		config.continuous_rounds = 0
 	return ..()
 
-/obj/effect/proc_holder/spell/lichdom/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/lichdom/cast(list/targets, mob/user = usr)
 	if(!config.continuous_rounds)
 		existence_stops_round_end = 1
 		config.continuous_rounds = 1
@@ -51,7 +49,7 @@
 				charge_counter = charge_max
 				return
 
-			if(!marked_item || QDELTED(marked_item)) //Wait nevermind
+			if(!marked_item || QDELETED(marked_item)) //Wait nevermind
 				to_chat(M, "<span class='warning'>Your phylactery is gone!</span>")
 				return
 
@@ -96,7 +94,7 @@
 			for(var/obj/item in hand_items)
 				if((ABSTRACT in item.flags) || (NODROP in item.flags))
 					continue
-				marked_item = itemE
+				marked_item = item
 				to_chat(M, "<span class='warning'>You begin to focus your very being into the [item.name]...</span>")
 				break
 
