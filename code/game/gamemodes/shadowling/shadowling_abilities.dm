@@ -98,20 +98,18 @@
 		for(var/atom/A in T.contents)
 			A.extinguish_light()
 
-/obj/effect/proc_holder/spell/shadow_walk
+/obj/effect/proc_holder/spell/targeted/shadow_walk
 	name = "Shadow Walk"
 	desc = "Phases you into the space between worlds for a short time, allowing movement through walls and invisbility."
 	panel = "Shadowling Abilities"
 	charge_max = 300 //Used to be twice this, buffed
 	clothes_req = 0
 	phase_allowed = TRUE
+	range = -1
+	include_user = 1
 	action_icon_state = "shadow_walk"
 
-/obj/effect/proc_holder/spell/shadow_walk/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/shadow_walk/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/shadow_walk/cast(list/targets, mob/user = usr)
 	if(!shadowling_check(user))
 		charge_counter = charge_max
 		return
@@ -134,19 +132,17 @@
 		target.alpha = 255
 		target.forceMove(user.loc)
 
-/obj/effect/proc_holder/spell/lesser_shadow_walk
+/obj/effect/proc_holder/spell/targeted/lesser_shadow_walk
 	name = "Guise"
 	desc = "Wraps your form in shadows, making you harder to see."
 	panel = "Thrall Abilities"
 	charge_max = 1200
 	clothes_req = 0
+	range = -1
+	include_user = 1
 	action_icon_state = "shadow_walk"
 
-/obj/effect/proc_holder/spell/lesser_shadow_walk/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/lesser_shadow_walk/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/lesser_shadow_walk/cast(list/targets, mob/user = usr)
 	for(var/mob/living/target in targets)
 		target.visible_message("<span class='warning'>[target] suddenly fades away!</span>", "<span class='shadowling'>You veil yourself in darkness, making you harder to see.</span>")
 		target.alpha = 10
@@ -155,19 +151,17 @@
 		target.alpha = initial(target.alpha)
 
 
-/obj/effect/proc_holder/spell/shadow_vision
+/obj/effect/proc_holder/spell/targeted/shadow_vision
 	name = "Shadowling Darksight"
 	desc = "Gives you night and thermal vision."
 	panel = "Shadowling Abilities"
 	charge_max = 0
+	range = -1
+	include_user = 1
 	clothes_req = 0
 	action_icon_state = "darksight"
 
-/obj/effect/proc_holder/spell/shadow_vision/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/shadow_vision/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/shadow_vision/cast(list/targets, mob/user = usr)
 	for(var/mob/living/target in targets)
 		if(!istype(target) || !ishuman(target))
 			return
@@ -179,7 +173,7 @@
 			to_chat(H, "<span class='notice'>You return your vision to normal.</span>")
 			H.set_sight(null)
 
-/obj/effect/proc_holder/spell/shadow_vision/thrall
+/obj/effect/proc_holder/spell/targeted/shadow_vision/thrall
 	desc = "Thrall Darksight"
 	desc = "Gives you night vision."
 	panel = "Thrall Abilities"
@@ -298,19 +292,17 @@
 	SSticker.mode.add_thrall(target.mind)
 	target.mind.special_role = SPECIAL_ROLE_SHADOWLING_THRALL
 
-/obj/effect/proc_holder/spell/shadowling_regenarmor  //Resets a shadowling's species to normal, removes genetic defects, and re-equips their armor
+/obj/effect/proc_holder/spell/targeted/shadowling_regenarmor //Resets a shadowling's species to normal, removes genetic defects, and re-equips their armor
 	name = "Rapid Re-Hatch"
 	desc = "Re-forms protective chitin that may be lost during cloning or similar processes."
 	panel = "Shadowling Abilities"
 	charge_max = 600
+	range = -1
+	include_user = 1
 	clothes_req = 0
 	action_icon_state = "regen_armor"
 
-/obj/effect/proc_holder/spell/shadowling_regenarmor/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/shadowling_regenarmor /cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/shadowling_regenarmor/cast(list/targets, mob/user = usr)
 	if(!is_shadow(user))
 		to_chat(user, "<span class='warning'>You must be a shadowling to do this!</span>")
 		charge_counter = charge_max
@@ -331,28 +323,26 @@
 		H.equip_to_slot_or_del(new /obj/item/clothing/mask/gas/shadowling(H), slot_wear_mask)
 		H.equip_to_slot_or_del(new /obj/item/clothing/glasses/shadowling(H), slot_glasses)
 
-/obj/effect/proc_holder/spell/collective_mind  //Lets a shadowling bring together their thralls' strength, granting new abilities and a headcount
+/obj/effect/proc_holder/spell/targeted/collective_mind //Lets a shadowling bring together their thralls' strength, granting new abilities and a headcount
 	name = "Collective Hivemind"
 	desc = "Gathers the power of all of your thralls and compares it to what is needed for ascendance. Also gains you new abilities."
 	panel = "Shadowling Abilities"
 	charge_max = 300 //30 second cooldown to prevent spam
 	clothes_req = 0
+	range = -1
+	include_user = 1
 	var/blind_smoke_acquired
 	var/screech_acquired
 	var/nullChargeAcquired
 	var/reviveThrallAcquired
 	action_icon_state = "collective_mind"
 
-/obj/effect/proc_holder/spell/shadowling_regenarmor/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/collective_mind /can_cast(mob/living/user = usr, charge_check = TRUE, show_message = FALSE)
+/obj/effect/proc_holder/spell/targeted/collective_mind/can_cast(mob/living/user = usr, charge_check = TRUE, show_message = FALSE)
 	if(user.incorporeal_move == INCORPOREAL_NORMAL)
 		return FALSE
 	. = ..()
 
-/obj/effect/proc_holder/spell/collective_mind /cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/collective_mind/cast(list/targets, mob/user = usr)
 	if(!shadowling_check(user))
 		charge_counter = charge_max
 		return
@@ -381,7 +371,7 @@
 			blind_smoke_acquired = 1
 			to_chat(target, "<span class='shadowling'><i>The power of your thralls has granted you the <b>Blinding Smoke</b> ability. \
 			It will create a choking cloud that will blind any non-thralls who enter.</i></span>")
-			target.mind.AddSpell(new /obj/effect/proc_holder/spell/blindness_smoke(null))
+			target.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/blindness_smoke(null))
 
 		if(thralls >= CEILING(7 * SSticker.mode.thrall_ratio, 1) && !nullChargeAcquired)
 			nullChargeAcquired = 1
@@ -403,12 +393,12 @@
 			to_chat(target, "<span class='shadowling'><b>You may find Ascendance in the Shadowling Evolution tab.</b></span>")
 			for(M in GLOB.alive_mob_list)
 				if(is_shadow(M))
-					var/obj/effect/proc_holder/spell/collective_mind /CM
+					var/obj/effect/proc_holder/spell/targeted/collective_mind/CM
 					if(CM in M.mind.spell_list)
 						M.mind.spell_list -= CM
 						qdel(CM)
-					M.mind.RemoveSpell(/obj/effect/proc_holder/spell/shadowling_hatch)
-					M.mind.AddSpell(new /obj/effect/proc_holder/spell/shadowling_ascend(null))
+					M.mind.RemoveSpell(/obj/effect/proc_holder/spell/targeted/shadowling_hatch)
+					M.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/shadowling_ascend(null))
 					if(M == user)
 						to_chat(M, "<span class='shadowling'><i>You project this power to the rest of the shadowlings.</i></span>")
 					else
@@ -417,24 +407,22 @@
 
 
 
-/obj/effect/proc_holder/spell/blindness_smoke
+/obj/effect/proc_holder/spell/targeted/blindness_smoke
 	name = "Blindness Smoke"
 	desc = "Spews a cloud of smoke which will blind enemies."
 	panel = "Shadowling Abilities"
 	charge_max = 600
 	clothes_req = 0
+	range = -1
+	include_user = 1
 	action_icon_state = "black_smoke"
 
-/obj/effect/proc_holder/spell/blindness_smoke/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/blindness_smoke/can_cast(mob/living/user = usr, charge_check = TRUE, show_message = FALSE)
+/obj/effect/proc_holder/spell/targeted/blindness_smoke/can_cast(mob/living/user = usr, charge_check = TRUE, show_message = FALSE)
 	if(user.incorporeal_move == INCORPOREAL_NORMAL)
 		return FALSE
 	. = ..()
 
-/obj/effect/proc_holder/spell/blindness_smoke/cast(list/targets, mob/user = usr) //Extremely hacky
+/obj/effect/proc_holder/spell/targeted/blindness_smoke/cast(list/targets, mob/user = usr) //Extremely hacky
 	if(!shadowling_check(user))
 		charge_counter = charge_max
 		return
@@ -647,9 +635,9 @@
 										"<span class='shadowling'><b>You feel new power flow into you. You have been gifted by your masters. You now closely resemble them. You are empowered in \
 										darkness but wither slowly in light. In addition, you now have glare and true shadow walk.</b></span>")
 		thrallToRevive.set_species(/datum/species/shadow/ling/lesser)
-		thrallToRevive.mind.RemoveSpell(/obj/effect/proc_holder/spell/lesser_shadow_walk)
+		thrallToRevive.mind.RemoveSpell(/obj/effect/proc_holder/spell/targeted/lesser_shadow_walk)
 		thrallToRevive.mind.AddSpell(new /obj/effect/proc_holder/spell/glare(null))
-		thrallToRevive.mind.AddSpell(new /obj/effect/proc_holder/spell/shadow_walk(null))
+		thrallToRevive.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/shadow_walk(null))
 	else if(thrallToRevive.stat == DEAD)
 		user.visible_message("<span class='danger'>[user] kneels over [thrallToRevive], placing [user.p_their()] hands on [thrallToRevive.p_their()] chest.</span>", \
 							"<span class='shadowling'>You crouch over the body of your thrall and begin gathering energy...</span>")
@@ -825,19 +813,17 @@
 
 
 
-/obj/effect/proc_holder/spell/shadowling_phase_shift
+/obj/effect/proc_holder/spell/targeted/shadowling_phase_shift
 	name = "Phase Shift"
 	desc = "Phases you into the space between worlds at will, allowing you to move through walls and become invisible."
 	panel = "Ascendant"
+	range = -1
+	include_user = 1
 	charge_max = 15
 	clothes_req = 0
 	action_icon_state = "shadow_walk"
 
-/obj/effect/proc_holder/spell/smoke/shadowling_phase_shift/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/shadowling_phase_shift/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/shadowling_phase_shift/cast(list/targets, mob/user = usr)
 	var/mob/living/simple_animal/ascendant_shadowling/SHA = user
 	for(SHA in targets)
 		SHA.phasing = !SHA.phasing
@@ -888,19 +874,17 @@
 			target.take_organ_damage(0,50)
 			user.Beam(target,icon_state="red_lightning",icon='icons/effects/effects.dmi',time=1)
 
-/obj/effect/proc_holder/spell/shadowlingAscendantTransmit
+/obj/effect/proc_holder/spell/targeted/shadowlingAscendantTransmit
 	name = "Ascendant Broadcast"
 	desc = "Sends a message to the whole wide world."
 	panel = "Ascendant"
 	charge_max = 200
 	clothes_req = 0
+	range = -1
+	include_user = 1
 	action_icon_state = "transmit"
 
-/obj/effect/proc_holder/spell/shadowlingAscendantTransmit/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/shadowlingAscendantTransmit/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/shadowlingAscendantTransmit/cast(list/targets, mob/user = usr)
 	for(var/mob/living/simple_animal/ascendant_shadowling/target in targets)
 		var/text = stripped_input(target, "What do you want to say to everything on and near [station_name()]?.", "Transmit to World", "")
 		if(!text)

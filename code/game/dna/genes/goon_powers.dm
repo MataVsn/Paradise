@@ -376,16 +376,18 @@
 	instability = GENE_INSTABILITY_MINOR
 	mutation = JUMPY
 
-	spelltype =/obj/effect/proc_holder/spell/leap
+	spelltype =/obj/effect/proc_holder/spell/targeted/leap
 
 /datum/dna/gene/basic/grant_spell/jumpy/New()
 	..()
 	block = GLOB.jumpblock
 
-/obj/effect/proc_holder/spell/leap
+/obj/effect/proc_holder/spell/targeted/leap
 	name = "Jump"
 	desc = "Leap great distances!"
 	panel = "Abilities"
+	range = -1
+	include_user = 1
 
 	charge_type = "recharge"
 	charge_max = 60
@@ -396,11 +398,7 @@
 
 	action_icon_state = "genetic_jump"
 
-/obj/effect/proc_holder/spell/leap/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
-
-/obj/effect/proc_holder/spell/leap/cast(list/targets, mob/user = usr)
+/obj/effect/proc_holder/spell/targeted/leap/cast(list/targets, mob/user = usr)
 	var/failure = FALSE
 	if(istype(user.loc,/mob/) || user.lying || user.stunned || user.buckled || user.stat)
 		to_chat(user, "<span class='warning'>You can't jump right now!</span>")

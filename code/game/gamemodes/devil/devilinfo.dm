@@ -344,13 +344,13 @@ GLOBAL_LIST_INIT(lawlorify, list (
 	remove_spells()
 	owner.AddSpell(new /obj/effect/proc_holder/spell/targeted/conjure_item/pitchfork(null))
 	owner.AddSpell(new /obj/effect/proc_holder/spell/fireball/hellish(null))
-	owner.AddSpell(new /obj/effect/proc_holder/spell/infernal_jaunt(null))
+	owner.AddSpell(new /obj/effect/proc_holder/spell/targeted/infernal_jaunt(null))
 
 /datum/devilinfo/proc/give_true_spells()
 	remove_spells()
 	owner.AddSpell(new /obj/effect/proc_holder/spell/targeted/conjure_item/pitchfork/greater(null))
 	owner.AddSpell(new /obj/effect/proc_holder/spell/fireball/hellish(null))
-	owner.AddSpell(new /obj/effect/proc_holder/spell/infernal_jaunt(null))
+	owner.AddSpell(new /obj/effect/proc_holder/spell/targeted/infernal_jaunt(null))
 	owner.AddSpell(new /obj/effect/proc_holder/spell/targeted/sintouch(null))
 
 /datum/devilinfo/proc/give_arch_spells()

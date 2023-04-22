@@ -140,7 +140,7 @@
 	proj_lifespan = 10
 	max_targets = 6
 
-/obj/effect/proc_holder/spell/smoke/disable
+/obj/effect/proc_holder/spell/targeted/smoke/disable
 	name = "Paralysing Smoke"
 	desc = "This spell spawns a cloud of paralysing smoke."
 	action_icon_state = "parasmoke"
@@ -150,11 +150,9 @@
 	clothes_req = FALSE
 	invocation = "none"
 	invocation_type = "none"
+	range = -1
+	include_user = 1
 	cooldown_min = 20 //25 deciseconds reduction per rank
 
 	smoke_spread = 3
 	smoke_amt = 10
-
-/obj/effect/proc_holder/spell/smoke/disable/create_new_targeting()
-	var/datum/spell_targeting/self/S = new()
-	return S
