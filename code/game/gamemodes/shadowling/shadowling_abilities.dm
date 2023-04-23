@@ -117,11 +117,10 @@
 			continue	//putting them at the edge is dumb
 		if(T.y > world.maxy-outer_tele_radius || T.y < outer_tele_radius)
 			continue
-
-		var/lightingcount = T.get_lumcount(0.5) * 10
+		var/light_amount = T.get_lumcount() * 10
 
 		// LIGHTING CHECK
-		if(lightingcount > max_lum)
+		if(light_amount > LIGHT_HEAL_THRESHOLD)
 			continue
 		turfs += T
 
