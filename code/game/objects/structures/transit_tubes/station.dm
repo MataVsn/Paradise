@@ -11,6 +11,7 @@
 	desc = "The lynchpin of the transit system."
 	icon = 'icons/obj/pipes_and_stuff/not_atmos/transit_tube_station.dmi'
 	icon_state = "closed_station0"
+	base_icon_state = "station0"
 	exit_delay = 1
 	enter_delay = 2
 	var/pod_moving = FALSE
@@ -55,12 +56,8 @@
 				to_chat(L, "<span class='warning'>The pod is already occupied.</span>")
 				return
 			if(!pod.moving && ((pod.dir in directions()) || (reverse_launch && (turn(pod.dir, 180) in directions()))))	
-				pod.move_into(moving_atom)
+				pod.move_into(L)
 				return
-		if(failed)
-			to_chat(moving_atom, "<span class='warning'>The pod is already occupied.</span>")
-
-
 
 /obj/structure/transit_tube/station/attack_hand(mob/user)
 	if(pod_moving)
