@@ -128379,9 +128379,8 @@
 /area/engine/hardsuitstorage)
 "xBT" = (
 /obj/structure/lattice,
-/obj/structure/transit_tube{
+/obj/structure/transit_tube/curved/flipped{
 	icon_state = "E-SW";
-	tag = "icon-E-SW"
 	},
 /turf/space,
 /area/space)
